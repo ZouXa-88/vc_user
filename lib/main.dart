@@ -60,17 +60,12 @@ class _UserState extends State<User>{
 
   Future<Uint8List> loadShare(String path) async {
     Uint8List inputImg = (await rootBundle.load(path)).buffer.asUint8List();
-    final binaryImg = image.decodeImage(inputImg)!
+    final buffer = image.decodeImage(inputImg)!
         .getBytes(format: image.Format.luminance)
-        .map((e) => e >= 128? 1 : 0)
-        .join();
+        .map((e) => e == 0 ? 0 : 1)
+        .toList();
 
-    Uint8List share = Uint8List(200);
-    for (int i = 0; i < binaryImg.length; i += 8) {
-      share[i ~/ 8] = int.parse(StringUtils.reverse(binaryImg.substring(i, i + 8)), radix: 2);
-    }
-
-    return share;
+    return Uint8List.fromList(buffer);
   }
 
   @override
