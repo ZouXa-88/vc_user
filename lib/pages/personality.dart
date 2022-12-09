@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:user/database.dart';
+import 'package:user/door_register.dart';
 
 class Personality extends StatefulWidget{
   const Personality({super.key});
@@ -42,7 +43,7 @@ class _PersonalityState extends State<Personality>{
                 children: [
                   ElevatedButton.icon(
                     icon: const Icon(Icons.app_registration),
-                    label: const Text("已註冊列表"),
+                    label: const Text("已註冊的門鎖"),
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -78,7 +79,7 @@ class RegisteredDoorDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("已註冊列表"),
+        title: const Text("已註冊的門鎖"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -96,6 +97,14 @@ class RegisteredDoorDisplay extends StatelessWidget {
             physics: const BouncingScrollPhysics(),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => DoorRegister(),)
+        ),
+        label: const Text("新增門鎖"),
+        icon: const Icon(Icons.add),
       ),
     );
   }

@@ -24,6 +24,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.green,
       ),
       home: const User(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }

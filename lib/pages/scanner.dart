@@ -41,6 +41,7 @@ class _ScannerState extends State<Scanner>{
         return;
       }
 
+      database.history.addNewHistory(door);
       controller.pauseCamera();
       Navigator.push(
           context,
@@ -50,7 +51,6 @@ class _ScannerState extends State<Scanner>{
       ).then((_) {
         controller.resumeCamera();
       });
-      database.history.addNewHistory(door);
     });
   }
 
@@ -67,11 +67,13 @@ class _ScannerState extends State<Scanner>{
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-        borderColor: Colors.orange,
-        borderRadius: 10,
-        borderLength: 30,
-        borderWidth: 10,
-        cutOutSize: 250,
+        // full screen
+        borderColor: Theme.of(context).primaryColor,
+        borderRadius: 0,
+        borderLength: 0,
+        borderWidth: 0,
+        cutOutWidth: MediaQuery.of(context).size.width,
+        cutOutHeight: MediaQuery.of(context).size.height,
       ),
     );
   }
