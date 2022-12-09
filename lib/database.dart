@@ -1,8 +1,6 @@
 import 'dart:collection';
 import 'dart:typed_data';
 
-import 'package:tuple/tuple.dart';
-
 Database database = Database();
 
 // ==========Database==========
@@ -87,19 +85,21 @@ class History {
 
 class HistoryData {
 
-  late Tuple2<String, String> _historyData;
+  late String _doorName;
+  late String _time;
   
   
   HistoryData(String door, String time) {
-    _historyData = Tuple2(door, time);
+    _doorName = door;
+    _time = time;
   }
   
   String getDoor() {
-    return _historyData.item1;
+    return _doorName;
   }
   
   String getTime() {
-    return _historyData.item2;
+    return _time;
   }
 }
 
