@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:image/image.dart' as image;
+import 'package:basic_utils/basic_utils.dart';
 
 import 'package:user/pages/home.dart';
 import 'package:user/pages/personality.dart';
@@ -35,12 +36,17 @@ Future<void> setUpUsers() async {
 
 Future<Uint8List> loadShare(String path) async {
   Uint8List inputImg = (await rootBundle.load(path)).buffer.asUint8List();
-  final buffer = image.decodeImage(inputImg)!
+  String binaries = image.decodeImage(inputImg)!
       .getBytes(format: image.Format.luminance)
       .map((e) => e == 0 ? 0 : 1)
-      .toList();
+      .join();
+  
+  List<int> buf = List.filled(200, 0);
+  for(int i = 0; i < 200; i++){
+    buf[i] = int.parse(StringUtils.reverse(binaries.substring(i * 8, i * 8 + 8)), radix: 2);
+  }
 
-  return Uint8List.fromList(buffer);
+  return Uint8List.fromList(buf);
 }
 
 class MyApp extends StatelessWidget {
