@@ -1,13 +1,13 @@
-import 'package:basic_utils/basic_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:image/image.dart' as image;
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:user/pages/home.dart';
 import 'package:user/pages/personality.dart';
 import 'package:user/pages/scanner.dart';
-import 'package:user/database.dart';
+import 'package:user/accounts.dart';
 
 void main() {
   runApp(const MyApp());

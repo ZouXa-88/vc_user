@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'package:user/database.dart';
+import 'package:user/accounts.dart';
 
 // ==========Scanner==========
 

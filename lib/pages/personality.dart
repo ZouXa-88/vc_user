@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:user/database.dart';
+import 'package:user/accounts.dart';
 import 'package:user/door_register.dart';
 
 class Personality extends StatefulWidget{
@@ -51,16 +51,16 @@ class _PersonalityState extends State<Personality>{
                       );
                     },
                   ),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.history),
-                    label: const Text("紀錄"),
+                  /*ElevatedButton.icon(
+                    icon: const Icon(Icons.switch_account),
+                    label: const Text("切換帳號"),
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const HistoryDisplay()),
                       );
                     },
-                  ),
+                  ),*/
                 ],
               ),
             ),
@@ -105,37 +105,6 @@ class RegisteredDoorDisplay extends StatelessWidget {
         ),
         label: const Text("新增門鎖"),
         icon: const Icon(Icons.add),
-      ),
-    );
-  }
-}
-
-class HistoryDisplay extends StatelessWidget {
-  const HistoryDisplay({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("紀錄"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Scrollbar(
-            child: ListView.builder(
-              itemCount: database.history.length(),
-              itemBuilder: (BuildContext buildContext, int index) {
-                return Card(
-                  child: ListTile(
-                    leading: const Icon(Icons.door_front_door),
-                    title: Text(database.history.elementAt(index).getDoor()),
-                    trailing: Text(database.history.elementAt(index).getTime()),
-                  ),
-                );
-              },
-              physics: const BouncingScrollPhysics(),
-            )
-        ),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:user/database.dart';
+import 'package:user/accounts.dart';
 
 class DoorRegister extends StatefulWidget {
   const DoorRegister({super.key});
