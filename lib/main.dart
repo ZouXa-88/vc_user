@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:image/image.dart' as image;
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 import 'package:user/pages/home.dart';
 import 'package:user/pages/personality.dart';
@@ -72,56 +71,37 @@ class _UserAppState extends State<UserApp>{
 
   var _selectedIndex = 0;
   final pages = [const Home(), const Scanner(), const Personality()];
-  bool initialized = false;
 
 
   @override
   Widget build(BuildContext context){
-    return WillPopScope(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("user app"),
-        ),
-        body: initialized?
-          pages[_selectedIndex] :
-          Center(
-            child: LoadingAnimationWidget.prograssiveDots(
-              color: Theme.of(context).primaryColor,
-              size: 100
-            )
-          ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("user app"),
+      ),
+      body: pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
               icon: Icon(Icons.home),
               label: "首頁"
-            ),
-            BottomNavigationBarItem(
+          ),
+          BottomNavigationBarItem(
               icon: Icon(Icons.qr_code_scanner),
               label: "掃描"
-            ),
-            BottomNavigationBarItem(
+          ),
+          BottomNavigationBarItem(
               icon: Icon(Icons.person),
               label: "個人資訊"
-            ),
-          ],
-          currentIndex: _selectedIndex,
-          onTap: (index) {
-            setState((){
-              _selectedIndex = index;
-            });
-          },
-        ),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        onTap: (index) {
+          setState((){
+            _selectedIndex = index;
+          });
+        },
       ),
-      onWillPop: () async {
-        if(_selectedIndex == 0){
-          return true;
-        }
-        setState(() {
-          _selectedIndex = 0;
-        });
-        return false;
-      }
     );
   }
 }
