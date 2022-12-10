@@ -9,8 +9,36 @@ import 'package:user/pages/personality.dart';
 import 'package:user/pages/scanner.dart';
 import 'package:user/accounts.dart';
 
-void main() {
+// ==========main==========
+
+void main() async {
+  await setUpUsers();
   runApp(const MyApp());
+}
+
+Future<void> setUpUsers() async {
+  Account user1 = Account();
+  Account user2 = Account();
+
+  user1.addShare("door1", await loadShare("assets/images/door1_1.png"));
+  user1.addShare("door2", await loadShare("assets/images/door2_1.png"));
+
+  user2.addShare("door1", await loadShare("assets/images/door1_2.png"));
+  user2.addShare("door2", await loadShare("assets/images/door2_2.png"));
+
+  accounts.addAccount(user1);
+  accounts.addAccount(user2);
+  currentAccount = accounts.getAccount("user1")!;
+}
+
+Future<Uint8List> loadShare(String path) async {
+  Uint8List inputImg = (await rootBundle.load(path)).buffer.asUint8List();
+  final buffer = image.decodeImage(inputImg)!
+      .getBytes(format: image.Format.luminance)
+      .map((e) => e == 0 ? 0 : 1)
+      .toList();
+
+  return Uint8List.fromList(buffer);
 }
 
 class MyApp extends StatelessWidget {
@@ -23,60 +51,29 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const User(),
+      home: const UserApp(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class User extends StatefulWidget{
-  const User({super.key});
+// ==========main==========
+
+// ==========User==========
+
+class UserApp extends StatefulWidget{
+  const UserApp({super.key});
 
   @override
-  _UserState createState() => _UserState();
+  _UserAppState createState() => _UserAppState();
 }
 
-class _UserState extends State<User>{
+class _UserAppState extends State<UserApp>{
 
   var _selectedIndex = 0;
   final pages = [const Home(), const Scanner(), const Personality()];
   bool initialized = false;
 
-
-  @override
-  void initState() {
-    super.initState();
-    setUpUsers();
-  }
-
-  Future<void> setUpUsers() async {
-    Account user1 = Account();
-    Account user2 = Account();
-
-    user1.addShare("door1", await loadShare("assets/images/door1_1.png"));
-    user1.addShare("door2", await loadShare("assets/images/door2_1.png"));
-
-    user2.addShare("door1", await loadShare("assets/images/door1_2.png"));
-    user2.addShare("door2", await loadShare("assets/images/door2_2.png"));
-
-    accounts.addAccount(user1);
-    accounts.addAccount(user2);
-    currentAccount = accounts.getAccount("user1")!;
-
-    setState(() {
-      initialized = true;
-    });
-  }
-
-  Future<Uint8List> loadShare(String path) async {
-    Uint8List inputImg = (await rootBundle.load(path)).buffer.asUint8List();
-    final buffer = image.decodeImage(inputImg)!
-        .getBytes(format: image.Format.luminance)
-        .map((e) => e == 0 ? 0 : 1)
-        .toList();
-
-    return Uint8List.fromList(buffer);
-  }
 
   @override
   Widget build(BuildContext context){
@@ -128,3 +125,5 @@ class _UserState extends State<User>{
     );
   }
 }
+
+// ==========User==========
