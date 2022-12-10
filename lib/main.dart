@@ -11,6 +11,7 @@ import 'package:user/accounts.dart';
 // ==========main==========
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   await setUpUsers();
   runApp(const MyApp());
 }
@@ -19,9 +20,11 @@ Future<void> setUpUsers() async {
   Account user1 = Account();
   Account user2 = Account();
 
+  user1.setName("user1");
   user1.addShare("door1", await loadShare("assets/images/door1_1.png"));
   user1.addShare("door2", await loadShare("assets/images/door2_1.png"));
 
+  user2.setName("user2");
   user2.addShare("door1", await loadShare("assets/images/door1_2.png"));
   user2.addShare("door2", await loadShare("assets/images/door2_2.png"));
 
@@ -58,7 +61,7 @@ class MyApp extends StatelessWidget {
 
 // ==========main==========
 
-// ==========User==========
+// ==========UserApp==========
 
 class UserApp extends StatefulWidget{
   const UserApp({super.key});
@@ -106,4 +109,4 @@ class _UserAppState extends State<UserApp>{
   }
 }
 
-// ==========User==========
+// ==========UserApp==========
