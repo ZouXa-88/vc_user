@@ -47,7 +47,7 @@ class _PersonalityState extends State<Personality>{
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const RegisteredDoorDisplay()),
+                        MaterialPageRoute(builder: (context) => RegisteredDoorDisplay()),
                       );
                     },
                   ),
@@ -72,8 +72,13 @@ class _PersonalityState extends State<Personality>{
 }
 
 class RegisteredDoorDisplay extends StatelessWidget {
-  const RegisteredDoorDisplay({super.key});
 
+  List<String> registeredDoors = List.empty();
+
+
+  RegisteredDoorDisplay({super.key}) {
+    registeredDoors = currentAccount.getRegisteredDoorsList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -85,12 +90,12 @@ class RegisteredDoorDisplay extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Scrollbar(
           child: ListView.builder(
-            itemCount: database.shares.length(),
+            itemCount: currentAccount.getNumRegisteredDoors(),
             itemBuilder: (BuildContext buildContext, int index) {
               return Card(
                 child: ListTile(
                   leading: const Icon(Icons.door_front_door),
-                  title: Text(database.shares.keyAt(index)),
+                  title: Text(registeredDoors[index]),
                 ),
               );
             },

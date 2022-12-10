@@ -46,12 +46,22 @@ class _UserState extends State<User>{
   @override
   void initState() {
     super.initState();
-    loadShares();
+    setUpUsers();
   }
 
-  Future<void> loadShares() async {
-    database.shares.add("door1", await loadShare("assets/images/door1_1.png"));
-    database.shares.add("door2", await loadShare("assets/images/door2_1.png"));
+  Future<void> setUpUsers() async {
+    Account user1 = Account();
+    Account user2 = Account();
+
+    user1.addShare("door1", await loadShare("assets/images/door1_1.png"));
+    user1.addShare("door2", await loadShare("assets/images/door2_1.png"));
+
+    user2.addShare("door1", await loadShare("assets/images/door1_2.png"));
+    user2.addShare("door2", await loadShare("assets/images/door2_2.png"));
+
+    accounts.addAccount(user1);
+    accounts.addAccount(user2);
+    currentAccount = accounts.getAccount("user1")!;
 
     setState(() {
       initialized = true;
