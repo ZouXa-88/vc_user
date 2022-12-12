@@ -25,13 +25,13 @@ class _PersonalityState extends State<Personality>{
               size: 100,
             ),
           ),
-          const Expanded(
+          Expanded(
             flex: 1,
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                "User",
-                style: TextStyle(fontSize: 40),
+                currentAccount.getName(),
+                style: const TextStyle(fontSize: 40),
               ),
             ),
           ),
@@ -51,16 +51,32 @@ class _PersonalityState extends State<Personality>{
                       );
                     },
                   ),
-                  /*ElevatedButton.icon(
+                  ElevatedButton.icon(
                     icon: const Icon(Icons.switch_account),
                     label: const Text("切換帳號"),
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HistoryDisplay()),
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return SimpleDialog(
+                            title: const Text("切換帳號"),
+                            children: accounts.getAllAccountsList().map((value) {
+                              return SimpleDialogOption(
+                                onPressed: () {
+                                  setState(() {
+                                    currentAccount = accounts.getAccount(value)!;
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          );
+                        }
                       );
                     },
-                  ),*/
+                  ),
+
                 ],
               ),
             ),
@@ -106,7 +122,7 @@ class RegisteredDoorDisplay extends StatelessWidget {
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => DoorRegister(),)
+            MaterialPageRoute(builder: (context) => const DoorRegister())
         ),
         label: const Text("新增門鎖"),
         icon: const Icon(Icons.add),

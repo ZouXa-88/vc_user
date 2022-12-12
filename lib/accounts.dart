@@ -20,6 +20,10 @@ class Accounts {
     }
     return null;
   }
+
+  List<String> getAllAccountsList() {
+    return List.of(_accounts.keys);
+  }
 }
 
 // ==========Accounts==========

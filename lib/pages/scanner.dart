@@ -104,6 +104,7 @@ class _QrCodeKeyState extends State<QrCodeKey> {
   late QrImage qrImage;
   bool qrCodeIsGenerated = false;
 
+
   @override
   void initState() {
     super.initState();
