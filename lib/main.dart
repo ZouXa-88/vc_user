@@ -21,17 +21,17 @@ Future<void> setUpUsers() async {
   Account user1 = Account();
   Account user2 = Account();
 
-  user1.setName("user1");
-  user1.addShare("door1", await loadShare("assets/images/door1_1.png"));
-  user1.addShare("door2", await loadShare("assets/images/door2_1.png"));
+  user1.setName("王小明");
+  user1.addShare("大門", await loadShare("assets/images/door1_1.png"));
+  user1.addShare("二樓辦公室", await loadShare("assets/images/door2_1.png"));
 
-  user2.setName("user2");
-  user2.addShare("door1", await loadShare("assets/images/door1_2.png"));
-  user2.addShare("door2", await loadShare("assets/images/door2_2.png"));
+  user2.setName("林小美");
+  user2.addShare("大門", await loadShare("assets/images/door1_2.png"));
+  user2.addShare("二樓辦公室", await loadShare("assets/images/door2_2.png"));
 
   accounts.addAccount(user1);
   accounts.addAccount(user2);
-  currentAccount = accounts.getAccount("user1")!;
+  currentAccount = user1;
 }
 
 Future<Uint8List> loadShare(String path) async {
