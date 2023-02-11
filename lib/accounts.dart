@@ -14,15 +14,15 @@ class Accounts {
     _accounts[account.getName()] = account;
   }
 
-  Account? getAccount(String name) {
-    if(_accounts.containsKey(name)){
-      return _accounts[name];
+  Account? getAccount(String accountId) {
+    if(_accounts.containsKey(accountId)){
+      return _accounts[accountId];
     }
     return null;
   }
 
-  List<String> getAllAccountsList() {
-    return List.of(_accounts.keys);
+  List<Account> getAllAccounts() {
+    return List.of(_accounts.values);
   }
 }
 

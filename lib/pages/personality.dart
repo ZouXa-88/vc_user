@@ -60,15 +60,15 @@ class _PersonalityState extends State<Personality>{
                         builder: (BuildContext context) {
                           return SimpleDialog(
                             title: const Text("切換帳號"),
-                            children: accounts.getAllAccountsList().map((value) {
+                            children: accounts.getAllAccounts().map((account) {
                               return SimpleDialogOption(
                                 onPressed: () {
                                   setState(() {
-                                    currentAccount = accounts.getAccount(value)!;
+                                    currentAccount = account;
                                   });
                                   Navigator.pop(context);
                                 },
-                                child: Text(value),
+                                child: Text(account.getName()),
                               );
                             }).toList(),
                           );
