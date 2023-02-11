@@ -32,8 +32,8 @@ class Accounts {
 
 class Account {
 
-  String _id = "";
-  String _name = "";
+  late String _id;
+  late String _name;
   final Map<String, Door> _availableDoors = {};
 
 
@@ -70,7 +70,6 @@ class Account {
     if(isRegistered(doorId)){
       return _availableDoors[doorId]!;
     }
-
     return null;
   }
 
@@ -89,9 +88,9 @@ class Account {
 
 class Door {
 
-  String _id = "";
-  String _name = "";
-  Uint8List _share = Uint8List(0);
+  late String _id;
+  late String _name;
+  late Uint8List _share;
 
 
   Door(final String id, final String name, final Uint8List share) {
