@@ -11,7 +11,7 @@ class Accounts {
 
 
   void addAccount(Account account) {
-    _accounts[account.getName()] = account;
+    _accounts[account.getId()] = account;
   }
 
   Account? getAccount(String accountId) {
