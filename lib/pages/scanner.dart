@@ -35,17 +35,18 @@ class _ScannerState extends State<Scanner>{
         return;
       }
 
-      String door = stringData.first.replaceAll("d=", "");
+      String doorId = stringData.first.replaceAll("d=", "");
       int? seed = int.tryParse(stringData.last.replaceAll("s=", ""));
-      if(!currentAccount.isRegistered(door) || seed == null){
+      if(!currentAccount.isRegistered(doorId) || seed == null){
         return;
       }
+      Door door = currentAccount.getDoor(doorId)!;
 
       controller.pauseCamera();
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => QrCodeKey(door: door, share: currentAccount.getShare(door)!, seed: seed),
+            builder: (context) => QrCodeKey(door: door.getName(), share: door.getShare(), seed: seed),
           )
       ).then((_) {
         controller.resumeCamera();

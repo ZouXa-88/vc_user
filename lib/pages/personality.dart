@@ -89,11 +89,11 @@ class _PersonalityState extends State<Personality>{
 
 class RegisteredDoorDisplay extends StatelessWidget {
 
-  List<String> registeredDoors = List.empty();
+  List<Door> registeredDoors = List.empty();
 
 
   RegisteredDoorDisplay({super.key}) {
-    registeredDoors = currentAccount.getRegisteredDoorsList();
+    registeredDoors = currentAccount.getAllRegisteredDoors();
   }
 
   @override
@@ -111,7 +111,7 @@ class RegisteredDoorDisplay extends StatelessWidget {
               return Card(
                 child: ListTile(
                   leading: const Icon(Icons.door_front_door),
-                  title: Text(registeredDoors[index]),
+                  title: Text(registeredDoors[index].getName()),
                 ),
               );
             },

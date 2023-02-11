@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 Accounts accounts = Accounts();
-Account currentAccount = Account();
+Account currentAccount = Account("000", "unknown");
 
 // ==========Accounts==========
 
@@ -32,40 +32,85 @@ class Accounts {
 
 class Account {
 
+  String _id = "";
   String _name = "";
-  Map<String, Uint8List> _shares = {};
+  final Map<String, Door> _availableDoors = {};
 
+
+  Account(final String id, final String name) {
+    setId(id);
+    setName(name);
+  }
+
+  void setId(String id) {
+    _id = id;
+  }
 
   void setName(String name) {
     _name = name;
   }
 
-  void addShare(String doorName, Uint8List share) {
-    _shares[doorName] = share;
+  void addDoor(String id, String name, Uint8List share) {
+    _availableDoors[id] = Door(id, name, share);
   }
 
-  bool isRegistered(String doorName) {
-    return _shares.containsKey(doorName);
+  bool isRegistered(String doorId) {
+    return _availableDoors.containsKey(doorId);
+  }
+
+  String getId() {
+    return _id;
   }
 
   String getName() {
     return _name;
   }
 
-  Uint8List? getShare(String doorName) {
-    if(isRegistered(doorName)) {
-      return _shares[doorName];
+  Door? getDoor(String doorId) {
+    if(isRegistered(doorId)){
+      return _availableDoors[doorId]!;
     }
+
     return null;
   }
 
   int getNumRegisteredDoors() {
-    return _shares.length;
+    return _availableDoors.length;
   }
 
-  List<String> getRegisteredDoorsList() {
-    return List.of(_shares.keys);
+  List<Door> getAllRegisteredDoors() {
+    return List.of(_availableDoors.values);
   }
 }
 
 // ==========Account==========
+
+// ==========Door==========
+
+class Door {
+
+  String _id = "";
+  String _name = "";
+  Uint8List _share = Uint8List(0);
+
+
+  Door(final String id, final String name, final Uint8List share) {
+    _id = id;
+    _name = name;
+    _share = share;
+  }
+
+  String getId() {
+    return _id;
+  }
+
+  String getName() {
+    return _name;
+  }
+
+  Uint8List getShare() {
+    return _share;
+  }
+}
+
+// ==========Door==========

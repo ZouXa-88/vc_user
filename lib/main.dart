@@ -18,16 +18,14 @@ void main() async {
 }
 
 Future<void> setUpUsers() async {
-  Account user1 = Account();
-  Account user2 = Account();
+  Account user1 = Account("001", "王小明");
+  Account user2 = Account("002", "麥當勞叔叔");
 
-  user1.setName("王小明");
-  user1.addShare("大門", await loadShare("assets/images/door1_1.png"));
-  user1.addShare("二樓辦公室", await loadShare("assets/images/door2_1.png"));
+  user1.addDoor("door1", "大門", await loadShare("assets/images/door1_1.png"));
+  user1.addDoor("door2", "二樓辦公室", await loadShare("assets/images/door2_1.png"));
 
-  user2.setName("林小美");
-  user2.addShare("大門", await loadShare("assets/images/door1_2.png"));
-  user2.addShare("二樓辦公室", await loadShare("assets/images/door2_2.png"));
+  user2.addDoor("door1", "大門", await loadShare("assets/images/door1_2.png"));
+  user2.addDoor("door2", "二樓辦公室", await loadShare("assets/images/door2_2.png"));
 
   accounts.addAccount(user1);
   accounts.addAccount(user2);
