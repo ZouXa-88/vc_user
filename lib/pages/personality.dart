@@ -51,6 +51,7 @@ class _PersonalityState extends State<Personality>{
                       );
                     },
                   ),
+                  /*
                   ElevatedButton.icon(
                     icon: const Icon(Icons.switch_account),
                     label: const Text("切換帳號"),
@@ -76,7 +77,7 @@ class _PersonalityState extends State<Personality>{
                       );
                     },
                   ),
-
+                  */
                 ],
               ),
             ),
