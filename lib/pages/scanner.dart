@@ -46,7 +46,7 @@ class _ScannerState extends State<Scanner>{
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => QrCodeKey(door: door.getName(), share: door.getShare(), seed: seed),
+            builder: (context) => QrCodeKey(doorName: door.getName(), share: door.getShare(), seed: seed),
           )
       ).then((_) {
         controller.resumeCamera();
@@ -85,12 +85,12 @@ class _ScannerState extends State<Scanner>{
 
 class QrCodeKey extends StatefulWidget {
 
-  final String door;
+  final String doorName;
   final Uint8List share;
   final int seed;
 
 
-  const QrCodeKey({Key? key, required this.door, required this.share, required this.seed}) : super(key: key);
+  const QrCodeKey({Key? key, required this.doorName, required this.share, required this.seed}) : super(key: key);
 
   @override
   _QrCodeKeyState createState() => _QrCodeKeyState();
@@ -98,7 +98,7 @@ class QrCodeKey extends StatefulWidget {
 
 class _QrCodeKeyState extends State<QrCodeKey> {
 
-  late String door;
+  late String doorName;
   late Uint8List share;
   late int seed;
 
@@ -110,7 +110,7 @@ class _QrCodeKeyState extends State<QrCodeKey> {
   void initState() {
     super.initState();
 
-    door = widget.door;
+    doorName = widget.doorName;
     share = widget.share;
     seed = widget.seed;
     generateQrCode();
@@ -151,7 +151,7 @@ class _QrCodeKeyState extends State<QrCodeKey> {
           Expanded(
             flex: 1,
             child: Text(
-              "# $door",
+              doorName,
               style: const TextStyle(fontSize: 25),
             ),
           ),
