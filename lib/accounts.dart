@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
 Accounts accounts = Accounts();
-Account currentAccount = Account("000", "unknown");
+Account currentAccount = Account(id: "000", name: "unknown");
 
 // ==========Accounts==========
 
@@ -34,24 +35,26 @@ class Account {
 
   late String _id;
   late String _name;
-  final Map<String, Door> _availableDoors = {};
+  final Map<String, Door> _availableDoors = {}; // TODO: Remove it latter.
+  List<String> _availableDoorsName = List.empty(growable: true);
 
 
-  Account(final String id, final String name) {
-    setId(id);
-    setName(name);
-  }
-
-  void setId(String id) {
+  Account({required final String id, required final String name, final List<String>? doorsName}) {
     _id = id;
-  }
-
-  void setName(String name) {
     _name = name;
+
+    if(doorsName != null){
+      _availableDoorsName = doorsName;
+    }
   }
 
   void addDoor(String id, String name, Uint8List share) {
-    _availableDoors[id] = Door(id, name, share);
+    _availableDoors[id] = Door(
+      id: id,
+      name: name,
+      share: share,
+    );
+    _availableDoorsName.add(name);
   }
 
   bool isRegistered(String doorId) {
@@ -74,11 +77,32 @@ class Account {
   }
 
   int getNumRegisteredDoors() {
-    return _availableDoors.length;
+    return _availableDoorsName.length;
   }
 
   List<Door> getAllRegisteredDoors() {
     return List.of(_availableDoors.values);
+  }
+
+  List<String> getAllRegisteredDoorsName() {
+    return _availableDoorsName;
+  }
+
+  String buildAccountData() {
+    return jsonEncode({
+      "id": _id,
+      "name": _name,
+      "doors": _availableDoorsName.join(","),
+    });
+  }
+
+  static Account from(final String jsonString) {
+    final json = jsonDecode(jsonString);
+    return Account(
+      id: json["id"],
+      name: json["name"],
+      doorsName: (json["doors"]).split(","),
+    );
   }
 }
 
@@ -88,27 +112,26 @@ class Account {
 
 class Door {
 
-  late String _id;
-  late String _name;
-  late Uint8List _share;
+  late String id; // TODO: Remove it latter.
+  late String name;
+  late Uint8List share;
 
+  Door({required this.id, required this.name, required this.share});
 
-  Door(final String id, final String name, final Uint8List share) {
-    _id = id;
-    _name = name;
-    _share = share;
+  String buildDoorData() {
+    return jsonEncode({
+      "name": name,
+      "share": share.join(","),
+    });
   }
 
-  String getId() {
-    return _id;
-  }
-
-  String getName() {
-    return _name;
-  }
-
-  Uint8List getShare() {
-    return _share;
+  static Door from(final String jsonString) {
+    final json = jsonDecode(jsonString);
+    return Door(
+      id: "door1",
+      name: json["name"],
+      share: Uint8List.fromList(json["share"].split(",")),
+    );
   }
 }
 
