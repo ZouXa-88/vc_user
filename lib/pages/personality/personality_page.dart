@@ -4,14 +4,14 @@ import 'package:user/accounts.dart';
 import 'route/registered_door_display.dart';
 import 'package:user/dev.dart';
 
-class Personality extends StatefulWidget{
-  const Personality({super.key});
+class PersonalityPage extends StatefulWidget{
+  const PersonalityPage({super.key});
 
   @override
-  State<Personality> createState() => _PersonalityState();
+  State<PersonalityPage> createState() => _PersonalityPage();
 }
 
-class _PersonalityState extends State<Personality> {
+class _PersonalityPage extends State<PersonalityPage> {
 
   @override
   Widget build(BuildContext context) {

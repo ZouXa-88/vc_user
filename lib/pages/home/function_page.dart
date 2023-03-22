@@ -3,8 +3,8 @@ import 'package:user/pages/home/route/delete_door.dart';
 
 import 'route/register_door.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class FunctionPage extends StatelessWidget {
+  const FunctionPage({super.key});
 
   Widget _functionButton({required String label, required void Function() onPressed}) {
     return Padding(

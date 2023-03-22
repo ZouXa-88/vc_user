@@ -5,14 +5,14 @@ import 'package:user/accounts.dart';
 import 'route/qr_code_key.dart';
 
 
-class Scanner extends StatefulWidget {
-  const Scanner({Key? key}) : super(key: key);
+class ScannerPage extends StatefulWidget {
+  const ScannerPage({Key? key}) : super(key: key);
 
   @override
-  State<Scanner> createState() => _ScannerState();
+  State<ScannerPage> createState() => _ScannerPage();
 }
 
-class _ScannerState extends State<Scanner> {
+class _ScannerPage extends State<ScannerPage> {
 
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');

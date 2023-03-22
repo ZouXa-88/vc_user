@@ -8,9 +8,9 @@ import 'package:basic_utils/basic_utils.dart';
 
 import 'package:user/login_page.dart';
 import 'package:user/connector.dart';
-import 'package:user/pages/home/home.dart';
-import 'package:user/pages/personality/personality.dart';
-import 'package:user/pages/scanner/scanner.dart';
+import 'package:user/pages/home/function_page.dart';
+import 'package:user/pages/personality/personality_page.dart';
+import 'package:user/pages/scanner/scanner_page.dart';
 import 'package:user/accounts.dart';
 import 'package:user/storage.dart';
 
@@ -92,7 +92,7 @@ class MainPage extends StatefulWidget {
 class _MainPage extends State<MainPage> {
 
   int _selectedIndex = 0;
-  final _pages = <Widget>[const Home(), const Scanner(), const Personality()];
+  final _pages = <Widget>[const FunctionPage(), const ScannerPage(), const PersonalityPage()];
   final _titles = <Text>[const Text("首頁"), const Text("掃描"), const Text("個人資訊")];
 
   late Account _account;
