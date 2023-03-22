@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:image/image.dart' as image;
 import 'package:basic_utils/basic_utils.dart';
 
-import 'package:user/login.dart';
+import 'package:user/login_page.dart';
 import 'package:user/connector.dart';
 import 'package:user/pages/home/home.dart';
 import 'package:user/pages/personality/personality.dart';

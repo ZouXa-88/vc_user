@@ -49,7 +49,7 @@ class _LoginPage extends State<LoginPage> {
       },
     );
 
-    ConnectorResponse response = await connector.sendLogin(email: email, password: password);
+    ConnectorResponse response = await connector.login(email: email, password: password);
 
     if(context.mounted) {
       Navigator.of(context).pop();
@@ -60,7 +60,7 @@ class _LoginPage extends State<LoginPage> {
           MaterialPageRoute(
             builder: (context) => MainPage(account: accounts.getAccount("001")!,),
           ),
-              (route) => false,
+          (route) => false,
         );
       }
       else{
@@ -88,7 +88,7 @@ class _LoginPage extends State<LoginPage> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        FocusScope.of(context).unfocus();
+        FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
         appBar: AppBar(
@@ -112,6 +112,7 @@ class _LoginPage extends State<LoginPage> {
                       decoration: const InputDecoration(
                         labelText: "信箱",
                         border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.email),
                       ),
                       onChanged: (text) {
                         _email = text;
@@ -130,6 +131,7 @@ class _LoginPage extends State<LoginPage> {
                       obscureText: !_passwordVisible,
                       decoration: InputDecoration(
                         labelText: "密碼",
+                        prefixIcon: const Icon(Icons.password),
                         suffixIcon: IconButton(
                           icon: _passwordVisible
                               ? const Icon(Icons.visibility)
@@ -168,16 +170,16 @@ class _LoginPage extends State<LoginPage> {
             OutlinedButton(
               style: ButtonStyle(
                 shape: MaterialStatePropertyAll<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    )
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  )
                 ),
               ),
               onPressed: () {
                 // TODO: Register a new account.
                 Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const CreateAccount())
+                    MaterialPageRoute(builder: (context) => const CreateAccountPage())
                 );
               },
               child: const Text("註冊帳號"),
@@ -191,21 +193,24 @@ class _LoginPage extends State<LoginPage> {
 
 // ==========LoginPage==========
 
-// ==========CreateAccount==========
+// ==========CreateAccountPage==========
 
-class CreateAccount extends StatefulWidget {
-  const CreateAccount({super.key});
+class CreateAccountPage extends StatefulWidget {
+  const CreateAccountPage({super.key});
 
   @override
-  State<CreateAccount> createState() => _CreateAccount();
+  State<CreateAccountPage> createState() => _CreateAccountPage();
 }
 
-class _CreateAccount extends State<CreateAccount> {
+class _CreateAccountPage extends State<CreateAccountPage> {
 
   final _formKey = GlobalKey<FormState>();
+  bool _passwordVisible = false;
+
   String _userName = "";
   String _email = "";
   String _password = "";
+  String _passwordAgain = "";
 
 
   @override
@@ -213,7 +218,7 @@ class _CreateAccount extends State<CreateAccount> {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        FocusScope.of(context).unfocus();
+        FocusScope.of(context).requestFocus(FocusNode());
       },
       child: Scaffold(
         appBar: AppBar(
@@ -233,6 +238,7 @@ class _CreateAccount extends State<CreateAccount> {
                   decoration: const InputDecoration(
                     labelText: "使用者名稱",
                     border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.person),
                   ),
                   onChanged: (text) {
                     setState(() {
@@ -248,10 +254,11 @@ class _CreateAccount extends State<CreateAccount> {
                 padding: const EdgeInsets.all(20),
                 child: TextFormField(
                   initialValue: "",
-                  keyboardType: TextInputType.multiline,
+                  keyboardType: TextInputType.emailAddress,
                   decoration: const InputDecoration(
                     labelText: "信箱",
                     border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.email),
                   ),
                   onChanged: (text) {
                     setState(() {
@@ -267,10 +274,22 @@ class _CreateAccount extends State<CreateAccount> {
                 padding: const EdgeInsets.all(20),
                 child: TextFormField(
                   initialValue: "",
-                  keyboardType: TextInputType.multiline,
-                  decoration: const InputDecoration(
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: !_passwordVisible,
+                  decoration: InputDecoration(
                     labelText: "密碼",
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.password),
+                    suffixIcon: IconButton(
+                      icon: _passwordVisible
+                          ? const Icon(Icons.visibility)
+                          : const Icon(Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ),
                   ),
                   onChanged: (text) {
                     setState(() {
@@ -279,6 +298,43 @@ class _CreateAccount extends State<CreateAccount> {
                   },
                   validator: (text) {
                     return (text == null || text.isEmpty) ? "請輸入密碼" : null;
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: TextFormField(
+                  initialValue: "",
+                  keyboardType: TextInputType.visiblePassword,
+                  obscureText: !_passwordVisible,
+                  decoration: InputDecoration(
+                    labelText: "確認密碼",
+                    border: const OutlineInputBorder(),
+                    prefixIcon: const Icon(Icons.password),
+                    suffixIcon: IconButton(
+                      icon: _passwordVisible
+                          ? const Icon(Icons.visibility)
+                          : const Icon(Icons.visibility_off),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  onChanged: (text) {
+                    setState(() {
+                      _passwordAgain = text;
+                    });
+                  },
+                  validator: (text) {
+                    if(text == null || text.isEmpty) {
+                      return "請再次輸入密碼";
+                    }
+                    if(text != _password){
+                      return "密碼不一致";
+                    }
+                    return null;
                   },
                 ),
               ),
@@ -300,4 +356,4 @@ class _CreateAccount extends State<CreateAccount> {
 
 }
 
-// ==========CreateAccount==========
+// ==========CreateAccountPage==========

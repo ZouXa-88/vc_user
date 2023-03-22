@@ -23,7 +23,7 @@ class Connector {
     return _serverAddress;
   }
 
-  Future<ConnectorResponse> sendLogin({required final String email, required final String password}) async {
+  Future<ConnectorResponse> login({required final String email, required final String password}) async {
     /*
     Uri url = Uri.https(_serverAddress, "/login");
     Response response = await http.post(url, body: {
@@ -41,7 +41,11 @@ class Connector {
     return ConnectorResponse(ok: true);
   }
 
-  Future<void> sendDoorRegistration({required final String doorId}) async {
+  Future<ConnectorResponse> createUser({required final String userName, required final String email, required final String password}) async {
+    return ConnectorResponse(ok: true);
+  }
+
+  Future<void> sendDoorRegistration({required final String doorName}) async {
 
   }
 
