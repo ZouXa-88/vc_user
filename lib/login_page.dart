@@ -176,10 +176,9 @@ class _LoginPage extends State<LoginPage> {
                 ),
               ),
               onPressed: () {
-                // TODO: Register a new account.
                 Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const CreateAccountPage())
+                  context,
+                  MaterialPageRoute(builder: (context) => const CreateAccountPage())
                 );
               },
               child: const Text("註冊帳號"),
@@ -212,6 +211,37 @@ class _CreateAccountPage extends State<CreateAccountPage> {
   String _password = "";
   String _passwordAgain = "";
 
+
+  void _create(BuildContext context, {required String userName, required String email, required String password}) async {
+    // Show processing dialog.
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(),
+                Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text("註冊中..."),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    ConnectorResponse response = await connector.createUser(userName: userName, email: email, password: password);
+  }
 
   @override
   Widget build(BuildContext context) {
