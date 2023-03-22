@@ -1,26 +1,19 @@
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:message/message.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+
 import 'package:user/accounts.dart';
+
+// ==========Connector==========
 
 Connector connector = Connector();
 
 class Connector {
 
-  Socket? _socket;
-  String _serverAddress = "172.16.1.245";
-  static const int _port = 7777;
+  String _serverAddress = "0.0.0.0";
 
-
-  void initialize() {
-    _sendMessage(
-      Message(
-        senderId: currentAccount.getId(),
-        messageTitle: MessageTitle.userCheckUpdate,
-        data: "",
-      )
-    );
-  }
 
   void setServerAddress(final String serverAddress) {
     _serverAddress = serverAddress;
@@ -30,28 +23,43 @@ class Connector {
     return _serverAddress;
   }
 
-  void close() {
-    _socket?.close();
+  Future<ConnectorResponse> sendLogin({required final String email, required final String password}) async {
+    /*
+    Uri url = Uri.https(_serverAddress, "/login");
+    Response response = await http.post(url, body: {
+      "email": email,
+      "password": password,
+    });
+
+    final responseBody = _getResponseBody(response);
+    if(response.statusCode == 200){
+      return ConnectorResponse(ok: true);
+    }
+    return ConnectorResponse(ok: false, errorMessage: responseBody["reason"]);
+    */
+    await Future.delayed(const Duration(seconds: 1));
+    return ConnectorResponse(ok: true);
   }
 
-  void sendDoorRegistration({required final String senderId,
-                             required final String doorId,
-                             required final String registrationReason})
-  {
-    _sendMessage(
-      Message(
-        senderId: senderId,
-        messageTitle: MessageTitle.userRegisterDoor,
-        data: "$doorId $registrationReason",
-      )
-    );
+  Future<void> sendDoorRegistration({required final String doorId}) async {
+
   }
 
-  void _sendMessage(Message message) {
-    Socket.connect(_serverAddress, _port).then(
-      (Socket socket) {
-        socket.write(message);
-      }
-    );
+  Map<String, dynamic> _getResponseBody(final Response response) {
+    return jsonDecode(utf8.decode(response.bodyBytes));
   }
 }
+
+// ==========Connector==========
+
+// ==========ConnectorResponse==========
+
+class ConnectorResponse {
+
+  bool ok;
+  String errorMessage;
+
+  ConnectorResponse({required this.ok, this.errorMessage = ""});
+}
+
+// ==========ConnectorResponse==========

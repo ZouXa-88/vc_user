@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const Login(),
+      home: const LoginPage(),
       debugShowCheckedModeBanner: false,
     );
   }
@@ -103,12 +103,6 @@ class _MainPage extends State<MainPage> {
     _account = widget.account;
     currentAccount = _account; // TODO: Remove it.
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    connector.close();
-    super.dispose();
   }
 
   @override

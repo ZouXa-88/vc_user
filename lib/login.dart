@@ -2,23 +2,86 @@ import 'package:flutter/material.dart';
 
 import 'package:user/main.dart';
 import 'package:user/accounts.dart';
+import 'package:user/connector.dart';
 
-// ==========Login==========
+// ==========LoginPage==========
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<Login> createState() => _Login();
+  State<LoginPage> createState() => _LoginPage();
 }
 
-class _Login extends State<Login> {
+class _LoginPage extends State<LoginPage> {
 
   final _formKey = GlobalKey<FormState>();
   String _email = "";
   String _password = "";
   bool _passwordVisible = false;
 
+
+  void _login(BuildContext context, {required String email, required String password}) async {
+    // Show processing dialog.
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(),
+                Padding(
+                  padding: EdgeInsets.only(top: 20),
+                  child: Text("登入中..."),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    ConnectorResponse response = await connector.sendLogin(email: email, password: password);
+
+    if(context.mounted) {
+      Navigator.of(context).pop();
+      if(response.ok){
+        // Login successful.
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MainPage(account: accounts.getAccount("001")!,),
+          ),
+              (route) => false,
+        );
+      }
+      else{
+        // Login failed.
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20)),
+              ),
+              title: const Text("登入失敗"),
+              content: Text(response.errorMessage),
+            );
+          },
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,14 +157,7 @@ class _Login extends State<Login> {
                       label: const Text("登入"),
                       onPressed: () {
                         if(_formKey.currentState!.validate()){
-                          // TODO: Login.
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => MainPage(account: accounts.getAccount("001")!,),
-                            ),
-                            (route) => false,
-                          );
+                          _login(context, email: _email, password: _password);
                         }
                       },
                     ),
@@ -120,8 +176,8 @@ class _Login extends State<Login> {
               onPressed: () {
                 // TODO: Register a new account.
                 Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreateAccount())
+                    context,
+                    MaterialPageRoute(builder: (context) => const CreateAccount())
                 );
               },
               child: const Text("註冊帳號"),
@@ -133,7 +189,7 @@ class _Login extends State<Login> {
   }
 }
 
-// ==========Login==========
+// ==========LoginPage==========
 
 // ==========CreateAccount==========
 
