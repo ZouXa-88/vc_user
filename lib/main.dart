@@ -77,19 +77,19 @@ class MyApp extends StatelessWidget {
 
 // ==========main==========
 
-// ==========MainPage==========
+// ==========MainScreen==========
 
-class MainPage extends StatefulWidget {
+class MainScreen extends StatefulWidget {
 
-  late Account account;
+  final Account account;
 
-  MainPage({Key? key, required this.account}) : super(key: key);
+  const MainScreen({Key? key, required this.account}) : super(key: key);
 
   @override
-  State<MainPage> createState() => _MainPage();
+  State<MainScreen> createState() => _MainScreen();
 }
 
-class _MainPage extends State<MainPage> {
+class _MainScreen extends State<MainScreen> {
 
   int _selectedIndex = 0;
   final _pages = <Widget>[const FunctionPage(), const ScannerPage(), const PersonalityPage()];
@@ -146,4 +146,4 @@ class _MainPage extends State<MainPage> {
   }
 }
 
-// ==========UserApp==========
+// ==========MainScreen==========
