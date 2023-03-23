@@ -93,7 +93,12 @@ class _LoginPage extends State<LoginPage> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text("登入帳號"),
-          automaticallyImplyLeading: false,
+          centerTitle: true,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(10),
+            ),
+          ),
         ),
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -168,9 +173,9 @@ class _LoginPage extends State<LoginPage> {
                       },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                        fixedSize: const Size(100, 50),
+                        fixedSize: const Size(200, 50),
                       ),
                     ),
                   ),
@@ -178,12 +183,11 @@ class _LoginPage extends State<LoginPage> {
               ),
             ),
             OutlinedButton(
-              style: ButtonStyle(
-                shape: MaterialStatePropertyAll<RoundedRectangleBorder>(
-                  RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  )
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
                 ),
+                fixedSize: const Size(200, 50),
               ),
               onPressed: () {
                 Navigator.push(
@@ -249,7 +253,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
       },
     );
 
-    ConnectorResponse response = await connector.createUser(userName: userName, email: email, password: password);
+    ConnectorResponse response = await connector.createAccount(userName: userName, email: email, password: password);
   }
 
   @override

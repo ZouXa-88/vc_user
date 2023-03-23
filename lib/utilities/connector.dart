@@ -21,7 +21,7 @@ class Connector {
   }
 
   Future<ConnectorResponse> login({required final String email, required final String password}) async {
-
+    /*
     Uri url = Uri.http(_serverAddress, "/login");
     final response = await http.post(url, body: {
       "email": email,
@@ -34,20 +34,43 @@ class Connector {
       return ConnectorResponse(ok: true);
     }
     return ConnectorResponse(ok: false, errorMessage: responseBody["reason"]);
-
+    */
     await Future.delayed(const Duration(seconds: 1));
     return ConnectorResponse(ok: true);
   }
 
-  Future<ConnectorResponse> createUser({required String userName, required String email, required String password}) async {
+  Future<ConnectorResponse> createAccount({required String userName, required String email, required String password}) async {
+    Uri url = Uri.http(_serverAddress, "/createUser");
+    final response = await http.post(url, body: {
+      "userName": userName,
+      "email": email,
+      "password": password,
+    });
+
+    final responseBody = _getResponseBody(response);
+    if(response.statusCode == 200){
+      return ConnectorResponse(ok: true);
+    }
+    return ConnectorResponse(ok: false, errorMessage: responseBody["reason"]);
+  }
+
+  Future<ConnectorResponse> registerDoor({required String doorName}) async {
+    // TODO.
     return ConnectorResponse(ok: true);
   }
 
-  Future<ConnectorResponse> sendDoorRegistration({required String doorName}) async {
+  Future<ConnectorResponse> deleteDoor({required String doorName}) async {
+    // TODO.
     return ConnectorResponse(ok: true);
   }
 
-  Future<ConnectorResponse> sendDoorDeletion({required String doorName}) async {
+  Future<ConnectorResponse> update() async {
+    // TODO.
+    return ConnectorResponse(ok: true);
+  }
+
+  Future<ConnectorResponse> deleteAccount() async {
+    // TODO.
     return ConnectorResponse(ok: true);
   }
 
