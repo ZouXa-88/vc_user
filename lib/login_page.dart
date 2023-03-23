@@ -166,6 +166,12 @@ class _LoginPage extends State<LoginPage> {
                           _login(context, email: _email, password: _password);
                         }
                       },
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        fixedSize: const Size(100, 50),
+                      ),
                     ),
                   ),
                 ],
