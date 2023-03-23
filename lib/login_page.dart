@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:user/main.dart';
-import 'package:user/accounts.dart';
-import 'package:user/connector.dart';
+import 'package:user/utilities/accounts.dart';
+import 'package:user/utilities/connector.dart';
 
 // ==========LoginPage==========
 
@@ -21,7 +21,7 @@ class _LoginPage extends State<LoginPage> {
   bool _passwordVisible = false;
 
 
-  void _login(BuildContext context, {required String email, required String password}) async {
+  Future<void> _login(BuildContext context, {required String email, required String password}) async {
     // Show processing dialog.
     showDialog(
       context: context,
@@ -58,7 +58,7 @@ class _LoginPage extends State<LoginPage> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => MainScreen(account: accounts.getAccount("001")!,),
+            builder: (context) => MainPage(account: accounts.getAccount("001")!,),
           ),
           (route) => false,
         );
@@ -215,7 +215,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
   String _password = "";
 
 
-  void _create(BuildContext context, {required String userName, required String email, required String password}) async {
+  Future<void> _create(BuildContext context, {required String userName, required String email, required String password}) async {
     // Show processing dialog.
     showDialog(
       context: context,

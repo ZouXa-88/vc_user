@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:user/pages/home/route/delete_door.dart';
 
+import 'route/delete_door.dart';
 import 'route/register_door.dart';
 
-class FunctionPage extends StatelessWidget {
-  const FunctionPage({super.key});
+
+class FunctionScreen extends StatelessWidget {
+  const FunctionScreen({super.key});
 
   Widget _functionButton({required String label, required void Function() onPressed}) {
     return Padding(

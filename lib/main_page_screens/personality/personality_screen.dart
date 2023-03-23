@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'package:user/accounts.dart';
+import 'package:user/utilities/accounts.dart';
 import 'route/registered_door_display.dart';
-import 'package:user/dev.dart';
+import 'package:user/main_page_screens/personality/route/dev.dart';
 
-class PersonalityPage extends StatefulWidget{
-  const PersonalityPage({super.key});
+class PersonalityScreen extends StatefulWidget{
+  const PersonalityScreen({super.key});
 
   @override
-  State<PersonalityPage> createState() => _PersonalityPage();
+  State<PersonalityScreen> createState() => _PersonalityScreen();
 }
 
-class _PersonalityPage extends State<PersonalityPage> {
+class _PersonalityScreen extends State<PersonalityScreen> {
 
   @override
   Widget build(BuildContext context) {

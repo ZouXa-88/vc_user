@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:user/accounts.dart';
-import 'package:user/connector.dart';
+import 'package:user/utilities/accounts.dart';
+import 'package:user/utilities/connector.dart';
 
 class RegisterDoor extends StatefulWidget {
   const RegisterDoor({super.key});

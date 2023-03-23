@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -7,12 +5,13 @@ import 'package:image/image.dart' as image;
 import 'package:basic_utils/basic_utils.dart';
 
 import 'package:user/login_page.dart';
-import 'package:user/connector.dart';
-import 'package:user/pages/home/function_page.dart';
-import 'package:user/pages/personality/personality_page.dart';
-import 'package:user/pages/scanner/scanner_page.dart';
-import 'package:user/accounts.dart';
-import 'package:user/storage.dart';
+import 'package:user/utilities/connector.dart';
+import 'package:user/main_page_screens/function/function_screen.dart';
+import 'package:user/main_page_screens/personality/personality_screen.dart';
+import 'package:user/main_page_screens/scanner/scanner_screen.dart';
+import 'package:user/utilities/accounts.dart';
+import 'package:user/utilities/storage.dart';
+
 
 // ==========main==========
 
@@ -77,22 +76,22 @@ class MyApp extends StatelessWidget {
 
 // ==========main==========
 
-// ==========MainScreen==========
+// ==========MainPage==========
 
-class MainScreen extends StatefulWidget {
+class MainPage extends StatefulWidget {
 
   final Account account;
 
-  const MainScreen({Key? key, required this.account}) : super(key: key);
+  const MainPage({Key? key, required this.account}) : super(key: key);
 
   @override
-  State<MainScreen> createState() => _MainScreen();
+  State<MainPage> createState() => _MainPage();
 }
 
-class _MainScreen extends State<MainScreen> {
+class _MainPage extends State<MainPage> {
 
   int _selectedIndex = 0;
-  final _pages = <Widget>[const FunctionPage(), const ScannerPage(), const PersonalityPage()];
+  final _pages = <Widget>[const FunctionScreen(), const ScannerScreen(), const PersonalityScreen()];
   final _titles = <Text>[const Text("首頁"), const Text("掃描"), const Text("個人資訊")];
 
   late Account _account;
@@ -146,4 +145,4 @@ class _MainScreen extends State<MainScreen> {
   }
 }
 
-// ==========MainScreen==========
+// ==========MainPage==========
