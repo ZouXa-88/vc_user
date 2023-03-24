@@ -71,7 +71,6 @@ class _LoginPage extends State<LoginPage> {
         // Login failed.
         showDialog(
           context: context,
-          barrierDismissible: false,
           builder: (context) {
             return AlertDialog(
               backgroundColor: Colors.white,
@@ -82,6 +81,12 @@ class _LoginPage extends State<LoginPage> {
               content: response.type == StatusType.emailPasswordIncorrectError
                   ? const Text("信箱或密碼不正確")
                   : const Text(""),
+              actions: [
+                TextButton(
+                  child: const Text("OK"),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
             );
           },
         );

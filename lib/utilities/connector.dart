@@ -20,7 +20,7 @@ class Connector {
     return _serverAddress;
   }
 
-  Future<ConnectResponse> login({required final String email, required final String password}) async {
+  Future<ConnectResponse> login({required String email, required String password}) async {
     Uri url = Uri.http(_serverAddress, "/login");
     final response = await http.post(url, body: {
       "email": email,
@@ -32,9 +32,6 @@ class Connector {
       _updateCookie(response);
     }
     return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
-
-    await Future.delayed(const Duration(seconds: 1));
-    return ConnectResponse(type: StatusType.ok);
   }
 
   Future<ConnectResponse> createAccount({required String userName, required String email, required String password}) async {
@@ -51,21 +48,25 @@ class Connector {
 
   Future<ConnectResponse> registerDoor({required String doorName}) async {
     // TODO.
+    Uri url = Uri.http(_serverAddress, "/requestKey");
     return ConnectResponse(type: StatusType.ok);
   }
 
   Future<ConnectResponse> deleteDoor({required String doorName}) async {
     // TODO.
+    Uri url = Uri.http(_serverAddress, "/deleteKey");
     return ConnectResponse(type: StatusType.ok);
   }
 
   Future<ConnectResponse> update() async {
     // TODO.
+    Uri url = Uri.http(_serverAddress, "/userUpdate");
     return ConnectResponse(type: StatusType.ok);
   }
 
   Future<ConnectResponse> deleteAccount() async {
     // TODO.
+    Uri url = Uri.http(_serverAddress, "/deleteUser");
     return ConnectResponse(type: StatusType.ok);
   }
 
@@ -111,6 +112,12 @@ class Connector {
       default:
         return StatusType.unknownError;
     }
+  }
+
+  // TODO: Remove this test.
+  Future<ConnectResponse> _fakeProcessing(StatusType statusType) async {
+    await Future.delayed(const Duration(seconds: 1));
+    return ConnectResponse(type: statusType);
   }
 }
 
