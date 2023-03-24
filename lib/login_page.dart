@@ -79,7 +79,7 @@ class _LoginPage extends State<LoginPage> {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               title: const Text("登入失敗"),
-              content: response.errorType == ConnectErrorType.emailPasswordIncorrect
+              content: response.errorType == RequestErrorType.emailPasswordIncorrect
                   ? const Text("信箱或密碼不正確")
                   : const Text(""),
             );

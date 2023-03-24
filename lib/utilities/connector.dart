@@ -86,33 +86,33 @@ class Connector {
     }
   }
 
-  ConnectErrorType _toErrorType(int statusCode, int code) {
+  RequestErrorType _toErrorType(int statusCode, int code) {
     if(statusCode == 401){
-      return ConnectErrorType.notAuthenticated;
+      return RequestErrorType.notAuthenticated;
     }
     if(statusCode == 400){
       switch(code){
         case 0:
-          return ConnectErrorType.syntaxError;
+          return RequestErrorType.syntaxError;
         case 1:
-          return ConnectErrorType.parameterInUsed;
+          return RequestErrorType.parameterInUsed;
         case 3:
-          return ConnectErrorType.invalidCredentialCode;
+          return RequestErrorType.invalidCredentialCode;
         case 4:
-          return ConnectErrorType.emailPasswordIncorrect;
+          return RequestErrorType.emailPasswordIncorrect;
         case 5:
-          return ConnectErrorType.objectNotExist;
+          return RequestErrorType.objectNotExist;
         case 6:
-          return ConnectErrorType.alreadyApplied;
+          return RequestErrorType.alreadyApplied;
         case 7:
-          return ConnectErrorType.youNotHaveThisKey;
+          return RequestErrorType.youNotHaveThisKey;
         case 8:
-          return ConnectErrorType.namePasswordInvalid;
+          return RequestErrorType.namePasswordInvalid;
         default:
-          return ConnectErrorType.unknown;
+          return RequestErrorType.unknown;
       }
     }
-    return ConnectErrorType.unknown;
+    return RequestErrorType.unknown;
   }
 }
 
@@ -123,7 +123,7 @@ class Connector {
 class ConnectResponse {
 
   bool ok;
-  ConnectErrorType? errorType;
+  RequestErrorType? errorType;
   Map<String, dynamic> body;
 
   ConnectResponse({required this.ok, this.body = const {}});
@@ -132,9 +132,9 @@ class ConnectResponse {
 
 // ==========ConnectResponse==========
 
-// ==========ConnectErrorType==========
+// ==========RequestErrorType==========
 
-enum ConnectErrorType {
+enum RequestErrorType {
   syntaxError,
   parameterInUsed,
   invalidCredentialCode,
@@ -147,4 +147,4 @@ enum ConnectErrorType {
   unknown,
 }
 
-// ==========ConnectErrorType==========
+// ==========RequestErrorType==========
