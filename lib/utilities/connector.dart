@@ -21,7 +21,6 @@ class Connector {
   }
 
   Future<ConnectResponse> login({required final String email, required final String password}) async {
-    /*
     Uri url = Uri.http(_serverAddress, "/login");
     final response = await http.post(url, body: {
       "email": email,
@@ -31,12 +30,11 @@ class Connector {
     final responseBody = _getResponseBody(response);
     if(response.statusCode == 200){
       _updateCookie(response);
-      return ConnectorResponse(ok: true);
     }
-    return ConnectorResponse(ok: false, errorMessage: responseBody["reason"]);
-    */
+    return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
+
     await Future.delayed(const Duration(seconds: 1));
-    return ConnectResponse(ok: true);
+    return ConnectResponse(type: StatusType.ok);
   }
 
   Future<ConnectResponse> createAccount({required String userName, required String email, required String password}) async {
@@ -48,30 +46,27 @@ class Connector {
     });
 
     final responseBody = _getResponseBody(response);
-    if(response.statusCode == 200){
-      return ConnectResponse(ok: true);
-    }
-    return ConnectResponse(ok: false, body: responseBody);
+    return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
   }
 
   Future<ConnectResponse> registerDoor({required String doorName}) async {
     // TODO.
-    return ConnectResponse(ok: true);
+    return ConnectResponse(type: StatusType.ok);
   }
 
   Future<ConnectResponse> deleteDoor({required String doorName}) async {
     // TODO.
-    return ConnectResponse(ok: true);
+    return ConnectResponse(type: StatusType.ok);
   }
 
   Future<ConnectResponse> update() async {
     // TODO.
-    return ConnectResponse(ok: true);
+    return ConnectResponse(type: StatusType.ok);
   }
 
   Future<ConnectResponse> deleteAccount() async {
     // TODO.
-    return ConnectResponse(ok: true);
+    return ConnectResponse(type: StatusType.ok);
   }
 
   Map<String, dynamic> _getResponseBody(http.Response response) {
@@ -86,33 +81,36 @@ class Connector {
     }
   }
 
-  RequestErrorType _toErrorType(int statusCode, int code) {
-    if(statusCode == 401){
-      return RequestErrorType.notAuthenticated;
+  StatusType _toStatusType(int statusCode, int? code) {
+    switch(statusCode){
+      case 200:
+        return StatusType.ok;
+      case 401:
+        return StatusType.notAuthenticatedError;
+      case 400:
+        switch(code){
+          case 0:
+            return StatusType.syntaxError;
+          case 1:
+            return StatusType.parameterInUsedError;
+          case 3:
+            return StatusType.invalidCredentialCodeError;
+          case 4:
+            return StatusType.emailPasswordIncorrectError;
+          case 5:
+            return StatusType.objectNotExistError;
+          case 6:
+            return StatusType.alreadyAppliedError;
+          case 7:
+            return StatusType.youNotHaveThisKeyError;
+          case 8:
+            return StatusType.namePasswordInvalidError;
+          default:
+            return StatusType.unknownError;
+        }
+      default:
+        return StatusType.unknownError;
     }
-    if(statusCode == 400){
-      switch(code){
-        case 0:
-          return RequestErrorType.syntaxError;
-        case 1:
-          return RequestErrorType.parameterInUsed;
-        case 3:
-          return RequestErrorType.invalidCredentialCode;
-        case 4:
-          return RequestErrorType.emailPasswordIncorrect;
-        case 5:
-          return RequestErrorType.objectNotExist;
-        case 6:
-          return RequestErrorType.alreadyApplied;
-        case 7:
-          return RequestErrorType.youNotHaveThisKey;
-        case 8:
-          return RequestErrorType.namePasswordInvalid;
-        default:
-          return RequestErrorType.unknown;
-      }
-    }
-    return RequestErrorType.unknown;
   }
 }
 
@@ -122,29 +120,33 @@ class Connector {
 
 class ConnectResponse {
 
-  bool ok;
-  RequestErrorType? errorType;
-  Map<String, dynamic> body;
+  StatusType type;
+  Map<String, dynamic> data;
 
-  ConnectResponse({required this.ok, this.body = const {}});
+  ConnectResponse({required this.type, this.data = const {}});
+
+  bool isOk() {
+    return type == StatusType.ok;
+  }
 
 }
 
 // ==========ConnectResponse==========
 
-// ==========RequestErrorType==========
+// ==========StatusType==========
 
-enum RequestErrorType {
+enum StatusType {
+  ok,
   syntaxError,
-  parameterInUsed,
-  invalidCredentialCode,
-  emailPasswordIncorrect,
-  objectNotExist,
-  alreadyApplied,
-  youNotHaveThisKey,
-  namePasswordInvalid,
-  notAuthenticated,
-  unknown,
+  parameterInUsedError,
+  invalidCredentialCodeError,
+  emailPasswordIncorrectError,
+  objectNotExistError,
+  alreadyAppliedError,
+  youNotHaveThisKeyError,
+  namePasswordInvalidError,
+  notAuthenticatedError,
+  unknownError,
 }
 
-// ==========RequestErrorType==========
+// ==========StatusType==========

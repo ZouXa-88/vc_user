@@ -57,7 +57,7 @@ class _LoginPage extends State<LoginPage> {
 
     if(context.mounted) {
       Navigator.of(context).pop();
-      if(response.ok){
+      if(response.isOk()){
         // Login successful.
         Navigator.pushAndRemoveUntil(
           context,
@@ -79,7 +79,7 @@ class _LoginPage extends State<LoginPage> {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               title: const Text("登入失敗"),
-              content: response.errorType == RequestErrorType.emailPasswordIncorrect
+              content: response.type == StatusType.emailPasswordIncorrectError
                   ? const Text("信箱或密碼不正確")
                   : const Text(""),
             );
