@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:user/main.dart';
+import 'package:user/main_page.dart';
 import 'package:user/utilities/accounts.dart';
 import 'package:user/utilities/connector.dart';
 
@@ -16,9 +16,10 @@ class LoginPage extends StatefulWidget {
 class _LoginPage extends State<LoginPage> {
 
   final _formKey = GlobalKey<FormState>();
+  bool _passwordVisible = false;
+
   String _email = "";
   String _password = "";
-  bool _passwordVisible = false;
 
 
   Future<void> _login(BuildContext context, {required String email, required String password}) async {
@@ -27,29 +28,32 @@ class _LoginPage extends State<LoginPage> {
       context: context,
       barrierDismissible: false,
       builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.white,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                CircularProgressIndicator(),
-                Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Text("登入中..."),
-                ),
-              ],
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Dialog(
+            backgroundColor: Colors.white,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(20)),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  CircularProgressIndicator(),
+                  Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text("登入中..."),
+                  ),
+                ],
+              ),
             ),
           ),
         );
       },
     );
 
-    ConnectorResponse response = await connector.login(email: email, password: password);
+    ConnectResponse response = await connector.login(email: email, password: password);
 
     if(context.mounted) {
       Navigator.of(context).pop();
@@ -58,7 +62,7 @@ class _LoginPage extends State<LoginPage> {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
-            builder: (context) => MainPage(account: accounts.getAccount("001")!,),
+            builder: (context) => MainPage(account: accounts.getAccount("001")!),
           ),
           (route) => false,
         );
@@ -75,7 +79,9 @@ class _LoginPage extends State<LoginPage> {
                 borderRadius: BorderRadius.all(Radius.circular(20)),
               ),
               title: const Text("登入失敗"),
-              content: Text(response.errorMessage),
+              content: response.errorType == ConnectErrorType.emailPasswordIncorrect
+                  ? const Text("信箱或密碼不正確")
+                  : const Text(""),
             );
           },
         );
@@ -253,7 +259,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
       },
     );
 
-    ConnectorResponse response = await connector.createAccount(userName: userName, email: email, password: password);
+    ConnectResponse response = await connector.createAccount(userName: userName, email: email, password: password);
   }
 
   @override

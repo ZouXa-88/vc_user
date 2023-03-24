@@ -20,7 +20,7 @@ class Connector {
     return _serverAddress;
   }
 
-  Future<ConnectorResponse> login({required final String email, required final String password}) async {
+  Future<ConnectResponse> login({required final String email, required final String password}) async {
     /*
     Uri url = Uri.http(_serverAddress, "/login");
     final response = await http.post(url, body: {
@@ -36,10 +36,10 @@ class Connector {
     return ConnectorResponse(ok: false, errorMessage: responseBody["reason"]);
     */
     await Future.delayed(const Duration(seconds: 1));
-    return ConnectorResponse(ok: true);
+    return ConnectResponse(ok: true);
   }
 
-  Future<ConnectorResponse> createAccount({required String userName, required String email, required String password}) async {
+  Future<ConnectResponse> createAccount({required String userName, required String email, required String password}) async {
     Uri url = Uri.http(_serverAddress, "/createUser");
     final response = await http.post(url, body: {
       "userName": userName,
@@ -49,29 +49,29 @@ class Connector {
 
     final responseBody = _getResponseBody(response);
     if(response.statusCode == 200){
-      return ConnectorResponse(ok: true);
+      return ConnectResponse(ok: true);
     }
-    return ConnectorResponse(ok: false, errorMessage: responseBody["reason"]);
+    return ConnectResponse(ok: false, body: responseBody);
   }
 
-  Future<ConnectorResponse> registerDoor({required String doorName}) async {
+  Future<ConnectResponse> registerDoor({required String doorName}) async {
     // TODO.
-    return ConnectorResponse(ok: true);
+    return ConnectResponse(ok: true);
   }
 
-  Future<ConnectorResponse> deleteDoor({required String doorName}) async {
+  Future<ConnectResponse> deleteDoor({required String doorName}) async {
     // TODO.
-    return ConnectorResponse(ok: true);
+    return ConnectResponse(ok: true);
   }
 
-  Future<ConnectorResponse> update() async {
+  Future<ConnectResponse> update() async {
     // TODO.
-    return ConnectorResponse(ok: true);
+    return ConnectResponse(ok: true);
   }
 
-  Future<ConnectorResponse> deleteAccount() async {
+  Future<ConnectResponse> deleteAccount() async {
     // TODO.
-    return ConnectorResponse(ok: true);
+    return ConnectResponse(ok: true);
   }
 
   Map<String, dynamic> _getResponseBody(http.Response response) {
@@ -85,18 +85,66 @@ class Connector {
       headers['cookie'] = (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
   }
+
+  ConnectErrorType _toErrorType(int statusCode, int code) {
+    if(statusCode == 401){
+      return ConnectErrorType.notAuthenticated;
+    }
+    if(statusCode == 400){
+      switch(code){
+        case 0:
+          return ConnectErrorType.syntaxError;
+        case 1:
+          return ConnectErrorType.parameterInUsed;
+        case 3:
+          return ConnectErrorType.invalidCredentialCode;
+        case 4:
+          return ConnectErrorType.emailPasswordIncorrect;
+        case 5:
+          return ConnectErrorType.objectNotExist;
+        case 6:
+          return ConnectErrorType.alreadyApplied;
+        case 7:
+          return ConnectErrorType.youNotHaveThisKey;
+        case 8:
+          return ConnectErrorType.namePasswordInvalid;
+        default:
+          return ConnectErrorType.unknown;
+      }
+    }
+    return ConnectErrorType.unknown;
+  }
 }
 
 // ==========Connector==========
 
-// ==========ConnectorResponse==========
+// ==========ConnectResponse==========
 
-class ConnectorResponse {
+class ConnectResponse {
 
   bool ok;
-  String errorMessage;
+  ConnectErrorType? errorType;
+  Map<String, dynamic> body;
 
-  ConnectorResponse({required this.ok, this.errorMessage = ""});
+  ConnectResponse({required this.ok, this.body = const {}});
+
 }
 
-// ==========ConnectorResponse==========
+// ==========ConnectResponse==========
+
+// ==========ConnectErrorType==========
+
+enum ConnectErrorType {
+  syntaxError,
+  parameterInUsed,
+  invalidCredentialCode,
+  emailPasswordIncorrect,
+  objectNotExist,
+  alreadyApplied,
+  youNotHaveThisKey,
+  namePasswordInvalid,
+  notAuthenticated,
+  unknown,
+}
+
+// ==========ConnectErrorType==========
