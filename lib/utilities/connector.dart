@@ -9,7 +9,10 @@ Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "127.0.0.1";
+  String _serverAddress = "192.168.0.130:5000"; // My real device.
+  //String _serverAddress = "10.0.0.2:5000" // For Android emulator.
+  //String _serverAddress = "127.0.0.1:5000"; // For iOS emulator.
+
   Map<String, String> headers = {};
 
 
@@ -33,7 +36,7 @@ class Connector {
       ).timeout(
           const Duration(seconds: 5),
           onTimeout: () {
-            return http.Response('Error', 408);
+            return http.Response(jsonEncode({}), 408);
           }
       );
 
