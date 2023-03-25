@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -21,26 +22,42 @@ class Connector {
   }
 
   Future<ConnectResponse> login({required String email, required String password}) async {
-    Uri url = Uri.http(_serverAddress, "/login");
-    final response = await http.post(url, body: {
-      "email": email,
-      "password": password,
-    });
+    try{
+      Uri url = Uri.http(_serverAddress, "/login");
+      final response = await http.post(
+          url,
+          body: jsonEncode({
+            "email": email,
+            "password": password,
+          })
+      ).timeout(
+          const Duration(seconds: 5),
+          onTimeout: () {
+            return http.Response('Error', 408);
+          }
+      );
 
-    final responseBody = _getResponseBody(response);
-    if(response.statusCode == 200){
-      _updateCookie(response);
+      final responseBody = _getResponseBody(response);
+      if(response.statusCode == 200){
+        _updateCookie(response);
+      }
+      return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
+    }catch(e){
+      return ConnectResponse(type: StatusType.unknownError, data: {"reason": e.toString()});
     }
-    return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
+
   }
 
   Future<ConnectResponse> createAccount({required String userName, required String email, required String password}) async {
     Uri url = Uri.http(_serverAddress, "/createUser");
-    final response = await http.post(url, body: {
-      "userName": userName,
-      "email": email,
-      "password": password,
-    });
+    final response = await http.post(
+      url,
+      body: {
+        "userName": userName,
+        "email": email,
+        "password": password,
+      }
+    );
 
     final responseBody = _getResponseBody(response);
     return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
@@ -49,7 +66,16 @@ class Connector {
   Future<ConnectResponse> registerDoor({required String doorName}) async {
     // TODO.
     Uri url = Uri.http(_serverAddress, "/requestKey");
-    return ConnectResponse(type: StatusType.ok);
+    final response = await http.post(
+      url,
+      body: {
+        "doorName": doorName,
+      },
+      headers: headers,
+    );
+
+    final responseBody = _getResponseBody(response);
+    return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
   }
 
   Future<ConnectResponse> deleteDoor({required String doorName}) async {
@@ -86,8 +112,6 @@ class Connector {
     switch(statusCode){
       case 200:
         return StatusType.ok;
-      case 401:
-        return StatusType.notAuthenticatedError;
       case 400:
         switch(code){
           case 0:
@@ -109,6 +133,10 @@ class Connector {
           default:
             return StatusType.unknownError;
         }
+      case 401:
+        return StatusType.notAuthenticatedError;
+      case 408:
+        return StatusType.connectionError;
       default:
         return StatusType.unknownError;
     }
@@ -116,7 +144,7 @@ class Connector {
 
   // TODO: Remove this test.
   Future<ConnectResponse> _fakeProcessing(StatusType statusType) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 3));
     return ConnectResponse(type: statusType);
   }
 }
@@ -153,6 +181,7 @@ enum StatusType {
   youNotHaveThisKeyError,
   namePasswordInvalidError,
   notAuthenticatedError,
+  connectionError,
   unknownError,
 }
 

@@ -17,6 +17,10 @@ class _RegisterDoor extends State<RegisterDoor> {
   String _reason = "";
 
 
+  Future<void> _register(BuildContext context, {required String doorName}) async {
+
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -79,7 +83,7 @@ class _RegisterDoor extends State<RegisterDoor> {
                 label: const Text("傳送"),
                 onPressed: () {
                   if(_formKey.currentState!.validate()){
-
+                    connector.registerDoor(doorName: _doorName);
                   }
                 },
               ),

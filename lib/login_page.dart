@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:user/main_page.dart';
 import 'package:user/utilities/accounts.dart';
 import 'package:user/utilities/connector.dart';
+import 'package:user/utilities/dialog_presenter.dart';
 
 // ==========LoginPage==========
 
@@ -13,7 +14,7 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPage();
 }
 
-class _LoginPage extends State<LoginPage> {
+class _LoginPage extends State<LoginPage> with DialogPresenter {
 
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
@@ -23,42 +24,13 @@ class _LoginPage extends State<LoginPage> {
 
 
   Future<void> _login(BuildContext context, {required String email, required String password}) async {
-    // Show processing dialog.
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: Dialog(
-            backgroundColor: Colors.white,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  CircularProgressIndicator(),
-                  Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Text("登入中..."),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+    showProcessingDialog(context, "登入中...");
 
     ConnectResponse response = await connector.login(email: email, password: password);
 
     if(context.mounted) {
-      Navigator.of(context).pop();
+      closeDialog(context);
       if(response.isOk()){
-        // Login successful.
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -68,28 +40,21 @@ class _LoginPage extends State<LoginPage> {
         );
       }
       else{
-        // Login failed.
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              backgroundColor: Colors.white,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-              title: const Text("登入失敗"),
-              content: response.type == StatusType.emailPasswordIncorrectError
-                  ? const Text("信箱或密碼不正確")
-                  : const Text(""),
-              actions: [
-                TextButton(
-                  child: const Text("OK"),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-              ],
-            );
-          },
-        );
+        String errorDescription;
+        switch(response.type){
+          case StatusType.emailPasswordIncorrectError:
+            errorDescription = "信箱或密碼不正確";
+            break;
+          case StatusType.connectionError:
+            errorDescription = "無法連線";
+            break;
+          case StatusType.unknownError:
+            errorDescription = response.data["reason"];
+            break;
+          default:
+            errorDescription = "";
+        }
+        showFailureDialog(context, "登入失敗", errorDescription);
       }
     }
   }
