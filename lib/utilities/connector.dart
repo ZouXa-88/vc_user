@@ -9,7 +9,7 @@ Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "0.0.0.0";
+  String _serverAddress = "127.0.0.1";
   Map<String, String> headers = {};
 
 
