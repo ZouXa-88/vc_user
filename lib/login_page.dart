@@ -61,120 +61,125 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("登入帳號"),
-          centerTitle: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(10),
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("登入帳號"),
+        centerTitle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(10),
           ),
         ),
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Form(
-              key: _formKey,
-              child: Column(
-                children: <Padding> [
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: TextFormField(
-                      initialValue: "",
-                      scrollPadding: const EdgeInsets.only(top: 20),
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: "信箱",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
+      ),
+      body: Stack(
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: null,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Form(
+                key: _formKey,
+                child: Column(
+                  children: <Padding> [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextFormField(
+                        initialValue: "",
+                        scrollPadding: const EdgeInsets.only(top: 20),
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                          labelText: "信箱",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(30)),
+                          ),
+                          prefixIcon: Icon(Icons.email),
                         ),
-                        prefixIcon: Icon(Icons.email),
-                      ),
-                      onChanged: (text) {
-                        _email = text;
-                      },
-                      validator: (text) {
-                        return (text == null || text.isEmpty) ? "請輸入信箱" : null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: TextFormField(
-                      initialValue: "",
-                      scrollPadding: const EdgeInsets.only(top: 20),
-                      keyboardType: TextInputType.visiblePassword,
-                      obscureText: !_passwordVisible,
-                      decoration: InputDecoration(
-                        labelText: "密碼",
-                        prefixIcon: const Icon(Icons.password),
-                        suffixIcon: IconButton(
-                          icon: _passwordVisible
-                              ? const Icon(Icons.visibility)
-                              : const Icon(Icons.visibility_off),
-                          onPressed: () {
-                            setState(() {
-                              _passwordVisible = !_passwordVisible;
-                            });
-                          },
-                        ),
-                        border: const OutlineInputBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)),
-                        ),
-                      ),
-                      onChanged: (text) {
-                        _password = text;
-                      },
-                      validator: (text) {
-                        return (text == null || text.isEmpty) ? "請輸入密碼" : null;
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
-                    child: ElevatedButton.icon(
-                      icon: const Icon(Icons.login),
-                      label: const Text("登入"),
-                      onPressed: () {
-                        if(_formKey.currentState!.validate()){
-                          _login(context, email: _email, password: _password);
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        fixedSize: const Size(200, 50),
+                        onChanged: (text) {
+                          _email = text;
+                        },
+                        validator: (text) {
+                          return (text == null || text.isEmpty) ? "請輸入信箱" : null;
+                        },
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ),
-            OutlinedButton(
-              style: OutlinedButton.styleFrom(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: TextFormField(
+                        initialValue: "",
+                        scrollPadding: const EdgeInsets.only(top: 20),
+                        keyboardType: TextInputType.visiblePassword,
+                        obscureText: !_passwordVisible,
+                        decoration: InputDecoration(
+                          labelText: "密碼",
+                          prefixIcon: const Icon(Icons.password),
+                          suffixIcon: IconButton(
+                            icon: _passwordVisible
+                                ? const Icon(Icons.visibility)
+                                : const Icon(Icons.visibility_off),
+                            onPressed: () {
+                              setState(() {
+                                _passwordVisible = !_passwordVisible;
+                              });
+                            },
+                          ),
+                          border: const OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(30)),
+                          ),
+                        ),
+                        onChanged: (text) {
+                          _password = text;
+                        },
+                        validator: (text) {
+                          return (text == null || text.isEmpty) ? "請輸入密碼" : null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10, bottom: 10),
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.login),
+                        label: const Text("登入"),
+                        onPressed: () {
+                          if(_formKey.currentState!.validate()){
+                            _login(context, email: _email, password: _password);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          fixedSize: const Size(200, 50),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                fixedSize: const Size(200, 50),
               ),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CreateAccountPage())
-                );
-              },
-              child: const Text("註冊帳號"),
-            ),
-          ],
-        ),
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  fixedSize: const Size(200, 50),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const CreateAccountPage())
+                  );
+                },
+                child: const Text("註冊帳號"),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -191,7 +196,7 @@ class CreateAccountPage extends StatefulWidget {
   State<CreateAccountPage> createState() => _CreateAccountPage();
 }
 
-class _CreateAccountPage extends State<CreateAccountPage> {
+class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
 
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
@@ -202,49 +207,56 @@ class _CreateAccountPage extends State<CreateAccountPage> {
 
 
   Future<void> _create(BuildContext context, {required String userName, required String email, required String password}) async {
-    // Show processing dialog.
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.white,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: const [
-                CircularProgressIndicator(),
-                Padding(
-                  padding: EdgeInsets.only(top: 20),
-                  child: Text("註冊中..."),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
+    showProcessingDialog(context, "註冊中...");
 
     ConnectResponse response = await connector.createAccount(userName: userName, email: email, password: password);
+
+    if(context.mounted) {
+      closeDialog(context);
+      if(response.isOk()){
+        showSuccessDialog(context, "傳送成功", "已寄驗證碼到 $_email");
+      }
+      else{
+        String errorDescription;
+        switch(response.type){
+          case StatusType.parameterInUsedError:
+            errorDescription = "使用者名稱或信箱已被使用";
+            break;
+          case StatusType.namePasswordInvalidError:
+            errorDescription = "使用者名稱或密碼不符標準";
+            break;
+          case StatusType.connectionError:
+            errorDescription = "無法連線";
+            break;
+          case StatusType.unknownError:
+            errorDescription = response.data["reason"];
+            break;
+          default:
+            errorDescription = "";
+        }
+        showFailureDialog(context, "註冊失敗", errorDescription);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      behavior: HitTestBehavior.translucent,
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("註冊帳號"),
-        ),
-        body: SingleChildScrollView(
-          child: Form(
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("註冊帳號"),
+      ),
+      resizeToAvoidBottomInset: false,
+      body: Stack(
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.translucent,
+            onTap: () {
+              FocusScope.of(context).requestFocus(FocusNode());
+            },
+            child: null,
+          ),
+          Form(
             key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -366,14 +378,14 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                   label: const Text("傳送"),
                   onPressed: () {
                     if(_formKey.currentState!.validate()){
-
+                      _create(context, userName: _userName, email: _email, password: _password);
                     }
                   },
                 ),
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }

@@ -36,18 +36,15 @@ class Connector {
   }
 
   Future<ConnectResponse> createAccount({required String userName, required String email, required String password}) async {
-    Uri url = Uri.http(_serverAddress, "/createUser");
-    final response = await http.post(
-      url,
-      body: {
+    return _sendRequest(
+      requestType: "POST",
+      url: Uri.http(_serverAddress, "/createUser"),
+      encodedBody: jsonEncode({
         "userName": userName,
         "email": email,
         "password": password,
-      }
+      }),
     );
-
-    final responseBody = _getResponseBody(response);
-    return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
   }
 
   Future<ConnectResponse> registerDoor({required String doorName}) async {
