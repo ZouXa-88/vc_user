@@ -48,18 +48,13 @@ class Connector {
   }
 
   Future<ConnectResponse> registerDoor({required String doorName}) async {
-    // TODO.
-    Uri url = Uri.http(_serverAddress, "/requestKey");
-    final response = await http.post(
-      url,
-      body: {
+    return _sendRequest(
+      requestType: "POST",
+      url: Uri.http(_serverAddress, "/requestKey"),
+      encodedBody: jsonEncode({
         "doorName": doorName,
-      },
-      headers: headers,
+      }),
     );
-
-    final responseBody = _getResponseBody(response);
-    return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
   }
 
   Future<ConnectResponse> deleteDoor({required String doorName}) async {
@@ -86,6 +81,7 @@ class Connector {
     http.Response response;
     FutureOr<http.Response> onTimeout() => http.Response(jsonEncode({}), 408);
 
+    // TODO: cookie.
     try{
       if(requestType == "GET"){
         // TODO: Change it to GET method.
