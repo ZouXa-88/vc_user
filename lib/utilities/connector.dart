@@ -9,8 +9,8 @@ Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "192.168.0.130:5000"; // My real device.
-  //String _serverAddress = "10.0.0.2:5000" // For Android emulator.
+  //String _serverAddress = "192.168.0.130:5000"; // For my real device.
+  String _serverAddress = "10.0.0.2:5000"; // For Android emulator.
   //String _serverAddress = "127.0.0.1:5000"; // For iOS emulator.
 
   Map<String, String> headers = {};
@@ -25,30 +25,14 @@ class Connector {
   }
 
   Future<ConnectResponse> login({required String email, required String password}) async {
-    try{
-      Uri url = Uri.http(_serverAddress, "/login");
-      final response = await http.post(
-          url,
-          body: jsonEncode({
-            "email": email,
-            "password": password,
-          })
-      ).timeout(
-          const Duration(seconds: 5),
-          onTimeout: () {
-            return http.Response(jsonEncode({}), 408);
-          }
-      );
-
-      final responseBody = _getResponseBody(response);
-      if(response.statusCode == 200){
-        _updateCookie(response);
-      }
-      return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
-    }catch(e){
-      return ConnectResponse(type: StatusType.unknownError, data: {"reason": e.toString()});
-    }
-
+    return _sendRequest(
+      requestType: "POST",
+      url: Uri.http(_serverAddress, "/login"),
+      encodedBody: jsonEncode({
+        "email": email,
+        "password": password,
+      }),
+    );
   }
 
   Future<ConnectResponse> createAccount({required String userName, required String email, required String password}) async {
@@ -97,6 +81,44 @@ class Connector {
     // TODO.
     Uri url = Uri.http(_serverAddress, "/deleteUser");
     return ConnectResponse(type: StatusType.ok);
+  }
+
+  Future<ConnectResponse> _sendRequest({required String requestType,
+                                        required Uri url,
+                                        required String encodedBody}) async {
+    http.Response response;
+    FutureOr<http.Response> onTimeout() => http.Response(jsonEncode({}), 408);
+
+    try{
+      if(requestType == "GET"){
+        // TODO: Change it to GET method.
+        response = await http.post(url, body: encodedBody);
+      }
+      else if(requestType == "POST"){
+        response = await http.post(url, body: encodedBody)
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: onTimeout,
+        );
+      }
+      else if(requestType == "DELETE"){
+        // TODO: Change it to DELETE method.
+        response = await http.post(url, body: encodedBody);
+      }
+      else{
+        return ConnectResponse(type: StatusType.syntaxError);
+      }
+    }catch(e){
+      return ConnectResponse(type: StatusType.unknownError, data: {"reason": e.toString()});
+    }
+
+    final responseBody = _getResponseBody(response);
+    if(response.statusCode == 200) {
+      _updateCookie(response);
+    }
+
+    // TODO: Have not retrieved data.
+    return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
   }
 
   Map<String, dynamic> _getResponseBody(http.Response response) {
