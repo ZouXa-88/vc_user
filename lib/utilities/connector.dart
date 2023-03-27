@@ -9,9 +9,7 @@ Connector connector = Connector();
 
 class Connector {
 
-  //String _serverAddress = "192.168.0.130:5000"; // For my real device.
-  String _serverAddress = "10.0.2.2:5000"; // For Android emulator.
-  //String _serverAddress = "127.0.0.1:5000"; // For iOS emulator.
+  String _serverAddress = "127.0.0.1:5000";
 
   Map<String, String> headers = {};
 
@@ -44,6 +42,14 @@ class Connector {
         "email": email,
         "password": password,
       },
+    );
+  }
+
+  Future<ConnectResponse> validate({required String code}) async {
+    return _sendRequest(
+      requestType: "GET",
+      url: Uri.http(_serverAddress, "/validateEmail?code=$code"),
+      body: {},
     );
   }
 
@@ -99,7 +105,7 @@ class Connector {
         );
       }
       else if(requestType == "POST"){
-        response = await http.post(url, body: jsonEncode(body))
+        response = await http.post(url, body: jsonEncode(body), headers: headers)
           .timeout(
             const Duration(seconds: 5),
             onTimeout: onTimeout,

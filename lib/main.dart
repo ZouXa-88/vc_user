@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:image/image.dart' as image;
 import 'package:basic_utils/basic_utils.dart';
 
-import 'package:user/login_page.dart';
+import 'package:user/pages/setup_page.dart';
 import 'package:user/utilities/accounts.dart';
 import 'package:user/utilities/storage.dart';
 
@@ -50,7 +50,7 @@ Future<Uint8List> loadShare(String path) async {
 
 Future<void> storeUserData(final Account account) async {
   await storage.initialize();
-  await storage.storeAccountData(account); // Comment it if you want to test login process.
+  await storage.storeAccountData(account);
 }
 
 class MyApp extends StatelessWidget {
@@ -61,8 +61,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.green,
+        inputDecorationTheme: const InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+          ),
+        ),
       ),
-      home: const LoginPage(),
+      home: const SetupPage(),
       debugShowCheckedModeBanner: false,
     );
   }

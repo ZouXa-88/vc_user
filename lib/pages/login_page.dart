@@ -96,9 +96,6 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                         keyboardType: TextInputType.emailAddress,
                         decoration: const InputDecoration(
                           labelText: "信箱",
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(30)),
-                          ),
                           prefixIcon: Icon(Icons.email),
                         ),
                         onChanged: (text) {
@@ -128,9 +125,6 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                                 _passwordVisible = !_passwordVisible;
                               });
                             },
-                          ),
-                          border: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(30)),
                           ),
                         ),
                         onChanged: (text) {
@@ -269,9 +263,6 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                     keyboardType: TextInputType.text,
                     decoration: const InputDecoration(
                       labelText: "使用者名稱",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                      ),
                       prefixIcon: Icon(Icons.person),
                     ),
                     onChanged: (text) {
@@ -291,9 +282,6 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: "信箱",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                      ),
                       prefixIcon: Icon(Icons.email),
                     ),
                     onChanged: (text) {
@@ -314,9 +302,6 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                     obscureText: !_passwordVisible,
                     decoration: InputDecoration(
                       labelText: "密碼",
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                      ),
                       prefixIcon: const Icon(Icons.password),
                       suffixIcon: IconButton(
                         icon: _passwordVisible
@@ -347,9 +332,6 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                     obscureText: !_passwordVisible,
                     decoration: InputDecoration(
                       labelText: "確認密碼",
-                      border: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(30)),
-                      ),
                       prefixIcon: const Icon(Icons.password),
                       suffixIcon: IconButton(
                         icon: _passwordVisible
