@@ -54,7 +54,7 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showFailureDialog(context, "登入失敗", errorDescription);
+        showProcessResultDialog(context, "登入失敗", errorDescription);
       }
     }
   }
@@ -214,7 +214,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
     if(context.mounted) {
       closeDialog(context);
       if(response.isOk()){
-        showSuccessDialog(context, "傳送成功", "已寄驗證碼到 $_email");
+        showProcessResultDialog(context, "傳送成功", "已寄驗證碼到 $_email");
       }
       else{
         String errorDescription;
@@ -234,7 +234,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showFailureDialog(context, "註冊失敗", errorDescription);
+        showProcessResultDialog(context, "註冊失敗", errorDescription);
       }
     }
   }

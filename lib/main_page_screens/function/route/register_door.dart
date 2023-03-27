@@ -25,7 +25,7 @@ class _RegisterDoor extends State<RegisterDoor> with DialogPresenter {
     if(context.mounted){
       closeDialog(context);
       if(response.isOk()){
-        showSuccessDialog(context, "傳送成功", "");
+        showProcessResultDialog(context, "傳送成功", "");
       }
       else{
         String errorDescription;
@@ -39,13 +39,16 @@ class _RegisterDoor extends State<RegisterDoor> with DialogPresenter {
           case StatusType.connectionError:
             errorDescription = "無法連線";
             break;
+          case StatusType.notAuthenticatedError:
+            errorDescription = "請登入";
+            break;
           case StatusType.unknownError:
             errorDescription = response.data["reason"];
             break;
           default:
             errorDescription = "";
         }
-        showFailureDialog(context, "申請失敗", errorDescription);
+        showProcessResultDialog(context, "申請失敗", errorDescription);
       }
     }
   }

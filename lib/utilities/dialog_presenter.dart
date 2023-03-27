@@ -39,7 +39,7 @@ class DialogPresenter {
     }
   }
 
-  void showFailureDialog(BuildContext context, String failureTitle, String? failureDescription) {
+  void showProcessResultDialog(BuildContext context, String title, String? description) {
     showDialog(
       context: context,
       builder: (context) {
@@ -48,30 +48,8 @@ class DialogPresenter {
           shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
-          title: Text(failureTitle),
-          content: (failureDescription == null) ? null : Text(failureDescription),
-          actions: [
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void showSuccessDialog(BuildContext context, String successTitle, String? successDescription) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          title: Text(successTitle),
-          content: (successDescription == null) ? null : Text(successDescription),
+          title: Text(title),
+          content: (description == null) ? null : Text(description),
           actions: [
             TextButton(
               child: const Text("OK"),
