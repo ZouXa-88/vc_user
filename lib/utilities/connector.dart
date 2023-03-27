@@ -10,7 +10,7 @@ Connector connector = Connector();
 class Connector {
 
   //String _serverAddress = "192.168.0.130:5000"; // For my real device.
-  String _serverAddress = "10.0.0.2:5000"; // For Android emulator.
+  String _serverAddress = "10.0.2.2:5000"; // For Android emulator.
   //String _serverAddress = "127.0.0.1:5000"; // For iOS emulator.
 
   Map<String, String> headers = {};
@@ -28,10 +28,10 @@ class Connector {
     return _sendRequest(
       requestType: "POST",
       url: Uri.http(_serverAddress, "/login"),
-      encodedBody: jsonEncode({
+      body: {
         "email": email,
         "password": password,
-      }),
+      },
     );
   }
 
@@ -39,11 +39,11 @@ class Connector {
     return _sendRequest(
       requestType: "POST",
       url: Uri.http(_serverAddress, "/createUser"),
-      encodedBody: jsonEncode({
+      body: {
         "userName": userName,
         "email": email,
         "password": password,
-      }),
+      },
     );
   }
 
@@ -51,52 +51,66 @@ class Connector {
     return _sendRequest(
       requestType: "POST",
       url: Uri.http(_serverAddress, "/requestKey"),
-      encodedBody: jsonEncode({
+      body: {
         "doorName": doorName,
-      }),
+      },
     );
   }
 
   Future<ConnectResponse> deleteDoor({required String doorName}) async {
-    // TODO.
-    Uri url = Uri.http(_serverAddress, "/deleteKey");
-    return ConnectResponse(type: StatusType.ok);
+    return _sendRequest(
+      requestType: "POST",
+      url: Uri.http(_serverAddress, "/deleteKey"),
+      body: {
+        "doorName": doorName,
+      },
+    );
   }
 
   Future<ConnectResponse> update() async {
-    // TODO.
-    Uri url = Uri.http(_serverAddress, "/userUpdate");
-    return ConnectResponse(type: StatusType.ok);
+    return _sendRequest(
+      requestType: "GET",
+      url: Uri.http(_serverAddress, "/userUpdate"),
+      body: {},
+    );
   }
 
   Future<ConnectResponse> deleteAccount() async {
-    // TODO.
-    Uri url = Uri.http(_serverAddress, "/deleteUser");
-    return ConnectResponse(type: StatusType.ok);
+    return _sendRequest(
+      requestType: "DELETE",
+      url: Uri.http(_serverAddress, "/deleteUser"),
+      body: {},
+    );
   }
 
   Future<ConnectResponse> _sendRequest({required String requestType,
                                         required Uri url,
-                                        required String encodedBody}) async {
+                                        required Map<String, dynamic> body}) async {
     http.Response response;
     FutureOr<http.Response> onTimeout() => http.Response(jsonEncode({}), 408);
 
     // TODO: cookie.
     try{
       if(requestType == "GET"){
-        // TODO: Change it to GET method.
-        response = await http.post(url, body: encodedBody);
+        response = await http.get(url, headers: headers)
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: onTimeout,
+        );
       }
       else if(requestType == "POST"){
-        response = await http.post(url, body: encodedBody)
+        response = await http.post(url, body: jsonEncode(body))
           .timeout(
             const Duration(seconds: 5),
             onTimeout: onTimeout,
         );
       }
       else if(requestType == "DELETE"){
-        // TODO: Change it to DELETE method.
-        response = await http.post(url, body: encodedBody);
+        response = await http.delete(url, headers: headers)
+          .timeout(
+            const Duration(seconds: 5),
+            onTimeout: onTimeout,
+        );
       }
       else{
         return ConnectResponse(type: StatusType.syntaxError);
@@ -110,8 +124,10 @@ class Connector {
       _updateCookie(response);
     }
 
-    // TODO: Have not retrieved data.
-    return ConnectResponse(type: _toStatusType(response.statusCode, responseBody["code"]));
+    return ConnectResponse(
+      type: _toStatusType(response.statusCode, responseBody["code"]),
+      data: responseBody,
+    );
   }
 
   Map<String, dynamic> _getResponseBody(http.Response response) {
@@ -120,7 +136,7 @@ class Connector {
 
   void _updateCookie(http.Response response) {
     String? rawCookie = response.headers['set-cookie'];
-    if (rawCookie != null) {
+    if(rawCookie != null){
       int index = rawCookie.indexOf(';');
       headers['cookie'] = (index == -1) ? rawCookie : rawCookie.substring(0, index);
     }
