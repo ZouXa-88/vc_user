@@ -6,16 +6,14 @@ import 'package:user/pages/qr_code_page.dart';
 import 'package:user/pages/register_door_page.dart';
 import 'package:user/pages/delete_door_page.dart';
 import 'package:user/pages/registered_door_display_page.dart';
-import 'package:user/utilities/accounts.dart';
+import 'package:user/utilities/account.dart';
+import 'package:user/utilities/connector.dart';
 
 
 // ==========MainPage==========
 
 class MainPage extends StatefulWidget {
-
-  final Account account;
-
-  const MainPage({Key? key, required this.account}) : super(key: key);
+  const MainPage({Key? key}) : super(key: key);
 
   @override
   State<MainPage> createState() => _MainPage();
@@ -27,14 +25,12 @@ class _MainPage extends State<MainPage> {
   final _pages = <Widget>[const FunctionScreen(), const ScannerScreen(), const PersonalityScreen()];
   final _titles = <Text>[const Text("首頁"), const Text("掃描"), const Text("個人資訊")];
 
-  late Account _account;
 
+  Future<void> _update() async {
+    ConnectResponse response = await connector.update();
 
-  @override
-  void initState() {
-    _account = widget.account;
-    currentAccount = _account; // TODO: Remove it.
-    super.initState();
+    List<String>? deleteDoors = response.data["deleteDoors"];
+    Map<String, String>? newShares = response.data["newShares"];
   }
 
   @override
@@ -45,7 +41,7 @@ class _MainPage extends State<MainPage> {
         actions: [
           IconButton(
             onPressed: () {
-              //TODO: Update.
+              _update();
             },
             icon: const Icon(Icons.update),
           ),

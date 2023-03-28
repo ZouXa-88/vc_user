@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:user/utilities/accounts.dart';
+import 'package:user/utilities/account.dart';
 import 'package:user/utilities/connector.dart';
 import 'package:user/utilities/dialog_presenter.dart';
 

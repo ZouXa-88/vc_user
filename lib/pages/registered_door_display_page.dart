@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:user/utilities/accounts.dart';
+import 'package:user/utilities/account.dart';
 
 class RegisteredDoorDisplayPage extends StatelessWidget {
 

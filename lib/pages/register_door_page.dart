@@ -81,7 +81,7 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
                     keyboardType: TextInputType.text,
                     decoration: const InputDecoration(
                       labelText: "門鎖名稱",
-                      border: OutlineInputBorder(),
+                      prefixIcon: Icon(Icons.door_back_door),
                     ),
                     onChanged: (text) {
                       setState(() {

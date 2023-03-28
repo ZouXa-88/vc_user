@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:user/pages/main_page.dart';
-import 'package:user/utilities/accounts.dart';
 import 'package:user/utilities/connector.dart';
 import 'package:user/utilities/dialog_presenter.dart';
 import 'package:user/pages/create_account_page.dart';
+import 'package:user/pages/main_page.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -31,12 +30,11 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
     if(context.mounted) {
       closeDialog(context);
       if(response.isOk()){
-        Navigator.pushAndRemoveUntil(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => MainPage(account: accounts.getAccount("001")!),
+            builder: (context) => const MainPage(),
           ),
-          (route) => false,
         );
       }
       else{
@@ -220,6 +218,17 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                         ],
                       );
                     },
+                  );
+                },
+              ),
+              TextButton(
+                child: const Text("Skip"),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MainPage(),
+                    ),
                   );
                 },
               ),

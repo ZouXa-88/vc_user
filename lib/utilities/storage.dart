@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'accounts.dart';
+import 'package:user/utilities/account.dart';
 
 Storage storage = Storage();
 
@@ -53,7 +53,8 @@ class Storage {
       // TODO: Remove it latter.
       Directory("$_userDirectoryPath/doors").create(recursive: true);
       for(Door door in account.getAllRegisteredDoors()){
-        final doorFile = File("$_userDirectoryPath/doors/${door.id}.txt");
+        // TODO: Directory or file name might not be Chinese.
+        final doorFile = File("$_userDirectoryPath/doors/${door.name}.txt");
         doorFile.create(recursive: true);
         doorFile.writeAsString(door.buildDoorData());
       }
