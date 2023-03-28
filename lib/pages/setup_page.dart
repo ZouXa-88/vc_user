@@ -9,11 +9,11 @@ class SetupPage extends StatelessWidget {
     await Future.delayed(const Duration(seconds: 3));
 
     if(context.mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
+      Navigator.pushReplacement(
+        context,
         MaterialPageRoute(
           builder: (context) => const LoginPage(),
         ),
-        (route) => false,
       );
     }
   }

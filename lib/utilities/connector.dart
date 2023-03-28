@@ -9,7 +9,8 @@ Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "127.0.0.1:5000";
+  String _serverAddress = "127.0.0.1";
+  int _port = 5000;
 
   Map<String, String> headers = {};
 
@@ -22,10 +23,18 @@ class Connector {
     return _serverAddress;
   }
 
+  void setPort(final int port) {
+    _port = port;
+  }
+
+  int getPort() {
+    return _port;
+  }
+
   Future<ConnectResponse> login({required String email, required String password}) async {
     return _sendRequest(
       requestType: "POST",
-      url: Uri.http(_serverAddress, "/login"),
+      url: Uri.http(_getHost(), "/login"),
       body: {
         "email": email,
         "password": password,
@@ -36,7 +45,7 @@ class Connector {
   Future<ConnectResponse> createAccount({required String userName, required String email, required String password}) async {
     return _sendRequest(
       requestType: "POST",
-      url: Uri.http(_serverAddress, "/createUser"),
+      url: Uri.http(_getHost(), "/createUser"),
       body: {
         "userName": userName,
         "email": email,
@@ -48,7 +57,7 @@ class Connector {
   Future<ConnectResponse> validate({required String code}) async {
     return _sendRequest(
       requestType: "GET",
-      url: Uri.http(_serverAddress, "/validateEmail?code=$code"),
+      url: Uri.http(_getHost(), "/validateEmail?code=$code"),
       body: {},
     );
   }
@@ -56,7 +65,7 @@ class Connector {
   Future<ConnectResponse> registerDoor({required String doorName}) async {
     return _sendRequest(
       requestType: "POST",
-      url: Uri.http(_serverAddress, "/requestKey"),
+      url: Uri.http(_getHost(), "/requestKey"),
       body: {
         "doorName": doorName,
       },
@@ -66,7 +75,7 @@ class Connector {
   Future<ConnectResponse> deleteDoor({required String doorName}) async {
     return _sendRequest(
       requestType: "POST",
-      url: Uri.http(_serverAddress, "/deleteKey"),
+      url: Uri.http(_getHost(), "/deleteKey"),
       body: {
         "doorName": doorName,
       },
@@ -76,7 +85,7 @@ class Connector {
   Future<ConnectResponse> update() async {
     return _sendRequest(
       requestType: "GET",
-      url: Uri.http(_serverAddress, "/userUpdate"),
+      url: Uri.http(_getHost(), "/userUpdate"),
       body: {},
     );
   }
@@ -84,9 +93,15 @@ class Connector {
   Future<ConnectResponse> deleteAccount() async {
     return _sendRequest(
       requestType: "DELETE",
-      url: Uri.http(_serverAddress, "/deleteUser"),
+      url: Uri.http(_getHost(), "/deleteUser"),
       body: {},
     );
+  }
+
+  // TODO: Remove this test.
+  Future<ConnectResponse> fakeProcessing(StatusType statusType) async {
+    await Future.delayed(const Duration(seconds: 3));
+    return ConnectResponse(type: statusType);
   }
 
   Future<ConnectResponse> _sendRequest({required String requestType,
@@ -182,10 +197,8 @@ class Connector {
     }
   }
 
-  // TODO: Remove this test.
-  Future<ConnectResponse> _fakeProcessing(StatusType statusType) async {
-    await Future.delayed(const Duration(seconds: 3));
-    return ConnectResponse(type: statusType);
+  String _getHost() {
+    return "$_serverAddress:$_port";
   }
 }
 

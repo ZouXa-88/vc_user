@@ -2,18 +2,35 @@ import 'package:flutter/material.dart';
 
 import 'package:user/utilities/accounts.dart';
 import 'package:user/utilities/connector.dart';
+import 'package:user/utilities/dialog_presenter.dart';
 
-class DeleteDoor extends StatefulWidget {
-  const DeleteDoor({super.key});
+class DeleteDoorPage extends StatefulWidget {
+  const DeleteDoorPage({super.key});
 
   @override
-  State<DeleteDoor> createState() => _DeleteDoor();
+  State<DeleteDoorPage> createState() => _DeleteDoorPage();
 }
 
-class _DeleteDoor extends State<DeleteDoor> {
+class _DeleteDoorPage extends State<DeleteDoorPage> with DialogPresenter {
 
   late final List<String> _registeredDoorsName;
 
+
+  Future<void> _delete(BuildContext context, {required String doorName}) async {
+    showProcessingDialog(context, "傳送中...");
+
+    final response = await connector.deleteDoor(doorName: doorName);
+
+    if(context.mounted){
+      closeDialog(context);
+      if(response.isOk()){
+
+      }
+      else{
+
+      }
+    }
+  }
 
   @override
   initState() {
@@ -47,7 +64,7 @@ class _DeleteDoor extends State<DeleteDoor> {
                       backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
                     ),
                     onPressed: () {
-
+                      connector.deleteDoor(doorName: _registeredDoorsName[index]);
                     },
                     child: const Text("刪除", style: TextStyle(color: Colors.white)),
                   ),

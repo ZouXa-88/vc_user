@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:user/utilities/accounts.dart';
 
-class RegisteredDoorDisplay extends StatelessWidget {
+class RegisteredDoorDisplayPage extends StatelessWidget {
 
   late final List<String> _registeredDoorsName;
 
 
-  RegisteredDoorDisplay({super.key}) {
+  RegisteredDoorDisplayPage({super.key}) {
     _registeredDoorsName = currentAccount.getAllRegisteredDoorsName();
   }
 

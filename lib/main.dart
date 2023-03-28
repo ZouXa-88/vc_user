@@ -66,6 +66,12 @@ class MyApp extends StatelessWidget {
             borderRadius: BorderRadius.all(Radius.circular(30)),
           ),
         ),
+        dialogTheme: const DialogTheme(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+        ),
       ),
       home: const SetupPage(),
       debugShowCheckedModeBanner: false,

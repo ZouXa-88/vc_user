@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:user/utilities/connector.dart';
 import 'package:user/utilities/dialog_presenter.dart';
 
-class RegisterDoor extends StatefulWidget {
-  const RegisterDoor({super.key});
+class RegisterDoorPage extends StatefulWidget {
+  const RegisterDoorPage({super.key});
 
   @override
-  State<RegisterDoor> createState() => _RegisterDoor();
+  State<RegisterDoorPage> createState() => _RegisterDoorPage();
 }
 
-class _RegisterDoor extends State<RegisterDoor> with DialogPresenter {
+class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
 
   final _formKey = GlobalKey<FormState>();
   String _doorName = "";
@@ -40,8 +40,8 @@ class _RegisterDoor extends State<RegisterDoor> with DialogPresenter {
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:
-            errorDescription = "請登入";
-            break;
+            showRequireLoginDialog(context);
+            return;
           case StatusType.unknownError:
             errorDescription = response.data["reason"];
             break;

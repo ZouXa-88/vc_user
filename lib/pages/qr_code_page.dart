@@ -5,20 +5,20 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class QrCodeKey extends StatefulWidget {
+class QrCodePage extends StatefulWidget {
 
   final String doorName;
   final Uint8List share;
   final int seed;
 
 
-  const QrCodeKey({Key? key, required this.doorName, required this.share, required this.seed}) : super(key: key);
+  const QrCodePage({Key? key, required this.doorName, required this.share, required this.seed}) : super(key: key);
 
   @override
-  State<QrCodeKey> createState() => _QrCodeKeyState();
+  State<QrCodePage> createState() => _QrCodePage();
 }
 
-class _QrCodeKeyState extends State<QrCodeKey> {
+class _QrCodePage extends State<QrCodePage> {
 
   late String doorName;
   late Uint8List share;

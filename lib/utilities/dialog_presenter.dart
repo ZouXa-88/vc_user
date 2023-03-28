@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user/pages/login_page.dart';
 
 class DialogPresenter {
 
@@ -10,10 +11,6 @@ class DialogPresenter {
         return WillPopScope(
           onWillPop: () async => false,
           child: Dialog(
-            backgroundColor: Colors.white,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-            ),
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Column(
@@ -44,10 +41,6 @@ class DialogPresenter {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
           title: Text(title),
           content: (description == null) ? null : Text(description),
           actions: [
@@ -56,6 +49,40 @@ class DialogPresenter {
               onPressed: () => Navigator.of(context).pop(),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  void showRequireLoginDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: const Text("請登入"),
+            actions: [
+              TextButton(
+                child: const Text("取消"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              TextButton(
+                child: const Text("登入"),
+                onPressed: () {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      )
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );
