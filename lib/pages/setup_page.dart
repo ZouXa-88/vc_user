@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user/pages/extendable/dialog_presenter.dart';
 
 import 'package:user/utilities/account.dart';
 import 'package:user/utilities/storage.dart';
@@ -6,12 +7,29 @@ import 'package:user/pages/main_page.dart';
 import 'package:user/pages/login_page.dart';
 
 
-class SetupPage extends StatelessWidget {
+class SetupPage extends StatelessWidget with DialogPresenter {
   const SetupPage({super.key});
 
   Future<void> _setup(BuildContext context) async {
     String? encodedAccountData = await storage.loadAccountData();
-    
+
+    // TODO: Remove test version.
+    // Test version.
+    // --------------------
+    if(encodedAccountData != null){
+      currentAccount = Account.from(encodedAccountData);
+    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const LoginPage(),
+      ),
+    );
+    // --------------------
+
+    // General version.
+    // --------------------
+    /*
     if(context.mounted) {
       if(encodedAccountData != null){
         currentAccount = Account.from(encodedAccountData);
@@ -30,8 +48,9 @@ class SetupPage extends StatelessWidget {
           ),
         );
       }
-      return;
     }
+    */
+    // --------------------
   }
 
   @override

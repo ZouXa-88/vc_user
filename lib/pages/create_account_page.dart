@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:user/utilities/connector.dart';
-import 'package:user/utilities/dialog_presenter.dart';
+import 'package:user/pages/extendable/dialog_presenter.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -28,7 +28,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
     if(context.mounted) {
       closeDialog(context);
       if(response.isOk()){
-        showProcessResultDialog(context, "傳送成功", "已寄驗證碼到 $_email");
+        showProcessResultDialog(context, "傳送成功", description: "已寄驗證碼到 $_email");
       }
       else{
         String errorDescription;
@@ -48,7 +48,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "註冊失敗", errorDescription);
+        showProcessResultDialog(context, "註冊失敗", description: errorDescription);
       }
     }
   }

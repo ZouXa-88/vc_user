@@ -1,64 +1,46 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 Account currentAccount = Account(name: "Guest");
-
-// ==========Account==========
 
 class Account {
 
   late String _name;
-  final Map<String, Door> _availableDoors = {}; // TODO: Remove it latter.
-  List<String> _availableDoorsName = List.empty(growable: true);
+  final Set<String> _doorNames = {};
 
 
-  Account({required String name, final List<String>? doorsName}) {
+  Account({required String name, List<String> doorNames = const []}) {
     _name = name;
-
-    if(doorsName != null){
-      _availableDoorsName = doorsName;
-    }
+    _doorNames.addAll(doorNames);
   }
 
-  void addDoor(String name, Uint8List share) {
-    _availableDoors[name] = Door(
-      name: name,
-      share: share,
-    );
-    _availableDoorsName.add(name);
+  void addDoor(String doorName) {
+    _doorNames.add(doorName);
   }
 
-  bool isRegistered(String doorId) {
-    return _availableDoors.containsKey(doorId);
+  void deleteDoor(String doorName) {
+    _doorNames.remove(doorName);
+  }
+
+  bool isRegistered(String doorName) {
+    return _doorNames.contains(doorName);
   }
 
   String getName() {
     return _name;
   }
 
-  Door? getDoor(String doorId) {
-    if(isRegistered(doorId)){
-      return _availableDoors[doorId]!;
-    }
-    return null;
-  }
-
   int getNumRegisteredDoors() {
-    return _availableDoorsName.length;
-  }
-
-  List<Door> getAllRegisteredDoors() {
-    return List.of(_availableDoors.values);
+    return _doorNames.length;
   }
 
   List<String> getAllRegisteredDoorsName() {
-    return _availableDoorsName;
+    return _doorNames.toList();
   }
 
   String buildAccountData() {
     return jsonEncode({
       "name": _name,
-      "doors": _availableDoorsName.join(","),
+      "doors": _doorNames.join(","),
     });
   }
 
@@ -66,36 +48,7 @@ class Account {
     final json = jsonDecode(jsonString);
     return Account(
       name: json["name"],
-      doorsName: (json["doors"]).split(","),
+      doorNames: (json["doors"]).split(","),
     );
   }
 }
-
-// ==========Account==========
-
-// ==========Door==========
-
-class Door {
-
-  late String name;
-  late Uint8List share;
-
-  Door({required this.name, required this.share});
-
-  String buildDoorData() {
-    return jsonEncode({
-      "name": name,
-      "share": share.join(","),
-    });
-  }
-
-  static Door from(final String jsonString) {
-    final json = jsonDecode(jsonString);
-    return Door(
-      name: json["name"],
-      share: Uint8List.fromList(json["share"].split(",")),
-    );
-  }
-}
-
-// ==========Door==========

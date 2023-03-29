@@ -9,10 +9,10 @@ Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "127.0.0.1";
-  int _port = 5000;
+  String _serverAddress = "192.168.0.1";
+  int _port = 8000;
 
-  Map<String, String> headers = {};
+  Map<String, String> headers = {"Content-Type": "application/json"};
 
 
   void setServerAddress(final String serverAddress) {
@@ -98,19 +98,12 @@ class Connector {
     );
   }
 
-  // TODO: Remove this test.
-  Future<ConnectResponse> fakeProcessing(StatusType statusType) async {
-    await Future.delayed(const Duration(seconds: 3));
-    return ConnectResponse(type: statusType);
-  }
-
   Future<ConnectResponse> _sendRequest({required String requestType,
                                         required Uri url,
                                         required Map<String, dynamic> body}) async {
     http.Response response;
     FutureOr<http.Response> onTimeout() => http.Response(jsonEncode({}), 408);
 
-    // TODO: cookie.
     try{
       if(requestType == "GET"){
         response = await http.get(url, headers: headers)
@@ -136,7 +129,8 @@ class Connector {
       else{
         return ConnectResponse(type: StatusType.syntaxError);
       }
-    }catch(e){
+    }
+    catch(e){
       return ConnectResponse(type: StatusType.unknownError, data: {"reason": e.toString()});
     }
 
@@ -152,14 +146,18 @@ class Connector {
   }
 
   Map<String, dynamic> _getResponseBody(http.Response response) {
-    return jsonDecode(utf8.decode(response.bodyBytes));
+    try {
+      return jsonDecode(response.body);
+    }
+    catch(e){
+      return {};
+    }
   }
 
   void _updateCookie(http.Response response) {
-    String? rawCookie = response.headers['set-cookie'];
-    if(rawCookie != null){
-      int index = rawCookie.indexOf(';');
-      headers['cookie'] = (index == -1) ? rawCookie : rawCookie.substring(0, index);
+    String? cookie = response.headers['set-cookie'];
+    if(cookie != null){
+      headers['cookie'] = cookie;
     }
   }
 

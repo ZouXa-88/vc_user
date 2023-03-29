@@ -5,24 +5,24 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class QrCodePage extends StatefulWidget {
+import 'package:user/utilities/storage.dart';
+
+class QrCodeKeyPage extends StatefulWidget {
 
   final String doorName;
-  final Uint8List share;
   final int seed;
 
 
-  const QrCodePage({Key? key, required this.doorName, required this.share, required this.seed}) : super(key: key);
+  const QrCodeKeyPage({Key? key, required this.doorName, required this.seed}) : super(key: key);
 
   @override
-  State<QrCodePage> createState() => _QrCodePage();
+  State<QrCodeKeyPage> createState() => _QrCodeKeyPage();
 }
 
-class _QrCodePage extends State<QrCodePage> {
+class _QrCodeKeyPage extends State<QrCodeKeyPage> {
 
-  late String doorName;
-  late Uint8List share;
-  late int seed;
+  late String _doorName;
+  late int _seed;
 
   late QrImage qrImage;
   bool qrCodeIsGenerated = false;
@@ -32,15 +32,19 @@ class _QrCodePage extends State<QrCodePage> {
   void initState() {
     super.initState();
 
-    doorName = widget.doorName;
-    share = widget.share;
-    seed = widget.seed;
+    _doorName = widget.doorName;
+    _seed = widget.seed;
     generateQrCode();
   }
 
-  void generateQrCode() {
-    Random random = Random(seed);
+  Future<void> generateQrCode() async {
+    // TODO: Be aware of data inconsistent.
+    Uint8List share = Uint8List.fromList(base64Decode(
+        (await storage.loadShare(_doorName))!
+    ));
+    Random random = Random(_seed);
     Uint8List buf = Uint8List(200);
+
     for(int i = 0; i < 200; i++) {
       buf[i] = share[i] ^ random.nextInt(256);
     }
@@ -73,13 +77,13 @@ class _QrCodePage extends State<QrCodePage> {
           Expanded(
             flex: 1,
             child: Text(
-              doorName,
+              _doorName,
               style: const TextStyle(fontSize: 25),
             ),
           ),
           Expanded(
             flex: 6,
-            child: qrCodeIsGenerated? qrImage : const Text("Qr Code 產生中..."),
+            child: qrCodeIsGenerated? qrImage : const CircularProgressIndicator(),
           ),
         ],
       ),

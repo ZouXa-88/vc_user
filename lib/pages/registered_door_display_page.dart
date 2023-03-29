@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user/pages/register_door_page.dart';
 
 import 'package:user/utilities/account.dart';
 
@@ -32,6 +33,28 @@ class RegisteredDoorDisplayPage extends StatelessWidget {
             },
             physics: const BouncingScrollPhysics(),
           ),
+        ),
+      ),
+      floatingActionButton: TextButton.icon(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const RegisterDoorPage(),
+            )
+          );
+        },
+        icon: const Icon(Icons.add_outlined),
+        label: const Text("新增門鎖"),
+        style: TextButton.styleFrom(
+          padding: const EdgeInsets.all(20),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          side: BorderSide(
+            color: Theme.of(context).primaryColor,
+            width: 2,
+          ),
+          backgroundColor: Colors.white,
         ),
       ),
     );

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
@@ -11,12 +12,27 @@ class Storage {
 
   String _applicationDirectoryPath = "";
   String _userDirectoryPath = "";
+  final Map<String, String> _shares = {};
 
 
-  Future<void> initialize() async {
-    _applicationDirectoryPath = (await getApplicationDocumentsDirectory()).path;
-    _userDirectoryPath = "$_applicationDirectoryPath/user";
-    Directory(_userDirectoryPath).create(recursive: true);
+  Future<bool> initialize() async {
+    if(await _checkPermission()){
+      try{
+        _applicationDirectoryPath =
+            (await getApplicationDocumentsDirectory()).path;
+        _userDirectoryPath = "$_applicationDirectoryPath/user";
+        Directory(_userDirectoryPath).create(recursive: true);
+
+        return true;
+      }
+      catch(e){
+        print("Storage initialize failed: ${e.toString()}");
+        return false;
+      }
+    }
+
+    print("Storage permission is not allowed.");
+    return false;
   }
 
   bool hasStoredAccount() {
@@ -33,41 +49,63 @@ class Storage {
     return null;
   }
 
-  Future<String?> loadDoorData(final String doorId) async {
-    final file = File("$_userDirectoryPath/doors/$doorId.txt");
+  FutureOr<String?> loadShare(final String doorName) async {
+    if(_shares.containsKey(doorName)){
+      return _shares[doorName];
+    }
+
+    final file = File("$_userDirectoryPath/doors/$doorName.txt");
     if(await file.exists() && await _checkPermission()) {
-      final jsonString = file.readAsString();
-      return jsonString;
+      String share = await file.readAsString();
+      _shares[doorName] = share;
+      return share;
     }
 
     return null;
   }
 
   Future<bool> storeAccountData(final Account account) async {
-    if(await _checkPermission()){
+    try{
       final file = File("$_userDirectoryPath/user_data.txt");
-
-      file.create(recursive: true);
+      await file.create(recursive: true);
       await file.writeAsString(account.buildAccountData());
-
-      // TODO: Remove it latter.
-      Directory("$_userDirectoryPath/doors").create(recursive: true);
-      for(Door door in account.getAllRegisteredDoors()){
-        // TODO: Directory or file name might not be Chinese.
-        final doorFile = File("$_userDirectoryPath/doors/${door.name}.txt");
-        doorFile.create(recursive: true);
-        doorFile.writeAsString(door.buildDoorData());
-      }
 
       return true;
     }
-    return false;
+    catch(e){
+      return false;
+    }
+  }
+
+  Future<bool> storeShare(final String doorName, final String share) async {
+    try{
+      final file = File("$_userDirectoryPath/doors/$doorName.txt");
+      await file.create();
+      await file.writeAsString(share);
+      return true;
+    }
+    catch(e){
+      print("Store share failed: ${e.toString()}");
+      return false;
+    }
+  }
+
+  Future<bool> deleteShare(final String doorName) async {
+    try{
+      final file = File("$_userDirectoryPath/doors/$doorName.txt");
+      await file.delete();
+      return true;
+    }
+    catch(e){
+      print("Delete share failed: ${e.toString()}");
+      return false;
+    }
   }
 
   Future<bool> _checkPermission() async {
-    if(await Permission.storage.isDenied){
-      Permission.storage.request();
+    if(!(await Permission.manageExternalStorage.isGranted)){
+      await Permission.manageExternalStorage.request();
     }
-    return await Permission.storage.isGranted;
+    return await Permission.manageExternalStorage.isGranted;
   }
 }

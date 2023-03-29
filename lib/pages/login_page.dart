@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:user/utilities/connector.dart';
-import 'package:user/utilities/dialog_presenter.dart';
+import 'package:user/pages/extendable/dialog_presenter.dart';
 import 'package:user/pages/create_account_page.dart';
 import 'package:user/pages/main_page.dart';
 
@@ -52,7 +52,7 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "登入失敗", errorDescription);
+        showProcessResultDialog(context, "登入失敗", description: errorDescription);
       }
     }
   }

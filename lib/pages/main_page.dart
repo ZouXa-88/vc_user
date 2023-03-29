@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:user/pages/extendable/dialog_presenter.dart';
 
-import 'package:user/pages/qr_code_page.dart';
+import 'package:user/pages/qr_code_key_page.dart';
 import 'package:user/pages/register_door_page.dart';
 import 'package:user/pages/delete_door_page.dart';
 import 'package:user/pages/registered_door_display_page.dart';
 import 'package:user/utilities/account.dart';
 import 'package:user/utilities/connector.dart';
+import 'package:user/utilities/storage.dart';
 
 
 // ==========MainPage==========
@@ -22,8 +24,18 @@ class MainPage extends StatefulWidget {
 class _MainPage extends State<MainPage> {
 
   int _selectedIndex = 0;
-  final _pages = <Widget>[const FunctionScreen(), const ScannerScreen(), const PersonalityScreen()];
-  final _titles = <Text>[const Text("首頁"), const Text("掃描"), const Text("個人資訊")];
+  final _pages = <Widget>[
+    const FunctionScreen(),
+    const ScannerScreen(),
+    const NotificationScreen(),
+    const PersonalityScreen()
+  ];
+  final _titles = <Text>[
+    const Text("首頁"),
+    const Text("掃描"),
+    const Text("通知"),
+    const Text("個人資訊")
+  ];
 
 
   Future<void> _update() async {
@@ -31,6 +43,19 @@ class _MainPage extends State<MainPage> {
 
     List<String>? deleteDoors = response.data["deleteDoors"];
     Map<String, String>? newShares = response.data["newShares"];
+
+    if(deleteDoors != null){
+      for(String doorName in deleteDoors){
+        currentAccount.deleteDoor(doorName);
+        storage.deleteShare(doorName);
+      }
+    }
+    if(newShares != null){
+      newShares.forEach((doorName, share) {
+        currentAccount.addDoor(doorName);
+        storage.storeShare(doorName, share);
+      });
+    }
   }
 
   @override
@@ -38,6 +63,14 @@ class _MainPage extends State<MainPage> {
     return Scaffold(
       appBar: AppBar(
         title: _titles[_selectedIndex],
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(1),
+          child: Divider(
+            height: 1,
+            thickness: 0.5,
+            color: Colors.black12,
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -49,18 +82,31 @@ class _MainPage extends State<MainPage> {
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        type: BottomNavigationBarType.fixed,
+        unselectedItemColor: Colors.black38,
+        selectedItemColor: Theme.of(context).primaryColor,
+        showSelectedLabels: true,
+        showUnselectedLabels: false,
+        items: const <BottomNavigationBarItem> [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home),
-              label: "首頁"
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: "首頁",
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.qr_code_scanner),
-              label: "掃描"
+            icon: Icon(Icons.qr_code_scanner_outlined),
+            activeIcon: Icon(Icons.qr_code_scanner),
+            label: "掃描",
           ),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: "個人資訊"
+            icon: Icon(Icons.notifications_none_outlined),
+            activeIcon: Icon(Icons.notifications),
+            label: "通知",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outlined),
+            activeIcon: Icon(Icons.person),
+            label: "個人資訊",
           ),
         ],
         currentIndex: _selectedIndex,
@@ -76,7 +122,7 @@ class _MainPage extends State<MainPage> {
 
 // ==========MainPage==========
 
-// Belows are three screens of bottom navigation.
+// Belows are four screens of bottom navigation.
 
 // ==========FunctionScreen==========
 
@@ -162,18 +208,17 @@ class _ScannerScreen extends State<ScannerScreen> {
         return;
       }
 
-      String doorId = stringData.first.replaceAll("d=", "");
+      String doorName = stringData.first.replaceAll("d=", "");
       int? seed = int.tryParse(stringData.last.replaceAll("s=", ""));
-      if(!currentAccount.isRegistered(doorId) || seed == null){
+      if(!currentAccount.isRegistered(doorName) || seed == null){
         return;
       }
-      Door door = currentAccount.getDoor(doorId)!;
 
       controller.pauseCamera();
       Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => QrCodePage(doorName: door.name, share: door.share, seed: seed),
+            builder: (context) => QrCodeKeyPage(doorName: doorName, seed: seed),
           )
       ).then((_) {
         controller.resumeCamera();
@@ -208,16 +253,67 @@ class _ScannerScreen extends State<ScannerScreen> {
 
 // ==========ScannerScreen==========
 
+// ==========NotificationScreen==========
+
+class NotificationScreen extends StatefulWidget {
+  const NotificationScreen({super.key});
+
+  @override
+  State<NotificationScreen> createState() => _NotificationScreen();
+}
+
+class _NotificationScreen extends State<NotificationScreen> {
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+
+    );
+  }
+}
+
+// ==========NotificationScreen==========
+
 // ==========PersonalityScreen==========
 
-class PersonalityScreen extends StatefulWidget{
+class PersonalityScreen extends StatefulWidget {
   const PersonalityScreen({super.key});
 
   @override
   State<PersonalityScreen> createState() => _PersonalityScreen();
 }
 
-class _PersonalityScreen extends State<PersonalityScreen> {
+class _PersonalityScreen extends State<PersonalityScreen> with DialogPresenter {
+
+  Future<void> _deleteAccount(BuildContext context) async {
+    showProcessingDialog(context, "傳送中");
+
+    ConnectResponse response = await connector.deleteAccount();
+
+    if(context.mounted){
+      closeDialog(context);
+      if(response.isOk()){
+        showProcessResultDialog(context, "傳送成功");
+      }
+      else{
+        String errorDescription;
+        switch(response.type){
+          case StatusType.connectionError:
+            errorDescription = "無法連線";
+            break;
+          case StatusType.notAuthenticatedError:
+            showRequireLoginDialog(context);
+            return;
+          case StatusType.unknownError:
+            errorDescription = response.data["reason"];
+            break;
+          default:
+            errorDescription = "";
+        }
+        showProcessResultDialog(context, "傳送失敗", description: errorDescription);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -245,7 +341,7 @@ class _PersonalityScreen extends State<PersonalityScreen> {
           Expanded(
             flex: 7,
             child: Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, top: 20,),
+              padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
               child: ListView(
                 children: <ElevatedButton>[
                   ElevatedButton.icon(
@@ -262,7 +358,34 @@ class _PersonalityScreen extends State<PersonalityScreen> {
                     icon: const Icon(Icons.delete),
                     label: const Text("刪除帳號"),
                     onPressed: () {
-
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return WillPopScope(
+                            onWillPop: () async => false,
+                            child: AlertDialog(
+                              title: const Text("刪除帳號"),
+                              content: const Text("確定要刪除帳號？"),
+                              actions: [
+                                TextButton(
+                                  child: const Text("取消"),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                    _deleteAccount(context);
+                                  },
+                                  child: const Text("OK"),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.deepOrange),

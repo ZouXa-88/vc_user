@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -11,39 +13,58 @@ import 'package:user/utilities/storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await setupUsers(); // TODO: Remove it when this project is done.
+  try {
+    await storage.initialize();
+    await setupUsers(); // TODO: Remove it when this project is done.
+  }
+  catch(e){
+    print(e.toString());
+  }
   runApp(const MyApp());
 }
+
+// These will be removed when the project is completed.
+// ----------------------------------------
 
 Future<void> setupUsers() async {
   Account user1 = Account(name: "王小明");
 
-  user1.addDoor("大門", await loadShare("assets/images/door1_1.png"));
-  user1.addDoor("二樓辦公室", await loadShare("assets/images/door2_1.png"));
+  user1.addDoor("大門");
+  storage.storeShare("大門", await loadShare("assets/images/door1_1.png"));
+  user1.addDoor("二樓辦公室");
+  storage.storeShare("二樓辦公室", await loadShare("assets/images/door2_1.png"));
 
   await storeUserData(user1);
 }
 
-// TODO: Change it to new version.
-Future<Uint8List> loadShare(String path) async {
+Future<String> loadShare(String path) async {
   Uint8List inputImg = (await rootBundle.load(path)).buffer.asUint8List();
   String binaries = image.decodeImage(inputImg)!
       .getBytes(format: image.Format.luminance)
       .map((e) => e == 0 ? 0 : 1)
       .join();
-  
-  List<int> buf = List.filled(200, 0);
+
+  String buf = "";
+  for(int pixel = 0; pixel < 400; pixel++){
+    int topLeft = 40 * (pixel ~/ 20) + 2 * (pixel % 20);
+    buf += binaries[topLeft];
+    buf += binaries[topLeft + 1];
+    buf += binaries[topLeft + 40];
+    buf += binaries[topLeft + 41];
+  }
+  List<int> intBuf = List.filled(200, 0);
   for(int i = 0; i < 200; i++){
-    buf[i] = int.parse(StringUtils.reverse(binaries.substring(i * 8, i * 8 + 8)), radix: 2);
+    intBuf[i] = int.parse(StringUtils.reverse(buf.substring(i * 8, i * 8 + 8)), radix: 2);
   }
 
-  return Uint8List.fromList(buf);
+  return base64Encode(intBuf);
 }
 
 Future<void> storeUserData(final Account account) async {
-  await storage.initialize();
-  await storage.storeAccountData(account);
+  print("Store user data: ${await storage.storeAccountData(account)}");
 }
+
+// ----------------------------------------
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -54,6 +75,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
         splashColor: Colors.transparent,
+        appBarTheme: const AppBarTheme(
+          /*
+          backgroundColor: Colors.white,
+          shadowColor: Colors.transparent,
+          foregroundColor: Colors.green,
+          */
+        ),
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(30)),

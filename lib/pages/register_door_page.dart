@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:user/pages/login_page.dart';
 
 import 'package:user/utilities/connector.dart';
-import 'package:user/utilities/dialog_presenter.dart';
+import 'package:user/pages/extendable/dialog_presenter.dart';
 
 class RegisterDoorPage extends StatefulWidget {
   const RegisterDoorPage({super.key});
@@ -25,7 +26,7 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
     if(context.mounted){
       closeDialog(context);
       if(response.isOk()){
-        showProcessResultDialog(context, "傳送成功", "");
+        showProcessResultDialog(context, "傳送成功");
       }
       else{
         String errorDescription;
@@ -48,7 +49,7 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "申請失敗", errorDescription);
+        showProcessResultDialog(context, "申請失敗", description: errorDescription);
       }
     }
   }

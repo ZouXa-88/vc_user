@@ -36,13 +36,13 @@ class DialogPresenter {
     }
   }
 
-  void showProcessResultDialog(BuildContext context, String title, String? description) {
+  void showProcessResultDialog(BuildContext context, String title, {String description = ""}) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Text(title),
-          content: (description == null) ? null : Text(description),
+          content: Text(description),
           actions: [
             TextButton(
               child: const Text("OK"),
@@ -57,32 +57,24 @@ class DialogPresenter {
   void showRequireLoginDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierDismissible: false,
       builder: (context) {
-        return WillPopScope(
-          onWillPop: () async => false,
-          child: AlertDialog(
-            title: const Text("請登入"),
-            actions: [
-              TextButton(
-                child: const Text("取消"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
+        return AlertDialog(
+          title: const Text("請登入"),
+          actions: [
+            TextButton(
+              child: const Text("取消"),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () => Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LoginPage(),
+                ),
               ),
-              TextButton(
-                child: const Text("登入"),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginPage(),
-                      )
-                  );
-                },
-              ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
