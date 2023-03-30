@@ -21,7 +21,7 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPage();
 }
 
-class _MainPage extends State<MainPage> {
+class _MainPage extends State<MainPage> with DialogPresenter {
 
   int _selectedIndex = 0;
   final _pages = <Widget>[
@@ -38,7 +38,9 @@ class _MainPage extends State<MainPage> {
   ];
 
 
-  Future<void> _update() async {
+  Future<void> _update(BuildContext context) async {
+    showProcessingDialog(context, "更新中");
+
     ConnectResponse response = await connector.update();
 
     List<String>? deleteDoors = response.data["deleteDoors"];
@@ -55,6 +57,30 @@ class _MainPage extends State<MainPage> {
         currentAccount.addDoor(doorName);
         storage.storeShare(doorName, share);
       });
+    }
+
+    if(context.mounted){
+      closeDialog(context);
+      if(response.isOk()){
+        showProcessResultDialog(context, "更新成功");
+      }
+      else{
+        String errorDescription;
+        switch(response.type){
+          case StatusType.connectionError:
+            errorDescription = "無法連線";
+            break;
+          case StatusType.notAuthenticatedError:
+            showRequireLoginDialog(context);
+            return;
+          case StatusType.unknownError:
+            errorDescription = response.data["reason"];
+            break;
+          default:
+            errorDescription = "";
+        }
+        showProcessResultDialog(context, "更新失敗", description: errorDescription);
+      }
     }
   }
 
@@ -74,7 +100,7 @@ class _MainPage extends State<MainPage> {
         actions: [
           IconButton(
             onPressed: () {
-              _update();
+              _update(context);
             },
             icon: const Icon(Icons.update),
           ),
@@ -345,7 +371,7 @@ class _PersonalityScreen extends State<PersonalityScreen> with DialogPresenter {
               child: ListView(
                 children: <ElevatedButton>[
                   ElevatedButton.icon(
-                    icon: const Icon(Icons.app_registration),
+                    icon: const Icon(Icons.key_rounded),
                     label: const Text("可解鎖的門鎖"),
                     onPressed: () {
                       Navigator.push(
@@ -354,6 +380,18 @@ class _PersonalityScreen extends State<PersonalityScreen> with DialogPresenter {
                       );
                     },
                   ),
+                  /*
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.admin_panel_settings_rounded),
+                    label: const Text("管理的門鎖"),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => RegisteredDoorDisplayPage()),
+                      );
+                    },
+                  ),
+                  */
                   ElevatedButton.icon(
                     icon: const Icon(Icons.delete),
                     label: const Text("刪除帳號"),
