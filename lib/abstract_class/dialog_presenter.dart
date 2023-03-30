@@ -62,7 +62,7 @@ class DialogPresenter {
           title: const Text("請登入"),
           actions: [
             TextButton(
-              child: const Text("取消"),
+              child: const Text("取消", style: TextStyle(color: Colors.grey)),
               onPressed: () => Navigator.of(context).pop(),
             ),
             TextButton(
@@ -75,6 +75,32 @@ class DialogPresenter {
               ),
             ),
           ],
+        );
+      },
+    );
+  }
+
+  Future<bool> showConfirmDialog(BuildContext context, String title, {String description = ""}) async {
+    return await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: AlertDialog(
+            title: Text(title),
+            content: Text(description),
+            actions: [
+              TextButton(
+                child: const Text("取消", style: TextStyle(color: Colors.grey)),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          ),
         );
       },
     );

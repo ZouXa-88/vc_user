@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:user/pages/extendable/dialog_presenter.dart';
+import 'package:user/abstract_class/dialog_presenter.dart';
 
 import 'package:user/pages/qr_code_key_page.dart';
 import 'package:user/pages/register_door_page.dart';
@@ -48,13 +48,13 @@ class _MainPage extends State<MainPage> with DialogPresenter {
 
     if(deleteDoors != null){
       for(String doorName in deleteDoors){
-        currentAccount.deleteDoor(doorName);
+        account.deleteDoor(doorName);
         storage.deleteShare(doorName);
       }
     }
     if(newShares != null){
       newShares.forEach((doorName, share) {
-        currentAccount.addDoor(doorName);
+        account.addDoor(doorName);
         storage.storeShare(doorName, share);
       });
     }
@@ -113,6 +113,7 @@ class _MainPage extends State<MainPage> with DialogPresenter {
         selectedItemColor: Theme.of(context).primaryColor,
         showSelectedLabels: true,
         showUnselectedLabels: false,
+        backgroundColor: Colors.white,
         items: const <BottomNavigationBarItem> [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
@@ -172,6 +173,7 @@ class FunctionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Scrollbar(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -179,7 +181,7 @@ class FunctionScreen extends StatelessWidget {
             child: Column(
               children: [
                 _functionButton(
-                  label: "申請門鎖鑰匙",
+                  label: "新增門鎖鑰匙",
                   onPressed: () {
                     Navigator.push(
                         context,
@@ -236,16 +238,16 @@ class _ScannerScreen extends State<ScannerScreen> {
 
       String doorName = stringData.first.replaceAll("d=", "");
       int? seed = int.tryParse(stringData.last.replaceAll("s=", ""));
-      if(!currentAccount.isRegistered(doorName) || seed == null){
+      if(!account.hasKey(doorName) || seed == null){
         return;
       }
 
       controller.pauseCamera();
       Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => QrCodeKeyPage(doorName: doorName, seed: seed),
-          )
+        context,
+        MaterialPageRoute(
+          builder: (context) => QrCodeKeyPage(doorName: doorName, seed: seed),
+        ),
       ).then((_) {
         controller.resumeCamera();
       });
@@ -293,7 +295,7 @@ class _NotificationScreen extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-
+      backgroundColor: Colors.white,
     );
   }
 }
@@ -344,12 +346,13 @@ class _PersonalityScreen extends State<PersonalityScreen> with DialogPresenter {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           const Expanded(
             flex: 2,
             child: Icon(
-              Icons.person,
+              Icons.account_circle_rounded,
               color: Colors.grey,
               size: 100,
             ),
@@ -359,7 +362,7 @@ class _PersonalityScreen extends State<PersonalityScreen> with DialogPresenter {
             child: Align(
               alignment: Alignment.center,
               child: Text(
-                currentAccount.getName(),
+                account.getName(),
                 style: const TextStyle(fontSize: 40),
               ),
             ),
@@ -368,68 +371,49 @@ class _PersonalityScreen extends State<PersonalityScreen> with DialogPresenter {
             flex: 7,
             child: Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, top: 20),
-              child: ListView(
-                children: <ElevatedButton>[
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.key_rounded),
-                    label: const Text("可解鎖的門鎖"),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisteredDoorDisplayPage()),
-                      );
-                    },
-                  ),
-                  /*
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.admin_panel_settings_rounded),
-                    label: const Text("管理的門鎖"),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegisteredDoorDisplayPage()),
-                      );
-                    },
-                  ),
-                  */
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.delete),
-                    label: const Text("刪除帳號"),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (context) {
-                          return WillPopScope(
-                            onWillPop: () async => false,
-                            child: AlertDialog(
-                              title: const Text("刪除帳號"),
-                              content: const Text("確定要刪除帳號？"),
-                              actions: [
-                                TextButton(
-                                  child: const Text("取消"),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                    _deleteAccount(context);
-                                  },
-                                  child: const Text("OK"),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    },
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
+              child: Scrollbar(
+                child: ListView(
+                  physics: const BouncingScrollPhysics(),
+                  children: <ElevatedButton>[
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.key_rounded),
+                      label: const Text("可解鎖的門鎖"),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisteredDoorDisplayPage()),
+                        );
+                      },
                     ),
-                  ),
-                ],
+                    /*
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.admin_panel_settings_rounded),
+                      label: const Text("管理的門鎖"),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => RegisteredDoorDisplayPage()),
+                        );
+                      },
+                    ),
+                    */
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.delete),
+                      label: const Text("刪除帳號"),
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
+                      ),
+                      onPressed: () {
+                        showConfirmDialog(context, "刪除帳號", description: "確定要刪除此帳號")
+                          .then((confirm) {
+                            if(confirm){
+                              _deleteAccount(context);
+                            }
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           )

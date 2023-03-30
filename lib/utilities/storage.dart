@@ -10,17 +10,15 @@ Storage storage = Storage();
 
 class Storage {
 
-  String _applicationDirectoryPath = "";
-  String _userDirectoryPath = "";
-  final Map<String, String> _shares = {};
+  late final String _userDirectoryPath;
+  final Map<String, String> _sharesCache = {};
 
 
   Future<bool> initialize() async {
     if(await _checkPermission()){
       try{
-        _applicationDirectoryPath =
-            (await getApplicationDocumentsDirectory()).path;
-        _userDirectoryPath = "$_applicationDirectoryPath/user";
+        final applicationDirectoryPath = (await getApplicationDocumentsDirectory()).path;
+        _userDirectoryPath = "$applicationDirectoryPath/user";
         Directory(_userDirectoryPath).create(recursive: true);
 
         return true;
@@ -50,14 +48,14 @@ class Storage {
   }
 
   FutureOr<String?> loadShare(final String doorName) async {
-    if(_shares.containsKey(doorName)){
-      return _shares[doorName];
+    if(_sharesCache.containsKey(doorName)){
+      return _sharesCache[doorName];
     }
 
     final file = File("$_userDirectoryPath/doors/$doorName.txt");
     if(await file.exists() && await _checkPermission()) {
       String share = await file.readAsString();
-      _shares[doorName] = share;
+      _sharesCache[doorName] = share;
       return share;
     }
 
@@ -94,6 +92,7 @@ class Storage {
     try{
       final file = File("$_userDirectoryPath/doors/$doorName.txt");
       await file.delete();
+      _sharesCache.remove(doorName);
       return true;
     }
     catch(e){

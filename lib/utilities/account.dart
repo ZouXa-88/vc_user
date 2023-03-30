@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-Account currentAccount = Account(name: "Guest");
+Account account = Account(name: "Guest");
 
 class Account {
 
@@ -21,7 +21,7 @@ class Account {
     _doorNames.remove(doorName);
   }
 
-  bool isRegistered(String doorName) {
+  bool hasKey(String doorName) {
     return _doorNames.contains(doorName);
   }
 

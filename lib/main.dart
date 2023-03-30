@@ -9,6 +9,7 @@ import 'package:basic_utils/basic_utils.dart';
 import 'package:user/pages/setup_page.dart';
 import 'package:user/utilities/account.dart';
 import 'package:user/utilities/storage.dart';
+import 'package:user/abstract_class/my_theme.dart';
 
 
 void main() async {
@@ -66,43 +67,13 @@ Future<void> storeUserData(final Account account) async {
 
 // ----------------------------------------
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget with MyTheme {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-        primarySwatch: Colors.green,
-        splashColor: Colors.transparent,
-        appBarTheme: const AppBarTheme(
-          /*
-          backgroundColor: Colors.white,
-          shadowColor: Colors.transparent,
-          foregroundColor: Colors.green,
-          */
-        ),
-        inputDecorationTheme: const InputDecorationTheme(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(30)),
-          ),
-        ),
-        dialogTheme: const DialogTheme(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            shape: MaterialStateProperty.all(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
-              )
-            ),
-          ),
-        ),
-      ),
+      theme: getThemeData(),
       home: const SetupPage(),
       debugShowCheckedModeBanner: false,
     );

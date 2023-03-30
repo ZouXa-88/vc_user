@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:user/pages/validate_page.dart';
 
 import 'package:user/utilities/connector.dart';
-import 'package:user/pages/extendable/dialog_presenter.dart';
+import 'package:user/abstract_class/dialog_presenter.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -20,15 +21,17 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
   String _password = "";
 
 
-  Future<void> _create(BuildContext context, {required String userName, required String email, required String password}) async {
+  Future<void> _create(BuildContext context) async {
     showProcessingDialog(context, "註冊中...");
 
-    ConnectResponse response = await connector.createAccount(userName: userName, email: email, password: password);
+    ConnectResponse response = await connector.createAccount(userName: _userName, email: _email, password: _password);
 
     if(context.mounted) {
       closeDialog(context);
       if(response.isOk()){
-        showProcessResultDialog(context, "傳送成功", description: "已寄驗證碼到 $_email");
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const ValidatePage())
+        );
       }
       else{
         String errorDescription;
@@ -48,7 +51,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "註冊失敗", description: errorDescription);
+        showProcessResultDialog(context, "傳送失敗", description: errorDescription);
       }
     }
   }
@@ -179,7 +182,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                   label: const Text("傳送"),
                   onPressed: () {
                     if(_formKey.currentState!.validate()){
-                      _create(context, userName: _userName, email: _email, password: _password);
+                      _create(context);
                     }
                   },
                 ),

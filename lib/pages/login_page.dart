@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:user/utilities/connector.dart';
-import 'package:user/pages/extendable/dialog_presenter.dart';
+import 'package:user/abstract_class/dialog_presenter.dart';
 import 'package:user/pages/create_account_page.dart';
 import 'package:user/pages/main_page.dart';
 
@@ -22,10 +22,10 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
   String _password = "";
 
 
-  Future<void> _login(BuildContext context, {required String email, required String password}) async {
+  Future<void> _login(BuildContext context) async {
     showProcessingDialog(context, "登入中...");
 
-    ConnectResponse response = await connector.login(email: email, password: password);
+    ConnectResponse response = await connector.login(email: _email, password: _password);
 
     if(context.mounted) {
       closeDialog(context);
@@ -60,15 +60,8 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("登入帳號"),
-        centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(10),
-          ),
-        ),
-      ),
+      resizeToAvoidBottomInset: false,
+      backgroundColor: const Color(0xFFF5FBF5),
       body: Stack(
         children: [
           GestureDetector(
@@ -78,162 +71,177 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
             },
             child: null,
           ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: <Padding> [
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: TextFormField(
-                        initialValue: "",
-                        scrollPadding: const EdgeInsets.only(top: 20),
-                        keyboardType: TextInputType.emailAddress,
-                        decoration: const InputDecoration(
-                          labelText: "信箱",
-                          prefixIcon: Icon(Icons.email),
-                        ),
-                        onChanged: (text) {
-                          _email = text;
-                        },
-                        validator: (text) {
-                          return (text == null || text.isEmpty) ? "請輸入信箱" : null;
-                        },
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: Text(
+                      "登入帳號",
+                      style: TextStyle(
+                        fontSize: 25,
+                        color: Theme.of(context).primaryColor,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(20),
-                      child: TextFormField(
-                        initialValue: "",
-                        scrollPadding: const EdgeInsets.only(top: 20),
-                        keyboardType: TextInputType.visiblePassword,
-                        obscureText: !_passwordVisible,
-                        decoration: InputDecoration(
-                          labelText: "密碼",
-                          prefixIcon: const Icon(Icons.password),
-                          suffixIcon: IconButton(
-                            icon: _passwordVisible
-                                ? const Icon(Icons.visibility)
-                                : const Icon(Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                _passwordVisible = !_passwordVisible;
-                              });
-                            },
-                          ),
-                        ),
-                        onChanged: (text) {
-                          _password = text;
-                        },
-                        validator: (text) {
-                          return (text == null || text.isEmpty) ? "請輸入密碼" : null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 10, bottom: 10),
-                      child: ElevatedButton.icon(
-                        icon: const Icon(Icons.login),
-                        label: const Text("登入"),
-                        onPressed: () {
-                          if(_formKey.currentState!.validate()){
-                            _login(context, email: _email, password: _password);
-                          }
-                        },
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          fixedSize: const Size(200, 50),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
                   ),
-                  fixedSize: const Size(200, 50),
                 ),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const CreateAccountPage())
-                  );
-                },
-                child: const Text("註冊帳號"),
-              ),
-              TextButton(
-                child: const Text("server's IP"),
-                onPressed: () {
-                  showDialog(
-                    context: context, 
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text("Set Server's IP"),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: TextFormField(
-                                initialValue: connector.getServerAddress(),
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  labelText: "IPv4",
-                                ),
-                                onChanged: (text) {
-                                  connector.setServerAddress(text);
-                                },
-                              ),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: TextFormField(
+                          initialValue: "",
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            labelText: "信箱",
+                            prefixIcon: Icon(Icons.email),
+                          ),
+                          onChanged: (text) {
+                            _email = text;
+                          },
+                          validator: (text) {
+                            return (text == null || text.isEmpty) ? "請輸入信箱" : null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        child: TextFormField(
+                          initialValue: "",
+                          scrollPadding: const EdgeInsets.only(top: 20),
+                          keyboardType: TextInputType.visiblePassword,
+                          obscureText: !_passwordVisible,
+                          decoration: InputDecoration(
+                            labelText: "密碼",
+                            prefixIcon: const Icon(Icons.password),
+                            suffixIcon: IconButton(
+                              icon: _passwordVisible
+                                  ? const Icon(Icons.visibility)
+                                  : const Icon(Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  _passwordVisible = !_passwordVisible;
+                                });
+                              },
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(top: 20),
-                              child: TextFormField(
-                                initialValue: connector.getPort().toString(),
-                                keyboardType: TextInputType.number,
-                                decoration: const InputDecoration(
-                                  labelText: "Port",
+                          ),
+                          onChanged: (text) {
+                            _password = text;
+                          },
+                          validator: (text) {
+                            return (text == null || text.isEmpty) ? "請輸入密碼" : null;
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if(_formKey.currentState!.validate()){
+                              _login(context);
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            fixedSize: const Size(200, 50),
+                          ),
+                          child: const Text("登入"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    fixedSize: const Size(200, 50),
+                  ),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CreateAccountPage())
+                    );
+                  },
+                  child: const Text("註冊帳號"),
+                ),
+                TextButton(
+                  child: const Text("server's IP"),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text("Set Server's IP"),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: TextFormField(
+                                  initialValue: connector.getServerAddress(),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    labelText: "IPv4",
+                                  ),
+                                  onChanged: (text) {
+                                    connector.setServerAddress(text);
+                                  },
                                 ),
-                                onChanged: (text) {
-                                  connector.setPort(int.parse(text));
-                                },
                               ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: TextFormField(
+                                  initialValue: connector.getPort().toString(),
+                                  keyboardType: TextInputType.number,
+                                  decoration: const InputDecoration(
+                                    labelText: "Port",
+                                  ),
+                                  onChanged: (text) {
+                                    connector.setPort(int.parse(text));
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              child: const Text("OK"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
                             ),
                           ],
-                        ),
-                        actions: [
-                          TextButton(
-                            child: const Text("OK"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              ),
-              TextButton(
-                child: const Text("Skip"),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MainPage(),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+                TextButton(
+                  child: const Text("Skip"),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MainPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          )
         ],
       ),
     );

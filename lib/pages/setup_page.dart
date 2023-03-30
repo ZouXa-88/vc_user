@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user/pages/extendable/dialog_presenter.dart';
+import 'package:user/abstract_class/dialog_presenter.dart';
 
 import 'package:user/utilities/account.dart';
 import 'package:user/utilities/storage.dart';
@@ -17,7 +17,7 @@ class SetupPage extends StatelessWidget with DialogPresenter {
     // Test version.
     // --------------------
     if(encodedAccountData != null){
-      currentAccount = Account.from(encodedAccountData);
+      account = Account.from(encodedAccountData);
     }
     Navigator.pushReplacement(
       context,

@@ -12,7 +12,7 @@ class Connector {
   String _serverAddress = "192.168.0.1";
   int _port = 8000;
 
-  Map<String, String> headers = {"Content-Type": "application/json"};
+  final Map<String, String> _headers = {"Content-Type": "application/json"};
 
 
   void setServerAddress(final String serverAddress) {
@@ -106,21 +106,21 @@ class Connector {
 
     try{
       if(requestType == "GET"){
-        response = await http.get(url, headers: headers)
+        response = await http.get(url, headers: _headers)
           .timeout(
             const Duration(seconds: 5),
             onTimeout: onTimeout,
         );
       }
       else if(requestType == "POST"){
-        response = await http.post(url, body: jsonEncode(body), headers: headers)
+        response = await http.post(url, body: jsonEncode(body), headers: _headers)
           .timeout(
             const Duration(seconds: 5),
             onTimeout: onTimeout,
         );
       }
       else if(requestType == "DELETE"){
-        response = await http.delete(url, headers: headers)
+        response = await http.delete(url, headers: _headers)
           .timeout(
             const Duration(seconds: 5),
             onTimeout: onTimeout,
@@ -157,7 +157,7 @@ class Connector {
   void _updateCookie(http.Response response) {
     String? cookie = response.headers['set-cookie'];
     if(cookie != null){
-      headers['cookie'] = cookie;
+      _headers['cookie'] = cookie;
     }
   }
 
