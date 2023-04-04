@@ -21,7 +21,7 @@ class _RegisteredDoorDisplayPage extends State<RegisteredDoorDisplayPage> {
 
   @override
   void initState() {
-    _registeredDoorsName = account.getAllRegisteredDoorsName();
+    _registeredDoorsName = account.getAllRegisteredDoorNames();
     _fadeInCardRespectively();
     super.initState();
   }
@@ -47,12 +47,8 @@ class _RegisteredDoorDisplayPage extends State<RegisteredDoorDisplayPage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
-        title: Align(
-          alignment: Alignment.centerRight,
-          child: Text("可解鎖的門鎖", style: TextStyle(color: Theme.of(context).primaryColor),),
-        ),
+        title: Text("可解鎖的門鎖", style: TextStyle(color: Theme.of(context).primaryColor),),
         backgroundColor: Colors.grey[100],
-        shadowColor: Colors.transparent,
         foregroundColor: Colors.grey,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_rounded),
@@ -63,28 +59,25 @@ class _RegisteredDoorDisplayPage extends State<RegisteredDoorDisplayPage> {
       body: Padding(
         padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
         child: Scrollbar(
-          child: ListView.builder(
-            itemCount: account.getNumRegisteredDoors(),
-            itemBuilder: (BuildContext buildContext, int index) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: AnimatedOpacity(
-                  opacity: cardVisible ? 1.0 : 0.0,
-                  duration: const Duration(milliseconds: 800),
+          child: AnimatedOpacity(
+            opacity: cardVisible ? 1.0 : 0.0,
+            duration: const Duration(milliseconds: 800),
+            child: ListView.builder(
+              itemCount: account.getNumRegisteredDoors(),
+              itemBuilder: (BuildContext buildContext, int index) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
                   child: Card(
                     color: Colors.green[100],
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
                     child: ListTile(
                       leading: const Icon(Icons.door_front_door),
                       title: Text(_registeredDoorsName[index]),
                     ),
                   ),
-                ),
-              );
-            },
-            physics: const BouncingScrollPhysics(),
+                );
+              },
+              physics: const BouncingScrollPhysics(),
+            ),
           ),
         ),
       ),

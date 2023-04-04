@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:user/pages/login_page.dart';
 
 import 'package:user/utilities/connector.dart';
-import 'package:user/abstract_class/dialog_presenter.dart';
+import 'package:user/abstract_classes/dialog_presenter.dart';
 
 class RegisterDoorPage extends StatefulWidget {
   const RegisterDoorPage({super.key});

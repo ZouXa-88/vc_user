@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:user/pages/login_page.dart';
 
-class DialogPresenter {
+abstract class DialogPresenter {
 
   void showProcessingDialog(BuildContext context, String processingDescription) {
     showDialog(
@@ -92,7 +92,7 @@ class DialogPresenter {
             content: Text(description),
             actions: [
               TextButton(
-                child: const Text("取消", style: TextStyle(color: Colors.grey)),
+                child: const Text("取消", style: TextStyle(color: Colors.black45)),
                 onPressed: () => Navigator.of(context).pop(false),
               ),
               TextButton(

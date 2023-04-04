@@ -33,7 +33,7 @@ class Account {
     return _doorNames.length;
   }
 
-  List<String> getAllRegisteredDoorsName() {
+  List<String> getAllRegisteredDoorNames() {
     return _doorNames.toList();
   }
 

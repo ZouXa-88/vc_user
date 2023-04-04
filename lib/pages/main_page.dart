@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:user/abstract_class/dialog_presenter.dart';
 
+import 'package:user/abstract_classes/dialog_presenter.dart';
+import 'package:user/abstract_classes/my_theme.dart';
+import 'package:user/pages/login_page.dart';
 import 'package:user/pages/qr_code_key_page.dart';
 import 'package:user/pages/register_door_page.dart';
 import 'package:user/pages/delete_door_page.dart';
@@ -89,13 +91,15 @@ class _MainPage extends State<MainPage> with DialogPresenter {
     return Scaffold(
       appBar: AppBar(
         title: _titles[_selectedIndex],
-        bottom: const PreferredSize(
-          preferredSize: Size.fromHeight(1),
-          child: Divider(
-            height: 1,
-            thickness: 0.5,
-            color: Colors.black12,
+        shadowColor: Colors.transparent,
+        // TODO: Remove it.
+        leading: IconButton(
+          onPressed: () => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const LoginPage()),
           ),
+          icon: const Icon(Icons.arrow_back_ios_rounded),
+          color: Colors.grey,
         ),
         actions: [
           IconButton(
@@ -109,11 +113,11 @@ class _MainPage extends State<MainPage> with DialogPresenter {
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        unselectedItemColor: Colors.black38,
-        selectedItemColor: Theme.of(context).primaryColor,
+        currentIndex: _selectedIndex,
         showSelectedLabels: true,
         showUnselectedLabels: false,
-        backgroundColor: Colors.white,
+        selectedItemColor: Theme.of(context).primaryColor,
+        unselectedItemColor: Colors.black54,
         items: const <BottomNavigationBarItem> [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
@@ -136,9 +140,8 @@ class _MainPage extends State<MainPage> with DialogPresenter {
             label: "個人資訊",
           ),
         ],
-        currentIndex: _selectedIndex,
         onTap: (index) {
-          setState((){
+          setState(() {
             _selectedIndex = index;
           });
         },
@@ -173,7 +176,7 @@ class FunctionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: MyTheme.background,
       body: Scrollbar(
         child: Padding(
           padding: const EdgeInsets.all(20),
@@ -295,7 +298,7 @@ class _NotificationScreen extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: MyTheme.background,
     );
   }
 }
@@ -346,7 +349,7 @@ class _PersonalityScreen extends State<PersonalityScreen> with DialogPresenter {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: MyTheme.background,
       body: Column(
         children: [
           const Expanded(
@@ -404,7 +407,7 @@ class _PersonalityScreen extends State<PersonalityScreen> with DialogPresenter {
                         backgroundColor: MaterialStateProperty.all(Colors.deepOrange),
                       ),
                       onPressed: () {
-                        showConfirmDialog(context, "刪除帳號", description: "確定要刪除此帳號")
+                        showConfirmDialog(context, "刪除帳號", description: "確定要刪除此帳號?")
                           .then((confirm) {
                             if(confirm){
                               _deleteAccount(context);

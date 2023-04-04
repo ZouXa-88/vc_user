@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:user/pages/validate_page.dart';
 
 import 'package:user/utilities/connector.dart';
-import 'package:user/abstract_class/dialog_presenter.dart';
+import 'package:user/abstract_classes/dialog_presenter.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -61,6 +61,16 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
     return Scaffold(
       appBar: AppBar(
         title: const Text("註冊帳號"),
+        actions: [
+          TextButton(
+            child: const Text("Skip"),
+            onPressed: () {
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const ValidatePage())
+              );
+            },
+          ),
+        ],
       ),
       resizeToAvoidBottomInset: false,
       body: Stack(

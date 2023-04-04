@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:user/utilities/account.dart';
 import 'package:user/utilities/connector.dart';
-import 'package:user/abstract_class/dialog_presenter.dart';
+import 'package:user/abstract_classes/dialog_presenter.dart';
 
 class DeleteDoorPage extends StatefulWidget {
   const DeleteDoorPage({super.key});
@@ -54,7 +54,7 @@ class _DeleteDoorPage extends State<DeleteDoorPage> with DialogPresenter {
 
   @override
   initState() {
-    _registeredDoorsName = account.getAllRegisteredDoorsName();
+    _registeredDoorsName = account.getAllRegisteredDoorNames();
     super.initState();
   }
 
@@ -92,9 +92,6 @@ class _DeleteDoorPage extends State<DeleteDoorPage> with DialogPresenter {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
                         child: ListTile(
                           leading: const Icon(Icons.door_front_door),
                           title: Text(_registeredDoorsName[index]),

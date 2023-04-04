@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user/abstract_class/dialog_presenter.dart';
+import 'package:user/abstract_classes/dialog_presenter.dart';
 
 import 'package:user/utilities/account.dart';
 import 'package:user/utilities/storage.dart';

@@ -9,7 +9,7 @@ import 'package:basic_utils/basic_utils.dart';
 import 'package:user/pages/setup_page.dart';
 import 'package:user/utilities/account.dart';
 import 'package:user/utilities/storage.dart';
-import 'package:user/abstract_class/my_theme.dart';
+import 'package:user/abstract_classes/my_theme.dart';
 
 
 void main() async {
@@ -55,7 +55,7 @@ Future<String> loadShare(String path) async {
   }
   List<int> intBuf = List.filled(200, 0);
   for(int i = 0; i < 200; i++){
-    intBuf[i] = int.parse(StringUtils.reverse(buf.substring(i * 8, i * 8 + 8)), radix: 2);
+    intBuf[i] = int.parse(buf.substring(i * 8, i * 8 + 8), radix: 2);
   }
 
   return base64Encode(intBuf);
@@ -72,6 +72,7 @@ class MyApp extends StatelessWidget with MyTheme {
 
   @override
   Widget build(BuildContext context) {
+    setSystemBar();
     return MaterialApp(
       theme: getThemeData(),
       home: const SetupPage(),

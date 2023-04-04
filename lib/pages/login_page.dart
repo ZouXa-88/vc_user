@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:user/utilities/connector.dart';
-import 'package:user/abstract_class/dialog_presenter.dart';
+import 'package:user/abstract_classes/dialog_presenter.dart';
 import 'package:user/pages/create_account_page.dart';
 import 'package:user/pages/main_page.dart';
 
