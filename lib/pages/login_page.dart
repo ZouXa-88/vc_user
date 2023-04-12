@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:user/utilities/connector.dart';
 import 'package:user/abstract_classes/dialog_presenter.dart';
@@ -72,31 +73,31 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
             child: null,
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.all(20),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: Text(
-                      "登入帳號",
-                      style: TextStyle(
-                        fontSize: 25,
-                        color: Theme.of(context).primaryColor,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                Text(
+                  "登入帳號",
+                  style: TextStyle(
+                    fontSize: 25,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 3,
                   ),
+                ),
+                Lottie.asset(
+                  "assets/lotties/login.json",
+                  width: MediaQuery.of(context).size.width / 2,
+                  height: MediaQuery.of(context).size.width / 2,
                 ),
                 Form(
                   key: _formKey,
                   child: Column(
                     children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
+                      SizedBox(
+                        height: 100,
                         child: TextFormField(
                           initialValue: "",
                           keyboardType: TextInputType.emailAddress,
@@ -110,10 +111,10 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                           validator: (text) {
                             return (text == null || text.isEmpty) ? "請輸入信箱" : null;
                           },
-                        ),
+                          ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 20),
+                      SizedBox(
+                        height: 100,
                         child: TextFormField(
                           initialValue: "",
                           scrollPadding: const EdgeInsets.only(top: 20),
@@ -142,7 +143,7 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
+                        padding: const EdgeInsets.only(bottom: 10),
                         child: ElevatedButton(
                           onPressed: () {
                             if(_formKey.currentState!.validate()){

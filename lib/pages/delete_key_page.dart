@@ -1,20 +1,23 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'package:user/utilities/account.dart';
 import 'package:user/utilities/connector.dart';
 import 'package:user/abstract_classes/dialog_presenter.dart';
 
-class DeleteDoorPage extends StatefulWidget {
-  const DeleteDoorPage({super.key});
+class DeleteKeyPage extends StatefulWidget {
+  const DeleteKeyPage({super.key});
 
   @override
-  State<DeleteDoorPage> createState() => _DeleteDoorPage();
+  State<DeleteKeyPage> createState() => _DeleteKeyPage();
 }
 
-class _DeleteDoorPage extends State<DeleteDoorPage> with DialogPresenter {
+class _DeleteKeyPage extends State<DeleteKeyPage> with DialogPresenter {
 
   late final List<String> _registeredDoorsName;
-
+  bool _hintTextVisible = true;
+  late Timer _hintTextVisibleTimer;
 
   Future<void> _delete(BuildContext context, {required String doorName}) async {
     showProcessingDialog(context, "傳送中...");
@@ -55,7 +58,21 @@ class _DeleteDoorPage extends State<DeleteDoorPage> with DialogPresenter {
   @override
   initState() {
     _registeredDoorsName = account.getAllRegisteredDoorNames();
+    _hintTextVisibleTimer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        setState(() {
+          _hintTextVisible = !_hintTextVisible;
+        });
+      },
+    );
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _hintTextVisibleTimer.cancel();
+    super.dispose();
   }
 
   @override
@@ -63,10 +80,7 @@ class _DeleteDoorPage extends State<DeleteDoorPage> with DialogPresenter {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
-        title: Align(
-          alignment: Alignment.centerRight,
-          child: Text("刪除門鎖", style: TextStyle(color: Theme.of(context).primaryColor),),
-        ),
+        title: const Text("刪除鑰匙"),
         backgroundColor: Colors.grey[100],
         shadowColor: Colors.transparent,
         foregroundColor: Colors.grey,
@@ -82,7 +96,11 @@ class _DeleteDoorPage extends State<DeleteDoorPage> with DialogPresenter {
           children: [
             Container(
               padding: const EdgeInsets.only(bottom: 20),
-              child: const Text("點選要刪除的門鎖"),
+              child: AnimatedOpacity(
+                opacity: _hintTextVisible ? 1.0 : 0.2,
+                duration: const Duration(seconds: 1),
+                child: const Text("點選要刪除的鑰匙"),
+              ),
             ),
             Expanded(
               child: Scrollbar(
@@ -93,10 +111,10 @@ class _DeleteDoorPage extends State<DeleteDoorPage> with DialogPresenter {
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Card(
                         child: ListTile(
-                          leading: const Icon(Icons.door_front_door),
+                          leading: const Icon(Icons.key),
                           title: Text(_registeredDoorsName[index]),
                           onTap: () {
-                            showConfirmDialog(context, "刪除門鎖", description: "確定要刪除 ${_registeredDoorsName[index]}?")
+                            showConfirmDialog(context, "刪除鑰匙", description: "確定要刪除 ${_registeredDoorsName[index]}?")
                               .then((confirm) {
                                 if(confirm){
                                   _delete(context, doorName: _registeredDoorsName[index]);

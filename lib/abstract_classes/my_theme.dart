@@ -5,6 +5,12 @@ abstract class MyTheme {
 
   static const background = Color(0xFFF2F3F8);
 
+  static const green = Color(0xFF2ECC71);
+  static const blue = Color(0xFF3498DB);
+  static const yellow = Color(0xFFF1C40F);
+  static const red = Color(0xFFE74C3C);
+  static const lightGrey = Color(0xFFD0D3D4);
+
   void setSystemBar() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,

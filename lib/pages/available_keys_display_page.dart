@@ -2,17 +2,17 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:user/pages/register_door_page.dart';
 import 'package:user/utilities/account.dart';
 
-class RegisteredDoorDisplayPage extends StatefulWidget {
-  const RegisteredDoorDisplayPage({super.key});
+
+class AvailableKeysDisplayPage extends StatefulWidget {
+  const AvailableKeysDisplayPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _RegisteredDoorDisplayPage();
+  State<StatefulWidget> createState() => _AvailableKeysDisplayPage();
 }
 
-class _RegisteredDoorDisplayPage extends State<RegisteredDoorDisplayPage> {
+class _AvailableKeysDisplayPage extends State<AvailableKeysDisplayPage> {
 
   late final List<String> _registeredDoorsName;
   late final Timer fadeInTimer;
@@ -47,7 +47,7 @@ class _RegisteredDoorDisplayPage extends State<RegisteredDoorDisplayPage> {
     return Scaffold(
       appBar: AppBar(
         toolbarHeight: 80,
-        title: Text("可解鎖的門鎖", style: TextStyle(color: Theme.of(context).primaryColor),),
+        title: const Text("鑰匙清單"),
         backgroundColor: Colors.grey[100],
         foregroundColor: Colors.grey,
         leading: IconButton(
@@ -70,7 +70,7 @@ class _RegisteredDoorDisplayPage extends State<RegisteredDoorDisplayPage> {
                   child: Card(
                     color: Colors.green[100],
                     child: ListTile(
-                      leading: const Icon(Icons.door_front_door),
+                      leading: const Icon(Icons.key),
                       title: Text(_registeredDoorsName[index]),
                     ),
                   ),
@@ -79,24 +79,6 @@ class _RegisteredDoorDisplayPage extends State<RegisteredDoorDisplayPage> {
               physics: const BouncingScrollPhysics(),
             ),
           ),
-        ),
-      ),
-      floatingActionButton: ElevatedButton.icon(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const RegisterDoorPage(),
-            )
-          );
-        },
-        icon: const Icon(Icons.add_outlined),
-        label: const Text("新增門鎖"),
-        style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.all(20),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          backgroundColor: Colors.blue[400],
         ),
       ),
     );

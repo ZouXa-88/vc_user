@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user/abstract_classes/my_theme.dart';
 import 'package:user/pages/validate_page.dart';
 
 import 'package:user/utilities/connector.dart';
@@ -73,6 +74,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
         ],
       ),
       resizeToAvoidBottomInset: false,
+      backgroundColor: MyTheme.background,
       body: Stack(
         children: [
           GestureDetector(
@@ -82,121 +84,124 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
             },
             child: null,
           ),
-          Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextFormField(
-                    initialValue: "",
-                    keyboardType: TextInputType.text,
-                    decoration: const InputDecoration(
-                      labelText: "使用者名稱",
-                      prefixIcon: Icon(Icons.person),
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        _userName = text;
-                      });
-                    },
-                    validator: (text) {
-                      return (text == null || text.isEmpty) ? "請輸入使用者名稱" : null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextFormField(
-                    initialValue: "",
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      labelText: "信箱",
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    onChanged: (text) {
-                      setState(() {
-                        _email = text;
-                      });
-                    },
-                    validator: (text) {
-                      return (text == null || text.isEmpty) ? "請輸入信箱" : null;
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextFormField(
-                    initialValue: "",
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: !_passwordVisible,
-                    decoration: InputDecoration(
-                      labelText: "密碼",
-                      prefixIcon: const Icon(Icons.password),
-                      suffixIcon: IconButton(
-                        icon: _passwordVisible
-                            ? const Icon(Icons.visibility)
-                            : const Icon(Icons.visibility_off),
-                        onPressed: () {
-                          setState(() {
-                            _passwordVisible = !_passwordVisible;
-                          });
-                        },
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 100,
+                    child: TextFormField(
+                      initialValue: "",
+                      keyboardType: TextInputType.text,
+                      decoration: const InputDecoration(
+                        labelText: "使用者名稱",
+                        prefixIcon: Icon(Icons.person),
                       ),
+                      onChanged: (text) {
+                        setState(() {
+                          _userName = text;
+                        });
+                      },
+                      validator: (text) {
+                        return (text == null || text.isEmpty) ? "請輸入使用者名稱" : null;
+                      },
                     ),
-                    onChanged: (text) {
-                      setState(() {
-                        _password = text;
-                      });
-                    },
-                    validator: (text) {
-                      return (text == null || text.isEmpty) ? "請輸入密碼" : null;
-                    },
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: TextFormField(
-                    initialValue: "",
-                    keyboardType: TextInputType.visiblePassword,
-                    obscureText: !_passwordVisible,
-                    decoration: InputDecoration(
-                      labelText: "確認密碼",
-                      prefixIcon: const Icon(Icons.password),
-                      suffixIcon: IconButton(
-                        icon: _passwordVisible
-                            ? const Icon(Icons.visibility)
-                            : const Icon(Icons.visibility_off),
-                        onPressed: () {
-                          setState(() {
-                            _passwordVisible = !_passwordVisible;
-                          });
-                        },
+                  SizedBox(
+                    height: 100,
+                    child: TextFormField(
+                      initialValue: "",
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        labelText: "信箱",
+                        prefixIcon: Icon(Icons.email),
                       ),
+                      onChanged: (text) {
+                        setState(() {
+                          _email = text;
+                        });
+                      },
+                      validator: (text) {
+                        return (text == null || text.isEmpty) ? "請輸入信箱" : null;
+                      },
                     ),
-                    validator: (text) {
-                      if(text == null || text.isEmpty) {
-                        return "請再次輸入密碼";
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: TextFormField(
+                      initialValue: "",
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: !_passwordVisible,
+                      decoration: InputDecoration(
+                        labelText: "密碼",
+                        prefixIcon: const Icon(Icons.password),
+                        suffixIcon: IconButton(
+                          icon: _passwordVisible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        ),
+                      ),
+                      onChanged: (text) {
+                        setState(() {
+                          _password = text;
+                        });
+                      },
+                      validator: (text) {
+                        return (text == null || text.isEmpty) ? "請輸入密碼" : null;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 100,
+                    child: TextFormField(
+                      initialValue: "",
+                      keyboardType: TextInputType.visiblePassword,
+                      obscureText: !_passwordVisible,
+                      decoration: InputDecoration(
+                        labelText: "確認密碼",
+                        prefixIcon: const Icon(Icons.password),
+                        suffixIcon: IconButton(
+                          icon: _passwordVisible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                          onPressed: () {
+                            setState(() {
+                              _passwordVisible = !_passwordVisible;
+                            });
+                          },
+                        ),
+                      ),
+                      validator: (text) {
+                        if(text == null || text.isEmpty) {
+                          return "請再次輸入密碼";
+                        }
+                        if(text != _password){
+                          return "密碼不一致";
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  TextButton.icon(
+                    icon: const Icon(Icons.send),
+                    label: const Text("傳送"),
+                    onPressed: () {
+                      if(_formKey.currentState!.validate()){
+                        _create(context);
                       }
-                      if(text != _password){
-                        return "密碼不一致";
-                      }
-                      return null;
                     },
                   ),
-                ),
-                TextButton.icon(
-                  icon: const Icon(Icons.send),
-                  label: const Text("傳送"),
-                  onPressed: () {
-                    if(_formKey.currentState!.validate()){
-                      _create(context);
-                    }
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

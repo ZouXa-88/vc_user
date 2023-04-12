@@ -1,22 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:user/abstract_classes/my_theme.dart';
+import 'package:user/pages/qr_code_scanner_page.dart';
 
 import 'package:user/utilities/connector.dart';
 import 'package:user/abstract_classes/dialog_presenter.dart';
 
-class RegisterDoorPage extends StatefulWidget {
-  const RegisterDoorPage({super.key});
+class CreateKeyPage extends StatefulWidget {
+
+  final String doorName;
+  final bool enableScan;
+
+  const CreateKeyPage({super.key, this.doorName = "", this.enableScan = false});
 
   @override
-  State<RegisterDoorPage> createState() => _RegisterDoorPage();
+  State<CreateKeyPage> createState() => _CreateKeyPage();
 }
 
-class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
+class _CreateKeyPage extends State<CreateKeyPage> with DialogPresenter {
 
   final _formKey = GlobalKey<FormState>();
-  final _doorNameEditingController = TextEditingController();
   String _doorName = "";
   String _reason = "";
+  late final bool _enableScan;
 
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
@@ -58,24 +64,11 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
     }
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    setState(() {
-      this.controller = controller;
-      this.controller!.resumeCamera();
-    });
-    controller.scannedDataStream.listen((scanData) {
-      List<String>? stringData = scanData.code?.split('&');
-      if(stringData == null || stringData.length != 2 ||
-          !stringData.first.contains("d=") || !stringData.last.contains("s=")){
-        return;
-      }
-
-      String doorName = stringData.first.replaceAll("d=", "");
-      _doorNameEditingController.text = doorName;
-      setState(() {
-        _doorName = doorName;
-      });
-    });
+  @override
+  void initState() {
+    _doorName = widget.doorName;
+    _enableScan = widget.enableScan;
+    super.initState();
   }
 
   @override
@@ -88,8 +81,9 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyTheme.background,
       appBar: AppBar(
-        title: const Text("新增門鎖"),
+        title: const Text("新增鑰匙"),
       ),
       body: Stack(
         children: [
@@ -101,6 +95,7 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
             child: null,
           ),
           Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Form(
                 key: _formKey,
@@ -112,7 +107,7 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
                       padding: const EdgeInsets.all(20),
                       child: TextFormField(
                         keyboardType: TextInputType.text,
-                        controller: _doorNameEditingController,
+                        initialValue: _doorName,
                         decoration: const InputDecoration(
                           labelText: "門鎖名稱",
                           prefixIcon: Icon(Icons.door_back_door),
@@ -134,7 +129,7 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
                         initialValue: "",
                         keyboardType: TextInputType.multiline,
                         decoration: const InputDecoration(
-                          labelText: "新增原因",
+                          labelText: "原因",
                           border: OutlineInputBorder(),
                         ),
                         onChanged: (text) {
@@ -143,7 +138,7 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
                           });
                         },
                         validator: (text) {
-                          return (text == null || text.isEmpty) ? "請輸入新增原因" : null;
+                          return (text == null || text.isEmpty) ? "請輸入原因" : null;
                         },
                       ),
                     ),
@@ -160,53 +155,42 @@ class _RegisterDoorPage extends State<RegisterDoorPage> with DialogPresenter {
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-                      child: const Divider(
-                        color: Colors.black,
-                        height: 36,
+              if(_enableScan) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 10.0, right: 20.0),
+                        child: const Divider(
+                          color: Colors.black,
+                          height: 36,
+                        ),
                       ),
                     ),
-                  ),
-                  const Text("OR"),
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-                      child: const Divider(
-                        color: Colors.black,
-                        height: 36,
+                    const Text("OR"),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 20, right: 10),
+                        child: const Divider(
+                          color: Colors.black,
+                          height: 36,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.qr_code_scanner),
-                  Text("掃門鎖QR Code"),
-                ],
-              ),
-              SizedBox(
-                width: MediaQuery.of(context).size.width - 20,
-                height: MediaQuery.of(context).size.width - 20,
-                child: QRView(
-                  key: qrKey,
-                  onQRViewCreated: _onQRViewCreated,
-                  overlay: QrScannerOverlayShape(
-                    // full screen
-                    borderColor: Theme.of(context).primaryColor,
-                    borderRadius: 0,
-                    borderLength: 0,
-                    borderWidth: 0,
-                    cutOutWidth: MediaQuery.of(context).size.width - 20,
-                    cutOutHeight: MediaQuery.of(context).size.width - 20,
-                  ),
+                  ],
                 ),
-              ),
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => const QrCodeScannerPage(forKeyCreation: true)
+                      )
+                    );
+                  },
+                  icon: const Icon(Icons.qr_code),
+                  label: const Text("掃門鎖QR Code"),
+                ),
+              ]
             ],
           ),
         ],

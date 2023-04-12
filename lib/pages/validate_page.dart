@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:user/abstract_classes/dialog_presenter.dart';
+import 'package:user/abstract_classes/my_theme.dart';
 import 'package:user/utilities/connector.dart';
 
 class ValidatePage extends StatefulWidget {
@@ -49,6 +51,7 @@ class _ValidatePage extends State<ValidatePage> with DialogPresenter {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: MyTheme.background,
       appBar: AppBar(
         title: const Text("驗證信箱"),
         centerTitle: true,
@@ -68,9 +71,18 @@ class _ValidatePage extends State<ValidatePage> with DialogPresenter {
               child: Column(
                 children: [
                   Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Lottie.asset(
+                      "assets/lotties/verify_code.json",
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: MediaQuery.of(context).size.width / 2,
+                    ),
+                  ),
+                  Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: TextFormField(
                       decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.code),
                         labelText: "驗證碼",
                       ),
                       onChanged: (text) {
