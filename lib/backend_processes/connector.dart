@@ -3,7 +3,8 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-// ==========Connector==========
+part 'package:user/objects/connect_response.dart';
+
 
 Connector connector = Connector();
 
@@ -31,7 +32,10 @@ class Connector {
     return _port;
   }
 
-  Future<ConnectResponse> login({required String email, required String password}) async {
+  Future<ConnectResponse> login({
+    required String email,
+    required String password,
+  }) async {
     return _sendRequest(
       requestType: "POST",
       url: Uri.http(_getHost(), "/login"),
@@ -42,7 +46,11 @@ class Connector {
     );
   }
 
-  Future<ConnectResponse> createAccount({required String userName, required String email, required String password}) async {
+  Future<ConnectResponse> createAccount({
+    required String userName,
+    required String email,
+    required String password,
+  }) async {
     return _sendRequest(
       requestType: "POST",
       url: Uri.http(_getHost(), "/createUser"),
@@ -98,31 +106,34 @@ class Connector {
     );
   }
 
-  Future<ConnectResponse> _sendRequest({required String requestType,
-                                        required Uri url,
-                                        required Map<String, dynamic> body}) async {
+  Future<ConnectResponse> _sendRequest({
+    required String requestType,
+    required Uri url,
+    required Map<String, dynamic> body
+  }) async {
     http.Response response;
+    const timeoutDuration = Duration(seconds: 5);
     FutureOr<http.Response> onTimeout() => http.Response(jsonEncode({}), 408);
 
     try{
       if(requestType == "GET"){
         response = await http.get(url, headers: _headers)
           .timeout(
-            const Duration(seconds: 5),
+            timeoutDuration,
             onTimeout: onTimeout,
         );
       }
       else if(requestType == "POST"){
         response = await http.post(url, body: jsonEncode(body), headers: _headers)
           .timeout(
-            const Duration(seconds: 5),
+            timeoutDuration,
             onTimeout: onTimeout,
         );
       }
       else if(requestType == "DELETE"){
         response = await http.delete(url, headers: _headers)
           .timeout(
-            const Duration(seconds: 5),
+            timeoutDuration,
             onTimeout: onTimeout,
         );
       }
@@ -199,41 +210,3 @@ class Connector {
     return "$_serverAddress:$_port";
   }
 }
-
-// ==========Connector==========
-
-// ==========ConnectResponse==========
-
-class ConnectResponse {
-
-  StatusType type;
-  Map<String, dynamic> data;
-
-  ConnectResponse({required this.type, this.data = const {}});
-
-  bool isOk() {
-    return type == StatusType.ok;
-  }
-
-}
-
-// ==========ConnectResponse==========
-
-// ==========StatusType==========
-
-enum StatusType {
-  ok,
-  syntaxError,
-  parameterInUsedError,
-  invalidCredentialCodeError,
-  emailPasswordIncorrectError,
-  objectNotExistError,
-  alreadyAppliedError,
-  youNotHaveThisKeyError,
-  namePasswordInvalidError,
-  notAuthenticatedError,
-  connectionError,
-  unknownError,
-}
-
-// ==========StatusType==========

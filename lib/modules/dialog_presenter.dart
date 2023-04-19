@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:user/pages/login_page.dart';
 
-abstract class DialogPresenter {
+class DialogPresenter {
 
-  void showProcessingDialog(BuildContext context, String processingDescription) {
+  DialogPresenter._();
+
+  static void showProcessingDialog(BuildContext context, String processingDescription) {
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -30,13 +32,7 @@ abstract class DialogPresenter {
     );
   }
 
-  void closeDialog(BuildContext context) {
-    if(context.mounted){
-      Navigator.of(context).pop();
-    }
-  }
-
-  void showProcessResultDialog(BuildContext context, String title, {String description = ""}) {
+  static void showInformDialog(BuildContext context, String title, {String description = ""}) {
     showDialog(
       context: context,
       builder: (context) {
@@ -54,12 +50,13 @@ abstract class DialogPresenter {
     );
   }
 
-  void showRequireLoginDialog(BuildContext context) {
+  static void showRequireLoginDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: const Text("請登入"),
+          icon: const Icon(Icons.login),
           actions: [
             TextButton(
               child: const Text("取消", style: TextStyle(color: Colors.grey)),
@@ -80,7 +77,7 @@ abstract class DialogPresenter {
     );
   }
 
-  Future<bool> showConfirmDialog(BuildContext context, String title, {String description = ""}) async {
+  static Future<bool> showConfirmDialog(BuildContext context, String title, {String description = ""}) async {
     return await showDialog(
       context: context,
       barrierDismissible: false,
@@ -104,5 +101,11 @@ abstract class DialogPresenter {
         );
       },
     );
+  }
+
+  static void closeDialog(BuildContext context) {
+    if(context.mounted){
+      Navigator.of(context).pop();
+    }
   }
 }

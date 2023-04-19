@@ -5,7 +5,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-import 'package:user/utilities/storage.dart';
+import 'package:user/backend_processes/storage.dart';
+
 
 class QrCodeKeyPage extends StatefulWidget {
 

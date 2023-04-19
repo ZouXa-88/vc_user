@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-abstract class MyTheme {
+
+class AppTheme {
 
   static const background = Color(0xFFF2F3F8);
 
   static const green = Color(0xFF2ECC71);
-  static const blue = Color(0xFF3498DB);
+  static const blue = Color(0xFF018DFF);
+  static const brightCyan = Color(0xFF07E7C5);
+  static const cyan = Color(0xFF26BDCF);
   static const yellow = Color(0xFFF1C40F);
+  static const yellowOrange = Color(0xFFF39C12);
+  static const orange = Color(0xFFE67E22);
+  static const brightRed = Color(0xFFFF556F);
   static const red = Color(0xFFE74C3C);
   static const lightGrey = Color(0xFFD0D3D4);
+  static const darkGrey = Color(0xFF7C92A9);
 
-  void setSystemBar() {
+  static const veryLightGreen = Color(0xFFF5FBF5);
+  static const veryLightOrange = Color(0xFFFEF5E7);
+
+
+  AppTheme._();
+
+  static void setSystemTheme() {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.dark, // For Android (dark icons).
@@ -19,7 +32,49 @@ abstract class MyTheme {
     ));
   }
 
-  ThemeData getThemeData() {
+  static InputDecoration getRoundedRectangleInputDecoration({
+    required String labelText,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      labelText: labelText,
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(10),
+        borderSide: const BorderSide(
+          color: Colors.black26,
+        ),
+      ),
+    );
+  }
+
+  static InputDecoration getEllipseInputDecoration({
+    required String labelText,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+  }) {
+    return InputDecoration(
+      labelText: labelText,
+      prefixIcon: prefixIcon,
+      suffixIcon: suffixIcon,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(30),
+        borderSide: const BorderSide(
+          color: Colors.black26,
+        ),
+      ),
+    );
+  }
+
+  static ThemeData getThemeData() {
     return ThemeData(
       splashColor: Colors.transparent,
       primarySwatch: Colors.green,

@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:user/utilities/account.dart';
-import 'package:user/utilities/connector.dart';
-import 'package:user/abstract_classes/dialog_presenter.dart';
+import 'package:user/objects/account.dart';
+import 'package:user/backend_processes/connector.dart';
+import 'package:user/modules/dialog_presenter.dart';
+import 'package:user/modules/app_theme.dart';
+
 
 class DeleteKeyPage extends StatefulWidget {
   const DeleteKeyPage({super.key});
@@ -13,21 +15,21 @@ class DeleteKeyPage extends StatefulWidget {
   State<DeleteKeyPage> createState() => _DeleteKeyPage();
 }
 
-class _DeleteKeyPage extends State<DeleteKeyPage> with DialogPresenter {
+class _DeleteKeyPage extends State<DeleteKeyPage> {
 
   late final List<String> _registeredDoorsName;
   bool _hintTextVisible = true;
   late Timer _hintTextVisibleTimer;
 
-  Future<void> _delete(BuildContext context, {required String doorName}) async {
-    showProcessingDialog(context, "傳送中...");
+  Future<void> _delete({required String doorName}) async {
+    DialogPresenter.showProcessingDialog(context, "傳送中...");
 
     final response = await connector.deleteDoor(doorName: doorName);
 
     if(context.mounted){
-      closeDialog(context);
+      DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        showProcessResultDialog(context, "傳送成功");
+        DialogPresenter.showInformDialog(context, "傳送成功");
       }
       else{
         String errorDescription;
@@ -42,7 +44,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> with DialogPresenter {
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:
-            showRequireLoginDialog(context);
+            DialogPresenter.showRequireLoginDialog(context);
             return;
           case StatusType.unknownError:
             errorDescription = response.data["reason"];
@@ -50,14 +52,14 @@ class _DeleteKeyPage extends State<DeleteKeyPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "傳送失敗", description: errorDescription);
+        DialogPresenter.showInformDialog(context, "傳送失敗", description: errorDescription);
       }
     }
   }
 
   @override
   initState() {
-    _registeredDoorsName = account.getAllRegisteredDoorNames();
+    _registeredDoorsName = account.getAllKeys();
     _hintTextVisibleTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
@@ -79,17 +81,9 @@ class _DeleteKeyPage extends State<DeleteKeyPage> with DialogPresenter {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 80,
         title: const Text("刪除鑰匙"),
-        backgroundColor: Colors.grey[100],
-        shadowColor: Colors.transparent,
-        foregroundColor: Colors.grey,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.background,
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -105,7 +99,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> with DialogPresenter {
             Expanded(
               child: Scrollbar(
                 child: ListView.builder(
-                  itemCount: account.getNumRegisteredDoors(),
+                  itemCount: account.getNumKeys(),
                   itemBuilder: (BuildContext buildContext, int index) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),
@@ -114,11 +108,14 @@ class _DeleteKeyPage extends State<DeleteKeyPage> with DialogPresenter {
                           leading: const Icon(Icons.key),
                           title: Text(_registeredDoorsName[index]),
                           onTap: () {
-                            showConfirmDialog(context, "刪除鑰匙", description: "確定要刪除 ${_registeredDoorsName[index]}?")
-                              .then((confirm) {
-                                if(confirm){
-                                  _delete(context, doorName: _registeredDoorsName[index]);
-                                }
+                            DialogPresenter.showConfirmDialog(
+                              context,
+                              "刪除鑰匙",
+                              description: "確定要刪除 ${_registeredDoorsName[index]}?",
+                            ).then((confirm) {
+                              if(confirm){
+                                _delete(doorName: _registeredDoorsName[index]);
+                              }
                             });
                           },
                         ),

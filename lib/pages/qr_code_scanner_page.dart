@@ -1,27 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import 'package:user/abstract_classes/dialog_presenter.dart';
+import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/pages/create_key_page.dart';
 import 'package:user/pages/qr_code_key_page.dart';
-import 'package:user/utilities/account.dart';
+import 'package:user/objects/account.dart';
 
 
 class QrCodeScannerPage extends StatefulWidget {
 
   final bool forKeyCreation;
+  final bool forDoorCreation;
 
-  const QrCodeScannerPage({Key? key, this.forKeyCreation = false}) : super(key: key);
+  const QrCodeScannerPage({
+    Key? key,
+    this.forKeyCreation = false,
+    this.forDoorCreation = false,
+  }) : super(key: key);
 
   @override
   State<QrCodeScannerPage> createState() => _QrCodeScannerPage();
 }
 
-class _QrCodeScannerPage extends State<QrCodeScannerPage> with DialogPresenter {
+class _QrCodeScannerPage extends State<QrCodeScannerPage> {
 
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   late final bool _forKeyCreation;
+  late final bool _forDoorCreation;
 
 
   bool _isValidFormat(final List<String>? tuple) {
@@ -64,22 +70,21 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> with DialogPresenter {
       else{
         // The user doesn't have this key.
         if(_forKeyCreation){
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => CreateKeyPage(doorName: doorName)
-            )
-          );
+          Navigator.of(context).pop(doorName);
+        }
+        else if(_forDoorCreation){
+          // TODO: For door creation.
         }
         else{
           controller.pauseCamera();
-          showConfirmDialog(context, "您沒有這扇門的鑰匙", description: "想要申請這扇門的鑰匙嗎?")
+          DialogPresenter.showConfirmDialog(context, "您沒有這扇門的鑰匙", description: "想要申請這扇門的鑰匙嗎?")
             .then((confirm) {
               if(confirm){
                 controller.pauseCamera();
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CreateKeyPage(doorName: doorName)
-                  )
+                    builder: (context) => CreateKeyPage(doorName: doorName),
+                  ),
                 ).then((_) {
                   controller.resumeCamera();
                 });
@@ -96,6 +101,7 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> with DialogPresenter {
   @override
   void initState() {
     _forKeyCreation = widget.forKeyCreation;
+    _forDoorCreation = widget.forDoorCreation;
     super.initState();
   }
 

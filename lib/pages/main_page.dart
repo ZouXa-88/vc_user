@@ -1,11 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:user/abstract_classes/dialog_presenter.dart';
-import 'package:user/abstract_classes/my_theme.dart';
-import 'package:user/pages/login_page.dart';
+import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
+
+import 'package:user/backend_processes/notifications_box.dart';
+import 'package:user/backend_processes/updater.dart';
 import 'package:user/screens/home_screen.dart';
 import 'package:user/screens/notification_screen.dart';
-import 'package:user/screens/function_screen.dart';
+import 'package:user/screens/account_screen.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -15,79 +17,68 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPage();
 }
 
-class _MainPage extends State<MainPage> with DialogPresenter {
+class _MainPage extends State<MainPage> {
 
   int _selectedIndex = 0;
-  final _screens = <Widget> [
-    const HomeScreen(),
-    const NotificationScreen(),
-    const FunctionScreen()
-  ];
-  final _titles = <String> [
-    "首頁",
-    "通知",
-    "功能",
-  ];
+  final PageController _pageController = PageController();
 
+
+  @override
+  void initState() {
+    updater.startPeriodicUpdate();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    updater.stopPeriodicUpdate();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _titles[_selectedIndex],
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w400,
-            letterSpacing: 1,
+      bottomNavigationBar: SnakeNavigationBar.color(
+        backgroundColor: Colors.white,
+        currentIndex: _selectedIndex,
+        snakeShape: SnakeShape.indicator,
+        snakeViewColor: CupertinoColors.activeBlue,
+        selectedItemColor: CupertinoColors.activeBlue,
+        unselectedItemColor: CupertinoColors.inactiveGray,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+          _pageController.jumpToPage(index);
+        },
+        items: const <BottomNavigationBarItem> [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
           ),
-        ),
-        shadowColor: Colors.transparent,
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            ),
-            child: const Text("登出", style: TextStyle(color: Colors.red)),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_none),
+            activeIcon: Icon(Icons.notifications),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outlined),
+            activeIcon: Icon(Icons.person),
           ),
         ],
       ),
-      body: _screens[_selectedIndex],
-      bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          border: Border.symmetric(horizontal: BorderSide(color: MyTheme.lightGrey)),
-        ),
-        child: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          currentIndex: _selectedIndex,
-          showSelectedLabels: true,
-          showUnselectedLabels: false,
-          selectedItemColor: Theme.of(context).primaryColor,
-          unselectedItemColor: Colors.black54,
-          items: const <BottomNavigationBarItem> [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-              activeIcon: Icon(Icons.home),
-              label: "首頁",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.notifications_none_outlined),
-              activeIcon: Icon(Icons.notifications),
-              label: "通知",
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.menu_outlined),
-              activeIcon: Icon(Icons.menu),
-              label: "功能",
-            ),
-          ],
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
-        ),
+      body: PageView(
+        controller: _pageController,
+        scrollBehavior: const ScrollBehavior().copyWith(overscroll: false),
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: const <Widget> [
+          HomeScreen(),
+          NotificationScreen(),
+          AccountScreen(),
+        ],
       ),
     );
   }

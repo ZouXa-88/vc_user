@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+
 import 'package:lottie/lottie.dart';
 
-import 'package:user/abstract_classes/dialog_presenter.dart';
-import 'package:user/abstract_classes/my_theme.dart';
-import 'package:user/utilities/connector.dart';
+import 'package:user/modules/dialog_presenter.dart';
+import 'package:user/modules/app_theme.dart';
+import 'package:user/backend_processes/connector.dart';
+
 
 class ValidatePage extends StatefulWidget {
   const ValidatePage({super.key});
@@ -12,21 +14,21 @@ class ValidatePage extends StatefulWidget {
   State<ValidatePage> createState() => _ValidatePage();
 }
 
-class _ValidatePage extends State<ValidatePage> with DialogPresenter {
+class _ValidatePage extends State<ValidatePage> {
 
   final _formKey = GlobalKey<FormState>();
   String _code = "";
 
 
-  Future<void> _validate(BuildContext context) async {
-    showProcessingDialog(context, "傳送中");
+  Future<void> _validate() async {
+    DialogPresenter.showProcessingDialog(context, "傳送中");
 
     ConnectResponse response = await connector.validate(code: _code);
 
     if(context.mounted){
-      closeDialog(context);
+      DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        showProcessResultDialog(context, "驗證成功");
+        DialogPresenter.showInformDialog(context, "驗證成功");
       }
       else{
         String errorDescription;
@@ -43,7 +45,7 @@ class _ValidatePage extends State<ValidatePage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "失敗", description: errorDescription);
+        DialogPresenter.showInformDialog(context, "失敗", description: errorDescription);
       }
     }
   }
@@ -51,10 +53,11 @@ class _ValidatePage extends State<ValidatePage> with DialogPresenter {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyTheme.background,
+      backgroundColor: AppTheme.veryLightOrange,
       appBar: AppBar(
         title: const Text("驗證信箱"),
         centerTitle: true,
+        backgroundColor: AppTheme.veryLightOrange,
       ),
       body: Stack(
         children: [
@@ -81,8 +84,8 @@ class _ValidatePage extends State<ValidatePage> with DialogPresenter {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     child: TextFormField(
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.code),
+                      decoration: AppTheme.getRoundedRectangleInputDecoration(
+                        prefixIcon: const Icon(Icons.code),
                         labelText: "驗證碼",
                       ),
                       onChanged: (text) {
@@ -96,9 +99,13 @@ class _ValidatePage extends State<ValidatePage> with DialogPresenter {
                     ),
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      fixedSize: const Size(100, 40),
+                    ),
                     onPressed: () {
                       if(_formKey.currentState!.validate()) {
-                        _validate(context);
+                        _validate();
                       }
                     },
                     child: const Text("傳送"),

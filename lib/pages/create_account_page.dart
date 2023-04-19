@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:user/abstract_classes/my_theme.dart';
-import 'package:user/pages/validate_page.dart';
 
-import 'package:user/utilities/connector.dart';
-import 'package:user/abstract_classes/dialog_presenter.dart';
+import 'package:user/pages/validate_page.dart';
+import 'package:user/backend_processes/connector.dart';
+import 'package:user/modules/app_theme.dart';
+import 'package:user/modules/dialog_presenter.dart';
+
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
@@ -12,7 +13,7 @@ class CreateAccountPage extends StatefulWidget {
   State<CreateAccountPage> createState() => _CreateAccountPage();
 }
 
-class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
+class _CreateAccountPage extends State<CreateAccountPage> {
 
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
@@ -22,13 +23,13 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
   String _password = "";
 
 
-  Future<void> _create(BuildContext context) async {
-    showProcessingDialog(context, "註冊中...");
+  Future<void> _create() async {
+    DialogPresenter.showProcessingDialog(context, "註冊中...");
 
     ConnectResponse response = await connector.createAccount(userName: _userName, email: _email, password: _password);
 
     if(context.mounted) {
-      closeDialog(context);
+      DialogPresenter.closeDialog(context);
       if(response.isOk()){
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const ValidatePage())
@@ -52,7 +53,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "傳送失敗", description: errorDescription);
+        DialogPresenter.showInformDialog(context, "傳送失敗", description: errorDescription);
       }
     }
   }
@@ -62,19 +63,27 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
     return Scaffold(
       appBar: AppBar(
         title: const Text("註冊帳號"),
+        backgroundColor: AppTheme.veryLightOrange,
         actions: [
           TextButton(
-            child: const Text("Skip"),
+            child: const Text(
+              "Skip",
+              style: TextStyle(
+                color: Colors.orange,
+              ),
+            ),
             onPressed: () {
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const ValidatePage())
+                MaterialPageRoute(
+                  builder: (context) => const ValidatePage(),
+                ),
               );
             },
           ),
         ],
       ),
       resizeToAvoidBottomInset: false,
-      backgroundColor: MyTheme.background,
+      backgroundColor: AppTheme.veryLightOrange,
       body: Stack(
         children: [
           GestureDetector(
@@ -97,9 +106,9 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                     child: TextFormField(
                       initialValue: "",
                       keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
+                      decoration: AppTheme.getEllipseInputDecoration(
                         labelText: "使用者名稱",
-                        prefixIcon: Icon(Icons.person),
+                        prefixIcon: const Icon(Icons.person),
                       ),
                       onChanged: (text) {
                         setState(() {
@@ -116,9 +125,9 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                     child: TextFormField(
                       initialValue: "",
                       keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
+                      decoration: AppTheme.getEllipseInputDecoration(
                         labelText: "信箱",
-                        prefixIcon: Icon(Icons.email),
+                        prefixIcon: const Icon(Icons.email),
                       ),
                       onChanged: (text) {
                         setState(() {
@@ -136,7 +145,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                       initialValue: "",
                       keyboardType: TextInputType.visiblePassword,
                       obscureText: !_passwordVisible,
-                      decoration: InputDecoration(
+                      decoration: AppTheme.getEllipseInputDecoration(
                         labelText: "密碼",
                         prefixIcon: const Icon(Icons.password),
                         suffixIcon: IconButton(
@@ -166,7 +175,7 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                       initialValue: "",
                       keyboardType: TextInputType.visiblePassword,
                       obscureText: !_passwordVisible,
-                      decoration: InputDecoration(
+                      decoration: AppTheme.getEllipseInputDecoration(
                         labelText: "確認密碼",
                         prefixIcon: const Icon(Icons.password),
                         suffixIcon: IconButton(
@@ -191,14 +200,17 @@ class _CreateAccountPage extends State<CreateAccountPage> with DialogPresenter {
                       },
                     ),
                   ),
-                  TextButton.icon(
-                    icon: const Icon(Icons.send),
-                    label: const Text("傳送"),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange,
+                      fixedSize: const Size(100, 40),
+                    ),
                     onPressed: () {
                       if(_formKey.currentState!.validate()){
-                        _create(context);
+                        _create();
                       }
                     },
+                    child: const Text("傳送"),
                   ),
                 ],
               ),

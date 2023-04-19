@@ -2,7 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:user/utilities/account.dart';
+import 'package:user/modules/app_theme.dart';
+import 'package:user/objects/account.dart';
 
 
 class AvailableKeysDisplayPage extends StatefulWidget {
@@ -21,7 +22,7 @@ class _AvailableKeysDisplayPage extends State<AvailableKeysDisplayPage> {
 
   @override
   void initState() {
-    _registeredDoorsName = account.getAllRegisteredDoorNames();
+    _registeredDoorsName = account.getAllKeys();
     _fadeInCardRespectively();
     super.initState();
   }
@@ -46,16 +47,9 @@ class _AvailableKeysDisplayPage extends State<AvailableKeysDisplayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 80,
         title: const Text("鑰匙清單"),
-        backgroundColor: Colors.grey[100],
-        foregroundColor: Colors.grey,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_rounded),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
-      backgroundColor: Colors.grey[100],
+      backgroundColor: AppTheme.background,
       body: Padding(
         padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
         child: Scrollbar(
@@ -63,12 +57,11 @@ class _AvailableKeysDisplayPage extends State<AvailableKeysDisplayPage> {
             opacity: cardVisible ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 800),
             child: ListView.builder(
-              itemCount: account.getNumRegisteredDoors(),
+              itemCount: account.getNumKeys(),
               itemBuilder: (BuildContext buildContext, int index) {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: Card(
-                    color: Colors.green[100],
                     child: ListTile(
                       leading: const Icon(Icons.key),
                       title: Text(_registeredDoorsName[index]),

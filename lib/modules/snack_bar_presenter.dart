@@ -1,0 +1,6 @@
+class SnackBarPresenter {
+
+  SnackBarPresenter._();
+
+
+}

@@ -1,56 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:user/abstract_classes/dialog_presenter.dart';
+import 'package:user/modules/default_account_handler.dart';
 
-import 'package:user/utilities/account.dart';
-import 'package:user/utilities/storage.dart';
-import 'package:user/pages/main_page.dart';
+import 'package:user/objects/account.dart';
+import 'package:user/backend_processes/storage.dart';
 import 'package:user/pages/login_page.dart';
 
 
-class SetupPage extends StatelessWidget with DialogPresenter {
+class SetupPage extends StatelessWidget {
   const SetupPage({super.key});
 
   Future<void> _setup(BuildContext context) async {
+    await storage.initialize();
+    await DefaultAccountHandler.storeDefaultAccount();
     String? encodedAccountData = await storage.loadAccountData();
 
-    // TODO: Remove test version.
-    // Test version.
-    // --------------------
     if(encodedAccountData != null){
       account = Account.from(encodedAccountData);
     }
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginPage(),
-      ),
-    );
-    // --------------------
-
-    // General version.
-    // --------------------
-    /*
     if(context.mounted) {
-      if(encodedAccountData != null){
-        currentAccount = Account.from(encodedAccountData);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MainPage(),
-          ),
-        );
-      }
-      else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const LoginPage(),
-          ),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+      );
     }
-    */
-    // --------------------
   }
 
   @override

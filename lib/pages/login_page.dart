@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+
 import 'package:lottie/lottie.dart';
 
-import 'package:user/utilities/connector.dart';
-import 'package:user/abstract_classes/dialog_presenter.dart';
+import 'package:user/backend_processes/connector.dart';
+import 'package:user/modules/app_theme.dart';
+import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/pages/create_account_page.dart';
 import 'package:user/pages/main_page.dart';
 
@@ -14,22 +16,24 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPage();
 }
 
-class _LoginPage extends State<LoginPage> with DialogPresenter {
+class _LoginPage extends State<LoginPage> {
 
   final _formKey = GlobalKey<FormState>();
   bool _passwordVisible = false;
+  bool _isLogging = false;
 
   String _email = "";
   String _password = "";
 
 
-  Future<void> _login(BuildContext context) async {
-    showProcessingDialog(context, "登入中...");
+  Future<void> _login() async {
+    setState(() {
+      _isLogging = true;
+    });
 
     ConnectResponse response = await connector.login(email: _email, password: _password);
 
     if(context.mounted) {
-      closeDialog(context);
       if(response.isOk()){
         Navigator.pushReplacement(
           context,
@@ -53,16 +57,20 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "登入失敗", description: errorDescription);
+        DialogPresenter.showInformDialog(context, "登入失敗", description: errorDescription);
       }
     }
+
+    setState(() {
+      _isLogging = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: const Color(0xFFF5FBF5),
+      backgroundColor: AppTheme.veryLightGreen,
       body: Stack(
         children: [
           GestureDetector(
@@ -101,9 +109,9 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                         child: TextFormField(
                           initialValue: "",
                           keyboardType: TextInputType.emailAddress,
-                          decoration: const InputDecoration(
+                          decoration: AppTheme.getEllipseInputDecoration(
                             labelText: "信箱",
-                            prefixIcon: Icon(Icons.email),
+                            prefixIcon: const Icon(Icons.email),
                           ),
                           onChanged: (text) {
                             _email = text;
@@ -120,7 +128,7 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                           scrollPadding: const EdgeInsets.only(top: 20),
                           keyboardType: TextInputType.visiblePassword,
                           obscureText: !_passwordVisible,
-                          decoration: InputDecoration(
+                          decoration: AppTheme.getEllipseInputDecoration(
                             labelText: "密碼",
                             prefixIcon: const Icon(Icons.password),
                             suffixIcon: IconButton(
@@ -147,7 +155,7 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                         child: ElevatedButton(
                           onPressed: () {
                             if(_formKey.currentState!.validate()){
-                              _login(context);
+                              _login();
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -156,7 +164,9 @@ class _LoginPage extends State<LoginPage> with DialogPresenter {
                             ),
                             fixedSize: const Size(200, 50),
                           ),
-                          child: const Text("登入"),
+                          child: _isLogging
+                            ? const CircularProgressIndicator(color: Colors.white)
+                            : const Text("登入"),
                         ),
                       ),
                     ],

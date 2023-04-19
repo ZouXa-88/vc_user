@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:user/abstract_classes/my_theme.dart';
-import 'package:user/pages/qr_code_scanner_page.dart';
 
-import 'package:user/utilities/connector.dart';
-import 'package:user/abstract_classes/dialog_presenter.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
+
+import 'package:user/pages/qr_code_scanner_page.dart';
+import 'package:user/backend_processes/connector.dart';
+import 'package:user/modules/dialog_presenter.dart';
+import 'package:user/modules/app_theme.dart';
+
 
 class CreateKeyPage extends StatefulWidget {
 
@@ -17,26 +19,29 @@ class CreateKeyPage extends StatefulWidget {
   State<CreateKeyPage> createState() => _CreateKeyPage();
 }
 
-class _CreateKeyPage extends State<CreateKeyPage> with DialogPresenter {
+class _CreateKeyPage extends State<CreateKeyPage> {
 
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController _doorNameController = TextEditingController();
+
   String _doorName = "";
   String _reason = "";
+
   late final bool _enableScan;
 
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
 
-  Future<void> _register(BuildContext context) async {
-    showProcessingDialog(context, "傳送中...");
+  Future<void> _register() async {
+    DialogPresenter.showProcessingDialog(context, "傳送中...");
 
     ConnectResponse response = await connector.registerDoor(doorName: _doorName);
 
     if(context.mounted){
-      closeDialog(context);
+      DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        showProcessResultDialog(context, "傳送成功");
+        DialogPresenter.showInformDialog(context, "傳送成功");
       }
       else{
         String errorDescription;
@@ -51,7 +56,7 @@ class _CreateKeyPage extends State<CreateKeyPage> with DialogPresenter {
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:
-            showRequireLoginDialog(context);
+            DialogPresenter.showRequireLoginDialog(context);
             return;
           case StatusType.unknownError:
             errorDescription = response.data["reason"];
@@ -59,7 +64,7 @@ class _CreateKeyPage extends State<CreateKeyPage> with DialogPresenter {
           default:
             errorDescription = "";
         }
-        showProcessResultDialog(context, "傳送失敗", description: errorDescription);
+        DialogPresenter.showInformDialog(context, "傳送失敗", description: errorDescription);
       }
     }
   }
@@ -81,10 +86,10 @@ class _CreateKeyPage extends State<CreateKeyPage> with DialogPresenter {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: MyTheme.background,
       appBar: AppBar(
         title: const Text("新增鑰匙"),
       ),
+      backgroundColor: AppTheme.background,
       body: Stack(
         children: [
           GestureDetector(
@@ -95,7 +100,7 @@ class _CreateKeyPage extends State<CreateKeyPage> with DialogPresenter {
             child: null,
           ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Form(
                 key: _formKey,
@@ -103,14 +108,35 @@ class _CreateKeyPage extends State<CreateKeyPage> with DialogPresenter {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const QrCodeScannerPage(forKeyCreation: true),
+                          ),
+                        ).then((doorName) {
+                          _doorNameController.text = doorName;
+                          setState(() {
+                            _doorName = _doorName;
+                          });
+                        });
+                      },
+                      child: const Text(
+                        "掃門鎖QR Code",
+                        style: TextStyle(
+                          fontSize: 16,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
                     Padding(
                       padding: const EdgeInsets.all(20),
                       child: TextFormField(
                         keyboardType: TextInputType.text,
-                        initialValue: _doorName,
-                        decoration: const InputDecoration(
+                        controller: _doorNameController,
+                        decoration: AppTheme.getEllipseInputDecoration(
                           labelText: "門鎖名稱",
-                          prefixIcon: Icon(Icons.door_back_door),
+                          prefixIcon: const Icon(Icons.door_back_door),
                         ),
                         onChanged: (text) {
                           setState(() {
@@ -143,54 +169,20 @@ class _CreateKeyPage extends State<CreateKeyPage> with DialogPresenter {
                       ),
                     ),
                     */
-                    TextButton.icon(
-                      icon: const Icon(Icons.send),
-                      label: const Text("傳送"),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(100, 40),
+                      ),
+                      child: const Text("傳送"),
                       onPressed: () {
                         if(_formKey.currentState!.validate()){
-                          _register(context);
+                          _register();
                         }
                       },
                     ),
                   ],
                 ),
               ),
-              if(_enableScan) ...[
-                Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-                        child: const Divider(
-                          color: Colors.black,
-                          height: 36,
-                        ),
-                      ),
-                    ),
-                    const Text("OR"),
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(left: 20, right: 10),
-                        child: const Divider(
-                          color: Colors.black,
-                          height: 36,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(
-                        builder: (context) => const QrCodeScannerPage(forKeyCreation: true)
-                      )
-                    );
-                  },
-                  icon: const Icon(Icons.qr_code),
-                  label: const Text("掃門鎖QR Code"),
-                ),
-              ]
             ],
           ),
         ],
