@@ -4,6 +4,7 @@ import 'package:lottie/lottie.dart';
 
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/modules/app_theme.dart';
+import 'package:user/modules/default_account_handler.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/pages/create_account_page.dart';
 import 'package:user/pages/main_page.dart';
@@ -47,6 +48,9 @@ class _LoginPage extends State<LoginPage> {
         switch(response.type){
           case StatusType.emailPasswordIncorrectError:
             errorDescription = "信箱或密碼不正確";
+            break;
+          case StatusType.programExceptionError:
+            errorDescription = response.data["reason"];
             break;
           case StatusType.connectionError:
             errorDescription = "無法連線";
@@ -240,8 +244,9 @@ class _LoginPage extends State<LoginPage> {
                   },
                 ),
                 TextButton(
-                  child: const Text("Skip"),
+                  child: const Text("使用預設帳號登入"),
                   onPressed: () {
+                    DefaultAccountHandler.addDefaultNotifications();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

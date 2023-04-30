@@ -24,7 +24,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
   Future<void> _delete({required String doorName}) async {
     DialogPresenter.showProcessingDialog(context, "傳送中...");
 
-    final response = await connector.deleteDoor(doorName: doorName);
+    final response = await connector.deleteKey(doorName: doorName);
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);
@@ -37,14 +37,17 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
           case StatusType.objectNotExistError:
             errorDescription = "此門($doorName)不存在";
             break;
-          case StatusType.youNotHaveThisKeyError:
+          case StatusType.youDoNotHaveThisKeyError:
             errorDescription = "您未擁有這扇門的鑰匙";
+            break;
+          case StatusType.programExceptionError:
+            errorDescription = response.data["reason"];
             break;
           case StatusType.connectionError:
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:
-            DialogPresenter.showRequireLoginDialog(context);
+            errorDescription = "請登入";
             return;
           case StatusType.unknownError:
             errorDescription = response.data["reason"];

@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 part 'package:user/objects/connect_response.dart';
 
 
-Connector connector = Connector();
+final Connector connector = Connector();
 
 class Connector {
 
@@ -14,6 +14,10 @@ class Connector {
   int _port = 8000;
 
   final Map<String, String> _headers = {"Content-Type": "application/json"};
+
+  final _timeoutDuration = const Duration(seconds: 5);
+  FutureOr<http.Response> _onTimeout() => http.Response(jsonEncode({}), 408);
+  http.Response _onException(String e) => http.Response(jsonEncode({"reason": e}), 422);
 
 
   void setServerAddress(final String serverAddress) {
@@ -36,116 +40,15 @@ class Connector {
     required String email,
     required String password,
   }) async {
-    return _sendRequest(
-      requestType: "POST",
+    final response = await _post(
       url: Uri.http(_getHost(), "/login"),
       body: {
         "email": email,
         "password": password,
       },
     );
-  }
-
-  Future<ConnectResponse> createAccount({
-    required String userName,
-    required String email,
-    required String password,
-  }) async {
-    return _sendRequest(
-      requestType: "POST",
-      url: Uri.http(_getHost(), "/createUser"),
-      body: {
-        "userName": userName,
-        "email": email,
-        "password": password,
-      },
-    );
-  }
-
-  Future<ConnectResponse> validate({required String code}) async {
-    return _sendRequest(
-      requestType: "GET",
-      url: Uri.http(_getHost(), "/validateEmail?code=$code"),
-      body: {},
-    );
-  }
-
-  Future<ConnectResponse> registerDoor({required String doorName}) async {
-    return _sendRequest(
-      requestType: "POST",
-      url: Uri.http(_getHost(), "/requestKey"),
-      body: {
-        "doorName": doorName,
-      },
-    );
-  }
-
-  Future<ConnectResponse> deleteDoor({required String doorName}) async {
-    return _sendRequest(
-      requestType: "POST",
-      url: Uri.http(_getHost(), "/deleteKey"),
-      body: {
-        "doorName": doorName,
-      },
-    );
-  }
-
-  Future<ConnectResponse> update() async {
-    return _sendRequest(
-      requestType: "GET",
-      url: Uri.http(_getHost(), "/userUpdate"),
-      body: {},
-    );
-  }
-
-  Future<ConnectResponse> deleteAccount() async {
-    return _sendRequest(
-      requestType: "DELETE",
-      url: Uri.http(_getHost(), "/deleteUser"),
-      body: {},
-    );
-  }
-
-  Future<ConnectResponse> _sendRequest({
-    required String requestType,
-    required Uri url,
-    required Map<String, dynamic> body
-  }) async {
-    http.Response response;
-    const timeoutDuration = Duration(seconds: 5);
-    FutureOr<http.Response> onTimeout() => http.Response(jsonEncode({}), 408);
-
-    try{
-      if(requestType == "GET"){
-        response = await http.get(url, headers: _headers)
-          .timeout(
-            timeoutDuration,
-            onTimeout: onTimeout,
-        );
-      }
-      else if(requestType == "POST"){
-        response = await http.post(url, body: jsonEncode(body), headers: _headers)
-          .timeout(
-            timeoutDuration,
-            onTimeout: onTimeout,
-        );
-      }
-      else if(requestType == "DELETE"){
-        response = await http.delete(url, headers: _headers)
-          .timeout(
-            timeoutDuration,
-            onTimeout: onTimeout,
-        );
-      }
-      else{
-        return ConnectResponse(type: StatusType.syntaxError);
-      }
-    }
-    catch(e){
-      return ConnectResponse(type: StatusType.unknownError, data: {"reason": e.toString()});
-    }
-
     final responseBody = _getResponseBody(response);
+
     if(response.statusCode == 200) {
       _updateCookie(response);
     }
@@ -154,6 +57,147 @@ class Connector {
       type: _toStatusType(response.statusCode, responseBody["code"]),
       data: responseBody,
     );
+  }
+
+  Future<ConnectResponse> createAccount({
+    required String userName,
+    required String email,
+    required String password,
+  }) async {
+    final response = await _post(
+      url: Uri.http(_getHost(), "/createUser"),
+      body: {
+        "userName": userName,
+        "email": email,
+        "password": password,
+      },
+    );
+    final responseBody = _getResponseBody(response);
+
+    return ConnectResponse(
+      type: _toStatusType(response.statusCode, responseBody["code"]),
+      data: responseBody,
+    );
+  }
+
+  Future<ConnectResponse> validate({required String code}) async {
+    final response = await _get(
+      url: Uri.http(_getHost(), "/validateEmail?code=$code"),
+    );
+    final responseBody = _getResponseBody(response);
+
+    return ConnectResponse(
+      type: _toStatusType(response.statusCode, responseBody["code"]),
+      data: responseBody,
+    );
+  }
+
+  Future<ConnectResponse> applyKey({required String doorName}) async {
+    final response = await _post(
+      url: Uri.http(_getHost(), "/requestKey"),
+      body: {
+        "doorName": doorName,
+      },
+    );
+    final responseBody = _getResponseBody(response);
+
+    return ConnectResponse(
+      type: _toStatusType(response.statusCode, responseBody["code"]),
+      data: responseBody,
+    );
+  }
+
+  Future<ConnectResponse> deleteKey({required String doorName}) async {
+    final response = await _post(
+      url: Uri.http(_getHost(), "/deleteKey"),
+      body: {
+        "doorName": doorName,
+      },
+    );
+    final responseBody = _getResponseBody(response);
+
+    return ConnectResponse(
+      type: _toStatusType(response.statusCode, responseBody["code"]),
+      data: responseBody,
+    );
+  }
+
+  Future<ConnectResponse> update() async {
+    final response = await _get(
+      url: Uri.http(_getHost(), "/userUpdate"),
+    );
+    final responseBody = _getResponseBody(response);
+
+    return ConnectResponse(
+      type: _toStatusType(response.statusCode, responseBody["code"]),
+      data: responseBody,
+    );
+  }
+
+  Future<ConnectResponse> deleteAccount() async {
+    final response = await _delete(
+      url: Uri.http(_getHost(), "/deleteUser"),
+      body: {},
+    );
+    final responseBody = _getResponseBody(response);
+
+    return ConnectResponse(
+      type: _toStatusType(response.statusCode, responseBody["code"]),
+      data: responseBody,
+    );
+  }
+
+  Future<http.Response> _post({
+    required Uri url,
+    required Map<String, dynamic> body,
+  }) async {
+    try{
+      return http.post(
+        url,
+        body: jsonEncode(body),
+        headers: _headers,
+      ).timeout(
+        _timeoutDuration,
+        onTimeout: _onTimeout,
+      );
+    }
+    catch(e){
+      return _onException(e.toString());
+    }
+  }
+
+  Future<http.Response> _get({required Uri url}) async {
+    try{
+      return http.get(
+        url,
+        headers: _headers,
+      ).timeout(
+        _timeoutDuration,
+        onTimeout: _onTimeout,
+      );
+    }
+    catch(e){
+      return _onException(e.toString());
+    }
+  }
+
+  Future<http.Response> _delete({
+    required Uri url,
+    required Map<String, dynamic> body,
+  }) async {
+    try{
+      return http.delete(
+        url,
+        body: jsonEncode(body),
+        headers: _headers,
+      ).timeout(
+        _timeoutDuration,
+        onTimeout: _onTimeout,
+      );
+    }
+    catch(e){
+      return _onException(e.toString());
+    }
   }
 
   Map<String, dynamic> _getResponseBody(http.Response response) {
@@ -191,7 +235,7 @@ class Connector {
           case 6:
             return StatusType.alreadyAppliedError;
           case 7:
-            return StatusType.youNotHaveThisKeyError;
+            return StatusType.youDoNotHaveThisKeyError;
           case 8:
             return StatusType.namePasswordInvalidError;
           default:
@@ -201,6 +245,8 @@ class Connector {
         return StatusType.notAuthenticatedError;
       case 408:
         return StatusType.connectionError;
+      case 422:
+        return StatusType.programExceptionError;
       default:
         return StatusType.unknownError;
     }

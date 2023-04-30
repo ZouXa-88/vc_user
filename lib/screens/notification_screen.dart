@@ -27,7 +27,7 @@ class _NotificationScreen extends State<NotificationScreen> {
           ),
         ),
       ),
-      body: notificationsBox.hasNewNotifications()
+      body: notificationsBox.hasNotifications()
       ? Scrollbar(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -35,8 +35,37 @@ class _NotificationScreen extends State<NotificationScreen> {
             physics: const BouncingScrollPhysics(),
             itemCount: notificationsBox.getNumNotifications(),
             itemBuilder: (context, index) {
-              // TODO: Display notifications.
-              return Container();
+              final notification = notificationsBox.getNotificationByIndex(index);
+              return Card(
+                child: ExpansionTile(
+                  title: Text(notification.title),
+                  subtitle: notification.isNew
+                      ? const Text(
+                        "新訊息",
+                        style: TextStyle(color: Colors.redAccent),
+                      )
+                      : null,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  childrenPadding: const EdgeInsets.symmetric(vertical: 10),
+                  children: [
+                    Text(
+                      notification.content,
+                      style: const TextStyle(
+                        fontSize: 17,
+                      ),
+                    ),
+                  ],
+                  onExpansionChanged: (isExpanded) {
+                    if(isExpanded && notification.isNew){
+                      setState(() {
+                        notification.pickUp();
+                      });
+                    }
+                  },
+                ),
+              );
             },
           ),
         ),

@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:user/modules/dialog_presenter.dart';
@@ -6,6 +5,7 @@ import 'package:user/modules/app_theme.dart';
 import 'package:user/objects/account.dart';
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/pages/login_page.dart';
+import 'package:user/pages/setting_page.dart';
 
 
 class AccountScreen extends StatefulWidget {
@@ -30,11 +30,14 @@ class _AccountScreen extends State<AccountScreen> {
       else{
         String errorDescription;
         switch(response.type){
+          case StatusType.programExceptionError:
+            errorDescription = response.data["reason"];
+            break;
           case StatusType.connectionError:
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:
-            DialogPresenter.showRequireLoginDialog(context);
+            errorDescription = "請登入";
             return;
           case StatusType.unknownError:
             errorDescription = response.data["reason"];
@@ -63,14 +66,6 @@ class _AccountScreen extends State<AccountScreen> {
             decoration: BoxDecoration(
               color: backgroundColor,
               borderRadius: const BorderRadius.all(Radius.circular(30)),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.3),
-                  spreadRadius: 3,
-                  blurRadius: 3,
-                  offset: Offset.fromDirection(45, 1),
-                ),
-              ],
             ),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -140,9 +135,18 @@ class _AccountScreen extends State<AccountScreen> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     _optionButton(
+                      label: "設定",
+                      iconData: Icons.settings,
+                      backgroundColor: Colors.grey,
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SettingPage()),
+                      ),
+                    ),
+                    _optionButton(
                       label: "登出",
                       iconData: Icons.logout,
-                      backgroundColor: CupertinoColors.systemGreen,
+                      backgroundColor: Colors.blueAccent,
                       onPressed: () => Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -151,7 +155,7 @@ class _AccountScreen extends State<AccountScreen> {
                     _optionButton(
                       label: "刪除帳號",
                       iconData: Icons.delete,
-                      backgroundColor: CupertinoColors.systemRed,
+                      backgroundColor: Colors.redAccent,
                       onPressed: () {
                         DialogPresenter.showConfirmDialog(
                           context,

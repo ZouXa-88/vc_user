@@ -10,12 +10,10 @@ import 'package:user/objects/account.dart';
 class QrCodeScannerPage extends StatefulWidget {
 
   final bool forKeyCreation;
-  final bool forDoorCreation;
 
   const QrCodeScannerPage({
     Key? key,
     this.forKeyCreation = false,
-    this.forDoorCreation = false,
   }) : super(key: key);
 
   @override
@@ -27,7 +25,6 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   late final bool _forKeyCreation;
-  late final bool _forDoorCreation;
 
 
   bool _isValidFormat(final List<String>? tuple) {
@@ -72,9 +69,6 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
         if(_forKeyCreation){
           Navigator.of(context).pop(doorName);
         }
-        else if(_forDoorCreation){
-          // TODO: For door creation.
-        }
         else{
           controller.pauseCamera();
           DialogPresenter.showConfirmDialog(context, "您沒有這扇門的鑰匙", description: "想要申請這扇門的鑰匙嗎?")
@@ -101,7 +95,6 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
   @override
   void initState() {
     _forKeyCreation = widget.forKeyCreation;
-    _forDoorCreation = widget.forDoorCreation;
     super.initState();
   }
 

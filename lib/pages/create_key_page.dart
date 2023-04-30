@@ -36,7 +36,7 @@ class _CreateKeyPage extends State<CreateKeyPage> {
   Future<void> _register() async {
     DialogPresenter.showProcessingDialog(context, "傳送中...");
 
-    ConnectResponse response = await connector.registerDoor(doorName: _doorName);
+    ConnectResponse response = await connector.applyKey(doorName: _doorName);
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);
@@ -52,11 +52,14 @@ class _CreateKeyPage extends State<CreateKeyPage> {
           case StatusType.alreadyAppliedError:
             errorDescription = "$_doorName已經申請過";
             break;
+          case StatusType.programExceptionError:
+            errorDescription = response.data["reason"];
+            break;
           case StatusType.connectionError:
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:
-            DialogPresenter.showRequireLoginDialog(context);
+            errorDescription = "請登入";
             return;
           case StatusType.unknownError:
             errorDescription = response.data["reason"];

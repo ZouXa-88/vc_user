@@ -19,7 +19,7 @@ class AppTheme {
   static const darkGrey = Color(0xFF7C92A9);
 
   static const veryLightGreen = Color(0xFFF5FBF5);
-  static const veryLightOrange = Color(0xFFFEF5E7);
+  static const veryLightOrange = Color(0xFFFBF9F5);
 
 
   AppTheme._();

@@ -16,8 +16,8 @@ class AvailableKeysDisplayPage extends StatefulWidget {
 class _AvailableKeysDisplayPage extends State<AvailableKeysDisplayPage> {
 
   late final List<String> _registeredDoorsName;
-  late final Timer fadeInTimer;
-  bool cardVisible = false;
+  late final Timer _fadeInTimer;
+  bool _cardVisible = false;
 
 
   @override
@@ -28,17 +28,17 @@ class _AvailableKeysDisplayPage extends State<AvailableKeysDisplayPage> {
   }
 
   Future<void> _fadeInCardRespectively() async {
-    fadeInTimer = Timer(const Duration(microseconds: 1), () {
+    _fadeInTimer = Timer(const Duration(microseconds: 1), () {
       setState(() {
-        cardVisible = true;
+        _cardVisible = true;
       });
     });
   }
 
   @override
   void dispose() {
-    if(fadeInTimer.isActive){
-      fadeInTimer.cancel();
+    if(_fadeInTimer.isActive){
+      _fadeInTimer.cancel();
     }
     super.dispose();
   }
@@ -54,7 +54,7 @@ class _AvailableKeysDisplayPage extends State<AvailableKeysDisplayPage> {
         padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
         child: Scrollbar(
           child: AnimatedOpacity(
-            opacity: cardVisible ? 1.0 : 0.0,
+            opacity: _cardVisible ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 800),
             child: ListView.builder(
               itemCount: account.getNumKeys(),

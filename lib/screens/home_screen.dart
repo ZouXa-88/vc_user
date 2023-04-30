@@ -6,6 +6,7 @@ import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/modules/app_theme.dart';
 import 'package:user/modules/page_switcher.dart';
 import 'package:user/pages/delete_key_page.dart';
+import 'package:user/pages/inform_blacklist_page.dart';
 import 'package:user/pages/qr_code_scanner_page.dart';
 import 'package:user/pages/create_key_page.dart';
 import 'package:user/pages/available_keys_display_page.dart';
@@ -27,7 +28,6 @@ class _HomeScreen extends State<HomeScreen> {
   Future<void> _update() async {
     DialogPresenter.showProcessingDialog(context, "更新中");
 
-    //await updater.forceUpdate();
     ConnectResponse response = await connector.update();
 
     List<String>? deleteDoors = response.data["deleteDoors"];
@@ -54,11 +54,14 @@ class _HomeScreen extends State<HomeScreen> {
       else{
         String errorDescription;
         switch(response.type){
+          case StatusType.programExceptionError:
+            errorDescription = response.data["reason"];
+            break;
           case StatusType.connectionError:
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:
-            DialogPresenter.showRequireLoginDialog(context);
+            errorDescription = "請登入";
             return;
           case StatusType.unknownError:
             errorDescription = response.data["reason"];
@@ -173,10 +176,75 @@ class _HomeScreen extends State<HomeScreen> {
       ),
       child: Icon(
         iconData,
-        size: 40,
+        size: 35,
         color: Colors.white,
       ),
     );
+  }
+
+  List<Widget> _getUserMenuItems() {
+    return <Widget> [
+      _secondaryFunctionButton(
+        label: "新增鑰匙",
+        icon: _roundedRectangleBorderIcon(
+          iconData: Icons.add,
+          backgroundColor: Colors.blueAccent,
+        ),
+        onPressed: () {
+          PageSwitcher.pushPage(
+            context: context,
+            destinationPage: const CreateKeyPage(enableScan: true),
+            lottiePath: "assets/lotties/plus.json",
+            label: "新增鑰匙",
+          );
+        },
+      ),
+      _secondaryFunctionButton(
+        label: "刪除鑰匙",
+        icon: _roundedRectangleBorderIcon(
+          iconData: Icons.delete,
+          backgroundColor: Colors.redAccent,
+        ),
+        onPressed: () {
+          PageSwitcher.pushPage(
+            context: context,
+            destinationPage: const DeleteKeyPage(),
+            lottiePath: "assets/lotties/delete.json",
+            label: "刪除鑰匙",
+          );
+        },
+      ),
+      _secondaryFunctionButton(
+        label: "鑰匙清單",
+        icon: _roundedRectangleBorderIcon(
+          iconData: Icons.list,
+          backgroundColor: Colors.grey,
+        ),
+        onPressed: () {
+          PageSwitcher.pushPage(
+            context: context,
+            destinationPage: const AvailableKeysDisplayPage(),
+            lottiePath: "assets/lotties/list.json",
+            label: "鑰匙清單",
+          );
+        },
+      ),
+      _secondaryFunctionButton(
+        label: "通報為黑名單",
+        icon: _roundedRectangleBorderIcon(
+          iconData: Icons.warning,
+          backgroundColor: Colors.orangeAccent,
+        ),
+        onPressed: () {
+          PageSwitcher.pushPage(
+            context: context,
+            destinationPage: const InformBlacklistPage(),
+            lottiePath: "assets/lotties/warning.json",
+            label: "通報為黑名單",
+          );
+        },
+      ),
+    ];
   }
 
   @override
@@ -202,9 +270,11 @@ class _HomeScreen extends State<HomeScreen> {
                   label: "掃QR Code",
                   imagePath: "assets/gifs/qr_code.gif",
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const QrCodeScannerPage()),
+                    PageSwitcher.pushPage(
+                      context: context,
+                      destinationPage: const QrCodeScannerPage(),
+                      lottiePath: "assets/lotties/qr_scanner.json",
+                      label: "掃QR Code",
                     );
                   },
                 ),
@@ -224,8 +294,17 @@ class _HomeScreen extends State<HomeScreen> {
                 thickness: 1.2,
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            Container(
+              decoration: const BoxDecoration(
+                color: AppTheme.green,
+                borderRadius: BorderRadius.all(Radius.circular(15)),
+              ),
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: Column(
+                children: _getUserMenuItems(),
+              ),
+              /*
               child: IntrinsicHeight(
                 child: TabContainer(
                   isStringTabs: false,
@@ -245,132 +324,12 @@ class _HomeScreen extends State<HomeScreen> {
                   ],
                   childPadding: const EdgeInsets.only(top: 10),
                   children: [
-                    // User menu.
-                    Column(
-                      children: [
-                        const Text(
-                          "使用者",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            letterSpacing: 4.5,
-                          ),
-                        ),
-                        const Divider(
-                          indent: 40,
-                          endIndent: 40,
-                          color: Colors.white54,
-                          thickness: 1,
-                        ),
-                        _secondaryFunctionButton(
-                          label: "新增鑰匙",
-                          icon: _roundedRectangleBorderIcon(
-                            iconData: Icons.add,
-                            backgroundColor: Colors.orange,
-                          ),
-                          onPressed: () {
-                            PageSwitcher.pushPage(
-                              context: context,
-                              destinationPage: const CreateKeyPage(enableScan: true),
-                              lottiePath: "assets/lotties/plus.json",
-                              label: "新增鑰匙",
-                            );
-                          },
-                        ),
-                        _secondaryFunctionButton(
-                          label: "刪除鑰匙",
-                          icon: _roundedRectangleBorderIcon(
-                            iconData: Icons.delete,
-                            backgroundColor: Colors.redAccent,
-                          ),
-                          onPressed: () {
-                            PageSwitcher.pushPage(
-                              context: context,
-                              destinationPage: const DeleteKeyPage(),
-                              lottiePath: "assets/lotties/delete.json",
-                              label: "刪除鑰匙",
-                            );
-                          },
-                        ),
-                        _secondaryFunctionButton(
-                          label: "鑰匙清單",
-                          icon: _roundedRectangleBorderIcon(
-                            iconData: Icons.list,
-                            backgroundColor: Colors.grey,
-                          ),
-                          onPressed: () {
-                            PageSwitcher.pushPage(
-                              context: context,
-                              destinationPage: const AvailableKeysDisplayPage(),
-                              lottiePath: "assets/lotties/list.json",
-                              label: "鑰匙清單",
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    // Admin menu.
-                    Column(
-                      children: [
-                        const Text(
-                          "管理者",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            letterSpacing: 4.5,
-                          ),
-                        ),
-                        const Divider(
-                          indent: 40,
-                          endIndent: 40,
-                          color: Colors.white54,
-                          thickness: 1,
-                        ),
-                        _secondaryFunctionButton(
-                          label: "新增門鎖",
-                          icon: _roundedRectangleBorderIcon(
-                            iconData: Icons.add,
-                            backgroundColor: Colors.orange,
-                          ),
-                          onPressed: () {
-                            // TODO: Create door page.
-                          },
-                        ),
-                        _secondaryFunctionButton(
-                          label: "刪除門鎖",
-                          icon: _roundedRectangleBorderIcon(
-                            iconData: Icons.delete,
-                            backgroundColor: Colors.redAccent,
-                          ),
-                          onPressed: () {
-                            // TODO: Delete door page.
-                          },
-                        ),
-                        _secondaryFunctionButton(
-                          label: "門鎖清單",
-                          icon: _roundedRectangleBorderIcon(
-                            iconData: Icons.list,
-                            backgroundColor: Colors.grey,
-                          ),
-                          onPressed: () {
-                            // TODO: Doors display page.
-                          },
-                        ),
-                        _secondaryFunctionButton(
-                          label: "核准鑰匙申請",
-                          icon: _roundedRectangleBorderIcon(
-                            iconData: Icons.check,
-                            backgroundColor: AppTheme.cyan,
-                          ),
-                          onPressed: () {
-                            // TODO: Admit key creation page.
-                          },
-                        ),
-                      ],
-                    ),
+                    _getUserMenu(),
+                    _getAdminMenu(),
                   ],
                 ),
               ),
+              */
             ),
           ],
         ),

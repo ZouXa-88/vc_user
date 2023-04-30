@@ -50,33 +50,6 @@ class DialogPresenter {
     );
   }
 
-  static void showRequireLoginDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("請登入"),
-          icon: const Icon(Icons.login),
-          actions: [
-            TextButton(
-              child: const Text("取消", style: TextStyle(color: Colors.grey)),
-              onPressed: () => Navigator.of(context).pop(),
-            ),
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () => Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LoginPage(),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   static Future<bool> showConfirmDialog(BuildContext context, String title, {String description = ""}) async {
     return await showDialog(
       context: context,

@@ -6,7 +6,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 import 'package:user/objects/account.dart';
 
-Storage storage = Storage();
+final Storage storage = Storage();
 
 class Storage {
 

@@ -10,7 +10,6 @@ class ConnectResponse {
   bool isOk() {
     return type == StatusType.ok;
   }
-
 }
 
 enum StatusType {
@@ -21,9 +20,10 @@ enum StatusType {
   emailPasswordIncorrectError,
   objectNotExistError,
   alreadyAppliedError,
-  youNotHaveThisKeyError,
+  youDoNotHaveThisKeyError,
   namePasswordInvalidError,
   notAuthenticatedError,
   connectionError,
+  programExceptionError,
   unknownError,
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import 'package:image/image.dart' as image;
+import 'package:user/backend_processes/notifications_box.dart';
 
 import 'package:user/objects/account.dart';
 import 'package:user/backend_processes/storage.dart';
@@ -15,6 +16,25 @@ class DefaultAccountHandler {
   static Future<void> storeDefaultAccount() async {
     final account = await _setupAccount();
     await storage.storeAccountData(account);
+  }
+
+  static void addDefaultNotifications() {
+    notificationsBox.clear();
+    notificationsBox.addNotification(Notification(
+      type: NotificationType.newKey,
+      title: "新增門鎖",
+      content: "大門",
+    ));
+    notificationsBox.addNotification(Notification(
+      type: NotificationType.newKey,
+      title: "新增門鎖",
+      content: "二樓辦公室",
+    ));
+    notificationsBox.addNotification(Notification(
+      type: NotificationType.deleteKey,
+      title: "刪除門鎖",
+      content: "實驗室",
+    ));
   }
 
   static Future<Account> _setupAccount() async {
