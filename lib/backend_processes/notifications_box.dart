@@ -1,29 +1,36 @@
-part 'package:user/objects/notification.dart';
+part 'package:user/objects/update_notification.dart';
 
 NotificationsBox notificationsBox = NotificationsBox();
 
 class NotificationsBox {
 
-  final List<Notification> _notifications = List.empty(growable: true);
+  final List<UpdateNotification> _notifications = List.empty(growable: true);
+  late DateTime _lastModifiedTime;
 
 
-  bool hasNotifications() {
-    return _notifications.isNotEmpty;
+  NotificationsBox() {
+    _updateModifiedTime();
   }
 
-  int getNumNotifications() {
-    return _notifications.length;
+  List<UpdateNotification> getAllNotifications() {
+    return _notifications;
   }
 
-  Notification getNotificationByIndex(int index) {
-    return _notifications[_notifications.length - index - 1];
-  }
-
-  void addNotification(final Notification newNotification) {
+  void addNotification(final UpdateNotification newNotification) {
     _notifications.add(newNotification);
+    _updateModifiedTime();
   }
 
   void clear() {
     _notifications.clear();
+    _updateModifiedTime();
+  }
+
+  DateTime getLastModifiedTime() {
+    return _lastModifiedTime;
+  }
+
+  void _updateModifiedTime() {
+    _lastModifiedTime = DateTime.now();
   }
 }

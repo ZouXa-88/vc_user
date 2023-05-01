@@ -82,7 +82,7 @@ class _HomeScreen extends State<HomeScreen> {
     return InkWell(
       onTap: onPressed,
       child: Container(
-        width: 150,
+        width: 130,
         height: 120,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(

@@ -20,21 +20,24 @@ class DefaultAccountHandler {
 
   static void addDefaultNotifications() {
     notificationsBox.clear();
-    notificationsBox.addNotification(Notification(
-      type: NotificationType.newKey,
-      title: "新增門鎖",
-      content: "大門",
-    ));
-    notificationsBox.addNotification(Notification(
-      type: NotificationType.newKey,
-      title: "新增門鎖",
-      content: "二樓辦公室",
-    ));
-    notificationsBox.addNotification(Notification(
-      type: NotificationType.deleteKey,
-      title: "刪除門鎖",
-      content: "實驗室",
-    ));
+    notificationsBox.addNotification(
+      UpdateNotification(
+        type: NotificationType.newKey,
+        content: "大門",
+      ),
+    );
+    notificationsBox.addNotification(
+      UpdateNotification(
+        type: NotificationType.newKey,
+        content: "二樓辦公室",
+      ),
+    );
+    notificationsBox.addNotification(
+      UpdateNotification(
+        type: NotificationType.deleteKey,
+        content: "實驗室",
+      ),
+    );
   }
 
   static Future<Account> _setupAccount() async {
