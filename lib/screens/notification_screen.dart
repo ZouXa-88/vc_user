@@ -97,8 +97,8 @@ class _NotificationScreen extends State<NotificationScreen> {
               initialIndex: _switchBarIndex,
               options: const [
                 "全部",
-                "新增門鎖",
-                "刪除門鎖",
+                "新增鑰匙",
+                "刪除鑰匙",
               ],
               onChange: (index) {
                 setState(() {

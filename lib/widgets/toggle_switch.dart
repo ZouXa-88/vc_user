@@ -42,10 +42,10 @@ class _ToggleSwitch extends State<ToggleSwitch> {
   Widget build(BuildContext context) {
     return Container(
       width: widget.width,
-      height: 50,
+      height: 40,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
-        color: Colors.grey,
+        color: AppTheme.lightGrey,
       ),
       child: Stack(
         children: [
@@ -67,6 +67,7 @@ class _ToggleSwitch extends State<ToggleSwitch> {
                         widget.options[i],
                         style: const TextStyle(
                           fontSize: 15,
+                          color: Colors.black38,
                         ),
                       ),
                     ),
@@ -77,14 +78,20 @@ class _ToggleSwitch extends State<ToggleSwitch> {
           ),
           AnimatedAlign(
             alignment: _toggleButtonAlignment[_switchIndex],
-            duration: const Duration(milliseconds: 200),
+            duration: const Duration(milliseconds: 150),
             child: Container(
-              margin: const EdgeInsets.all(5),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    spreadRadius: 3,
+                    blurRadius: 3,
+                  ),
+                ],
               ),
-              width: widget.width / widget.options.length - 10,
+              width: widget.width / widget.options.length,
               child: Center(
                 child: Text(
                   widget.options[_switchIndex],

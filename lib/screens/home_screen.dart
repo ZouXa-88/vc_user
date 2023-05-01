@@ -279,7 +279,7 @@ class _HomeScreen extends State<HomeScreen> {
                   },
                 ),
                 _primaryFunctionButton(
-                  label: "更新資料",
+                  label: "手動更新資料",
                   imagePath: "assets/gifs/update.gif",
                   onPressed: () {
                     _update();
@@ -287,20 +287,13 @@ class _HomeScreen extends State<HomeScreen> {
                 ),
               ],
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              child: Divider(
-                color: AppTheme.lightGrey,
-                thickness: 1.2,
-              ),
-            ),
             Container(
               decoration: const BoxDecoration(
                 color: AppTheme.green,
                 borderRadius: BorderRadius.all(Radius.circular(15)),
               ),
               padding: const EdgeInsets.symmetric(vertical: 10),
-              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 25),
               child: Column(
                 children: _getUserMenuItems(),
               ),
