@@ -40,7 +40,6 @@ dependencies:
   permission_handler: ^10.2.0
   http: ^0.13.5
   lottie: ^2.0.0
-  tab_container: ^2.0.0
   flutter_snake_navigationbar: ^0.6.0
   page_transition: ^2.0.9
   page_view_dot_indicator: ^2.1.0

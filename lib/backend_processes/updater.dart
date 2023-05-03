@@ -11,10 +11,21 @@ final Updater updater = Updater();
 class Updater {
 
   Timer? _updateTimer;
+  bool _updateSuccessful = true;
+  String _updateFailedMessage = "";
 
+
+  bool isSuccessful() {
+    return _updateSuccessful;
+  }
+
+  String getFailedMessage() {
+    return _updateFailedMessage;
+  }
 
   void startPeriodicUpdate() {
     if(_updateTimer == null || !_updateTimer!.isActive) {
+      update();
       _updateTimer = Timer.periodic(
         const Duration(seconds: 10),
         (timer) => update(),
@@ -28,44 +39,52 @@ class Updater {
     }
   }
 
-  Future<ConnectResponse> update() async {
+  Future<void> update() async {
     final response = await connector.update();
-    _updateData(response);
-
-    return response;
+    try{
+      if(response.isOk()){
+        _updateData(response);
+      }
+      else{
+        String? failedReason = response.data["reason"];
+        throw Exception(response.type.name + (failedReason != null ? "\n$failedReason" : ""));
+      }
+    }
+    catch(e){
+      _updateSuccessful = false;
+      _updateFailedMessage = e.toString();
+    }
   }
 
   Future<void> _updateData(final ConnectResponse response) async {
-    if(response.isOk()) {
-      List<String>? deleteDoors = response.data["deleteDoors"];
-      Map<String, String>? newShares = response.data["newShares"];
+    List<String>? deleteDoors = response.data["deleteDoors"];
+    Map<String, String>? newShares = response.data["newShares"];
 
-      if(deleteDoors != null){
-        for(String doorName in deleteDoors){
-          account.deleteKey(doorName);
-          storage.deleteShare(doorName);
+    if(deleteDoors != null){
+      for(String doorName in deleteDoors){
+        account.deleteKey(doorName);
+        storage.deleteShare(doorName);
 
-          notificationsBox.addNotification(
-            UpdateNotification(
-              type: NotificationType.deleteKey,
-              content: doorName,
-            ),
-          );
-        }
+        notificationsBox.addNotification(
+          UpdateNotification(
+            type: NotificationType.deleteKey,
+            content: doorName,
+          ),
+        );
       }
-      if(newShares != null){
-        newShares.forEach((doorName, share){
-          account.addKey(doorName);
-          storage.storeShare(doorName, share);
+    }
+    if(newShares != null){
+      newShares.forEach((doorName, share){
+        account.addKey(doorName);
+        storage.storeShare(doorName, share);
 
-          notificationsBox.addNotification(
-            UpdateNotification(
-              type: NotificationType.newKey,
-              content: doorName,
-            ),
-          );
-        });
-      }
+        notificationsBox.addNotification(
+          UpdateNotification(
+            type: NotificationType.newKey,
+            content: doorName,
+          ),
+        );
+      });
     }
   }
 }

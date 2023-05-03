@@ -79,6 +79,7 @@ class _InformBlacklistPage extends State<InformBlacklistPage> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.amber,
+                fixedSize: const Size(130, 50),
               ),
               child: const Text("確定通報"),
             ),

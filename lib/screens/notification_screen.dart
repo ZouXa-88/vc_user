@@ -31,7 +31,7 @@ class _NotificationScreen extends State<NotificationScreen> {
         return <UpdateNotification> [
           for(UpdateNotification notification in notifications) ...[
             if(notification.type == NotificationType.newKey) ...[
-              notification
+              notification,
             ]
           ]
         ];
@@ -39,7 +39,7 @@ class _NotificationScreen extends State<NotificationScreen> {
         return <UpdateNotification> [
           for(UpdateNotification notification in notifications) ...[
             if(notification.type == NotificationType.deleteKey) ...[
-              notification
+              notification,
             ]
           ]
         ];
@@ -120,7 +120,7 @@ class _NotificationScreen extends State<NotificationScreen> {
                   return Card(
                     child: ExpansionTile(
                       leading: notification.isNew 
-                          ? const Text("新訊息", style: TextStyle(color: Colors.redAccent))
+                          ? const Text("新", style: TextStyle(color: Colors.redAccent))
                           : const Text(""),
                       title: Text(
                         notification.type == NotificationType.newKey ? "新增鑰匙" : "刪除鑰匙",

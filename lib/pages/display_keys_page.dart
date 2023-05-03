@@ -6,14 +6,14 @@ import 'package:user/modules/app_theme.dart';
 import 'package:user/objects/account.dart';
 
 
-class AvailableKeysDisplayPage extends StatefulWidget {
-  const AvailableKeysDisplayPage({super.key});
+class DisplayKeysPage extends StatefulWidget {
+  const DisplayKeysPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _AvailableKeysDisplayPage();
+  State<StatefulWidget> createState() => _DisplayKeysPage();
 }
 
-class _AvailableKeysDisplayPage extends State<AvailableKeysDisplayPage> {
+class _DisplayKeysPage extends State<DisplayKeysPage> {
 
   late final List<String> _registeredDoorsName;
   late final Timer _fadeInTimer;
