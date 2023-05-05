@@ -32,14 +32,4 @@ class PageSwitcher {
       ),
     );
   }
-
-  static void pushPageWithHero({
-    required BuildContext context,
-    required Widget destinationPage,
-    required String lottiePath,
-    required Hero heroLabel,
-    PageTransitionType toAnimation = PageTransitionType.fade,
-  }) {
-    // TODO: Implement it.
-  }
 }

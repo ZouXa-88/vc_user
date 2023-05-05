@@ -84,7 +84,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("刪除鑰匙"),
+        title: const Text("刪除特定鑰匙"),
       ),
       backgroundColor: AppTheme.background,
       body: Padding(

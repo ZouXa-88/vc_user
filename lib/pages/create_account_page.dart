@@ -216,7 +216,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
             _screenTitles[_currentScreen],
             style: const TextStyle(
               color: Colors.black,
-              fontSize: 20,
+              fontSize: 18,
             ),
           ),
         ),

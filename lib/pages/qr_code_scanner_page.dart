@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
 import 'package:user/modules/dialog_presenter.dart';
-import 'package:user/pages/create_key_page.dart';
+import 'package:user/pages/apply_key_page.dart';
 import 'package:user/pages/qr_code_key_page.dart';
 import 'package:user/objects/account.dart';
 
@@ -77,7 +77,7 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
                 controller.pauseCamera();
                 Navigator.of(context).push(
                   MaterialPageRoute(
-                    builder: (context) => CreateKeyPage(doorName: doorName),
+                    builder: (context) => ApplyKeyPage(doorName: doorName),
                   ),
                 ).then((_) {
                   controller.resumeCamera();

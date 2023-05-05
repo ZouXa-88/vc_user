@@ -93,7 +93,7 @@ class _NotificationScreen extends State<NotificationScreen> {
           appBar: AppBar(
             centerTitle: true,
             title: ToggleSwitch(
-              width: MediaQuery.of(context).size.width * 0.75,
+              width: MediaQuery.of(context).size.width * 0.8,
               initialIndex: _switchBarIndex,
               options: const [
                 "全部",

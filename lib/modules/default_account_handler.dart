@@ -52,25 +52,37 @@ class DefaultAccountHandler {
   }
 
   static Future<String> _loadShare(String path) async {
-    Uint8List inputImg = (await rootBundle.load(path)).buffer.asUint8List();
-    String binaries = image.decodeImage(inputImg)!
-        .getBytes(format: image.Format.luminance)
-        .map((e) => e == 0 ? 0 : 1)
-        .join();
-
     String buf = "";
-    for(int pixel = 0; pixel < 400; pixel++){
-      int topLeft = 40 * (pixel ~/ 20) + 2 * (pixel % 20);
-      buf += binaries[topLeft];
-      buf += binaries[topLeft + 1];
-      buf += binaries[topLeft + 40];
-      buf += binaries[topLeft + 41];
-    }
-    List<int> intBuf = List.filled(200, 0);
-    for(int i = 0; i < 200; i++){
-      intBuf[i] = int.parse(buf.substring(i * 8, i * 8 + 8), radix: 2);
-    }
+    final byteData = await rootBundle.load(path);
+    final buffer = image
+        .decodeImage(byteData.buffer.asUint8List())!
+        .getBytes(format: image.Format.luminance)
+        .map((e) => e == 0 ? 1 : 0) // e == 0 means e is black
+        .toList();
 
-    return base64Encode(intBuf);
+    buf = base64Encode(Uint8List.fromList(LoadShare(buffer)));
+    return buf;
+  }
+
+  static List<int> LoadShare(List<int> Share) {
+      var Img = List.generate(40, (i) => List.filled(40, 0, growable: false), growable: false);
+      var Ret = List.filled(200, 0);
+      for (int i = 0; i < 1600; ++i) {
+        Img[i ~/ 40][i % 40] = Share[i];
+      }
+      for (int r = 0; r < 40; r += 2) {
+        for (int c = 0; c < 40; c += 2) {
+          int Idx = r * 5 + (c ~/ 4);
+          for (int sh = 0; sh < 2; ++sh) {
+            Ret[Idx] |= Img[r][c] << (sh * 4);
+            Ret[Idx] |= Img[r][c + 1] << (sh * 4 + 1);
+            Ret[Idx] |= Img[r + 1][c] << (sh * 4 + 2);
+            Ret[Idx] |= Img[r + 1][c + 1] << (sh * 4 + 3);
+            c += 2;
+          }
+          c -= 2;
+        }
+      }
+      return Ret;
   }
 }

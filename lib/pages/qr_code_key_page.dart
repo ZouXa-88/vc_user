@@ -25,8 +25,8 @@ class _QrCodeKeyPage extends State<QrCodeKeyPage> {
   late String _doorName;
   late int _seed;
 
-  late QrImage qrImage;
-  bool qrCodeIsGenerated = false;
+  late QrImage _qrImage;
+  bool _qrCodeIsGenerated = false;
 
 
   @override
@@ -39,7 +39,6 @@ class _QrCodeKeyPage extends State<QrCodeKeyPage> {
   }
 
   Future<void> generateQrCode() async {
-    // TODO: Be aware of data inconsistent.
     Uint8List share = Uint8List.fromList(base64Decode(
         (await storage.loadShare(_doorName))!
     ));
@@ -51,12 +50,12 @@ class _QrCodeKeyPage extends State<QrCodeKeyPage> {
     }
 
     setState(() {
-      qrImage = QrImage(
+      _qrImage = QrImage(
         data: base64Encode(buf),
         version: 10,
         errorCorrectionLevel: QrErrorCorrectLevel.L,
       );
-      qrCodeIsGenerated = true;
+      _qrCodeIsGenerated = true;
     });
   }
 
@@ -84,7 +83,13 @@ class _QrCodeKeyPage extends State<QrCodeKeyPage> {
           ),
           Expanded(
             flex: 6,
-            child: qrCodeIsGenerated? qrImage : const CircularProgressIndicator(),
+            child: _qrCodeIsGenerated
+                ? _qrImage
+                : const SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(),
+                ),
           ),
         ],
       ),
