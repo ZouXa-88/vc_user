@@ -244,7 +244,7 @@ class Connector {
       case 401:
         return StatusType.notAuthenticatedError;
       case 408:
-        return StatusType.connectionError;
+        return StatusType.timeoutError;
       case 422:
         return StatusType.programExceptionError;
       default:

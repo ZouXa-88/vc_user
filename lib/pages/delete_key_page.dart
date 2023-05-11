@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:user/objects/account.dart';
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/modules/dialog_presenter.dart';
+import 'package:user/modules/snack_bar_presenter.dart';
 import 'package:user/modules/app_theme.dart';
 
 
@@ -29,7 +30,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
     if(context.mounted){
       DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        DialogPresenter.showInformDialog(context, "傳送成功");
+        SnackBarPresenter.showSnackBar(context, "傳送成功");
       }
       else{
         String errorDescription;
@@ -43,7 +44,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
           case StatusType.programExceptionError:
             errorDescription = response.data["reason"];
             break;
-          case StatusType.connectionError:
+          case StatusType.timeoutError:
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:

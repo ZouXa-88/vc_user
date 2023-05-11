@@ -65,7 +65,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
           case StatusType.programExceptionError:
             errorDescription = response.data["reason"];
             break;
-          case StatusType.connectionError:
+          case StatusType.timeoutError:
             errorDescription = "無法連線";
             break;
           case StatusType.unknownError:
@@ -101,7 +101,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
           case StatusType.programExceptionError:
             errorDescription = response.data["reason"];
             break;
-          case StatusType.connectionError:
+          case StatusType.timeoutError:
             errorDescription = "無法連線";
             break;
           case StatusType.unknownError:
@@ -151,7 +151,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                           _currentScreen == 3 ? "返回" : "上一步",
                           style: const TextStyle(
                             color: Colors.orange,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
                         ),
                       ]
@@ -198,7 +198,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                           "下一步",
                           style: TextStyle(
                             color: Colors.orange,
-                            fontSize: 16,
+                            fontSize: 14,
                           ),
                         ),
                         const Icon(Icons.arrow_forward_ios, color: Colors.orange),
@@ -216,7 +216,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
             _screenTitles[_currentScreen],
             style: const TextStyle(
               color: Colors.black,
-              fontSize: 18,
+              fontSize: 17,
             ),
           ),
         ),

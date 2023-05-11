@@ -23,7 +23,7 @@ enum StatusType {
   youDoNotHaveThisKeyError,
   namePasswordInvalidError,
   notAuthenticatedError,
-  connectionError,
+  timeoutError,
   programExceptionError,
   unknownError,
 }

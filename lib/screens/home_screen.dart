@@ -20,21 +20,11 @@ class _HomeScreen extends State<HomeScreen> {
 
   Widget _rectangleContainer({List<Widget> contents = const []}) {
     return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            spreadRadius: 3,
-            blurRadius: 3,
-            offset: Offset.fromDirection(45, 3),
-          ),
-        ],
-      ),
       margin: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        children: contents,
+      child: Card(
+        child: Column(
+          children: contents,
+        ),
       ),
     );
   }
@@ -50,7 +40,7 @@ class _HomeScreen extends State<HomeScreen> {
         splashColor: Colors.white24,
         onTap: onPressed,
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+          padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 10),
           child: Row(
             mainAxisSize: MainAxisSize.max,
             children: <Expanded> [
@@ -59,8 +49,8 @@ class _HomeScreen extends State<HomeScreen> {
                 child: Center(
                   child: Image.asset(
                     imagePath,
-                    width: 60,
-                    height: 60,
+                    width: 50,
+                    height: 50,
                   ),
                 ),
               ),
@@ -71,7 +61,7 @@ class _HomeScreen extends State<HomeScreen> {
                   child: Text(
                     label,
                     style: const TextStyle(
-                      fontSize: 18,
+                      fontSize: 16,
                       color: Colors.black,
                       fontWeight: FontWeight.w500,
                       letterSpacing: 2,
@@ -98,7 +88,7 @@ class _HomeScreen extends State<HomeScreen> {
           ),
         ),
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 30),
         child: Column(
           children: [
@@ -122,7 +112,7 @@ class _HomeScreen extends State<HomeScreen> {
               contents: [
                 _functionButton(
                   label: "鑰匙清單",
-                  imagePath: "assets/gifs/list.gif",
+                  imagePath: "assets/gifs/keys.gif",
                   onPressed: () {
                     PageSwitcher.pushPage(
                       context: context,
@@ -131,6 +121,10 @@ class _HomeScreen extends State<HomeScreen> {
                       label: "鑰匙清單",
                     );
                   },
+                ),
+                const Divider(
+                  color: AppTheme.background,
+                  thickness: 1.5,
                 ),
                 _functionButton(
                   label: "申請鑰匙",
@@ -143,6 +137,10 @@ class _HomeScreen extends State<HomeScreen> {
                       label: "申請鑰匙",
                     );
                   },
+                ),
+                const Divider(
+                  color: AppTheme.background,
+                  thickness: 1.5,
                 ),
                 _functionButton(
                   label: "刪除特定鑰匙",

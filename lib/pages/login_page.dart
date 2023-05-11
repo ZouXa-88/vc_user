@@ -47,12 +47,12 @@ class _LoginPage extends State<LoginPage> {
         String errorDescription;
         switch(response.type){
           case StatusType.emailPasswordIncorrectError:
-            errorDescription = "信箱或密碼不正確";
+            errorDescription = "帳號或密碼不正確";
             break;
           case StatusType.programExceptionError:
             errorDescription = response.data["reason"];
             break;
-          case StatusType.connectionError:
+          case StatusType.timeoutError:
             errorDescription = "無法連線";
             break;
           case StatusType.unknownError:
@@ -114,14 +114,14 @@ class _LoginPage extends State<LoginPage> {
                           initialValue: "",
                           keyboardType: TextInputType.emailAddress,
                           decoration: AppTheme.getEllipseInputDecoration(
-                            labelText: "信箱",
+                            labelText: "帳號",
                             prefixIcon: const Icon(Icons.email),
                           ),
                           onChanged: (text) {
                             _email = text;
                           },
                           validator: (text) {
-                            return (text == null || text.isEmpty) ? "請輸入信箱" : null;
+                            return (text == null || text.isEmpty) ? "請輸入帳號" : null;
                           },
                           ),
                       ),

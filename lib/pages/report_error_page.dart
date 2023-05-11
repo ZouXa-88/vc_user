@@ -43,13 +43,22 @@ class _ReportErrorPage extends State<ReportErrorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("通報為黑名單"),
+        title: const Text("問題通報"),
       ),
       backgroundColor: AppTheme.background,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+            ),
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            child: Column(
+              children: [],
+            ),
+          ),
         ],
       ),
     );

@@ -6,6 +6,7 @@ import 'package:user/pages/qr_code_scanner_page.dart';
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/modules/app_theme.dart';
+import 'package:user/modules/snack_bar_presenter.dart';
 
 
 class ApplyKeyPage extends StatefulWidget {
@@ -39,7 +40,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
     if(context.mounted){
       DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        DialogPresenter.showInformDialog(context, "傳送成功");
+        SnackBarPresenter.showSnackBar(context, "傳送成功");
       }
       else{
         String errorDescription;
@@ -53,7 +54,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
           case StatusType.programExceptionError:
             errorDescription = response.data["reason"];
             break;
-          case StatusType.connectionError:
+          case StatusType.timeoutError:
             errorDescription = "無法連線";
             break;
           case StatusType.notAuthenticatedError:
@@ -122,9 +123,9 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
                               builder: (context) => const QrCodeScannerPage(forKeyCreation: true),
                             ),
                           ).then((doorName) {
-                            _doorNameController.text = doorName;
                             setState(() {
-                              _doorName = _doorName;
+                              _doorNameController.text = doorName;
+                              _doorName = doorName;
                             });
                           });
                         },
