@@ -82,7 +82,7 @@ class Connector {
 
   Future<ConnectResponse> validate({required String code}) async {
     final response = await _get(
-      url: Uri.http(_getHost(), "/validateEmail?code=$code"),
+      url: Uri.http(_getHost(), "/validateEmail", {"code": code}),
     );
     final responseBody = _getResponseBody(response);
 
