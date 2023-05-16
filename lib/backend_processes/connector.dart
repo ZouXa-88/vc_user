@@ -10,14 +10,14 @@ final Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "192.168.0.1";
+  String _serverAddress = "10.201.32.58";
   int _port = 8000;
 
   final Map<String, String> _headers = {"Content-Type": "application/json"};
 
   final _timeoutDuration = const Duration(seconds: 5);
   FutureOr<http.Response> _onTimeout() => http.Response(jsonEncode({}), 408);
-  http.Response _onException(String e) => http.Response(jsonEncode({"reason": e}), 422);
+  http.Response _onException(String e) => http.Response(jsonEncode({"detail": e}), 422);
 
 
   void setServerAddress(final String serverAddress) {
@@ -54,7 +54,20 @@ class Connector {
     }
 
     return ConnectResponse(
-      type: _toStatusType(response.statusCode, responseBody["code"]),
+      code: response.statusCode,
+      data: responseBody,
+    );
+  }
+
+  Future<ConnectResponse> getUserData() async {
+    final response = await _get(
+      url: Uri.http(_getHost(), "/getMe"),
+    );
+
+    final responseBody = _getResponseBody(response);
+
+    return ConnectResponse(
+      code: response.statusCode,
       data: responseBody,
     );
   }
@@ -75,7 +88,7 @@ class Connector {
     final responseBody = _getResponseBody(response);
 
     return ConnectResponse(
-      type: _toStatusType(response.statusCode, responseBody["code"]),
+      code: response.statusCode,
       data: responseBody,
     );
   }
@@ -87,7 +100,7 @@ class Connector {
     final responseBody = _getResponseBody(response);
 
     return ConnectResponse(
-      type: _toStatusType(response.statusCode, responseBody["code"]),
+      code: response.statusCode,
       data: responseBody,
     );
   }
@@ -102,7 +115,7 @@ class Connector {
     final responseBody = _getResponseBody(response);
 
     return ConnectResponse(
-      type: _toStatusType(response.statusCode, responseBody["code"]),
+      code: response.statusCode,
       data: responseBody,
     );
   }
@@ -117,7 +130,7 @@ class Connector {
     final responseBody = _getResponseBody(response);
 
     return ConnectResponse(
-      type: _toStatusType(response.statusCode, responseBody["code"]),
+      code: response.statusCode,
       data: responseBody,
     );
   }
@@ -129,7 +142,7 @@ class Connector {
     final responseBody = _getResponseBody(response);
 
     return ConnectResponse(
-      type: _toStatusType(response.statusCode, responseBody["code"]),
+      code: response.statusCode,
       data: responseBody,
     );
   }
@@ -142,7 +155,7 @@ class Connector {
     final responseBody = _getResponseBody(response);
 
     return ConnectResponse(
-      type: _toStatusType(response.statusCode, responseBody["code"]),
+      code: response.statusCode,
       data: responseBody,
     );
   }
@@ -213,42 +226,6 @@ class Connector {
     String? cookie = response.headers['set-cookie'];
     if(cookie != null){
       _headers['cookie'] = cookie;
-    }
-  }
-
-  StatusType _toStatusType(int statusCode, int? code) {
-    switch(statusCode){
-      case 200:
-        return StatusType.ok;
-      case 400:
-        switch(code){
-          case 0:
-            return StatusType.syntaxError;
-          case 1:
-            return StatusType.parameterInUsedError;
-          case 3:
-            return StatusType.invalidCredentialCodeError;
-          case 4:
-            return StatusType.emailPasswordIncorrectError;
-          case 5:
-            return StatusType.objectNotExistError;
-          case 6:
-            return StatusType.alreadyAppliedError;
-          case 7:
-            return StatusType.youDoNotHaveThisKeyError;
-          case 8:
-            return StatusType.namePasswordInvalidError;
-          default:
-            return StatusType.unknownError;
-        }
-      case 401:
-        return StatusType.notAuthenticatedError;
-      case 408:
-        return StatusType.timeoutError;
-      case 422:
-        return StatusType.programExceptionError;
-      default:
-        return StatusType.unknownError;
     }
   }
 

@@ -1,11 +1,14 @@
-import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:flutter/material.dart';
+
+import 'package:expandable_page_view/expandable_page_view.dart';
 import 'package:lottie/lottie.dart';
 import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/modules/app_theme.dart';
+import 'package:user/modules/account_handler.dart';
 import 'package:user/modules/dialog_presenter.dart';
+import 'package:user/objects/account.dart';
 
 
 class CreateAccountPage extends StatefulWidget {
@@ -54,27 +57,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
         _animateSwitchScreen();
       }
       else{
-        String errorDescription;
-        switch(response.type){
-          case StatusType.parameterInUsedError:
-            errorDescription = "使用者名稱或信箱已被使用";
-            break;
-          case StatusType.namePasswordInvalidError:
-            errorDescription = "使用者名稱或密碼不符標準";
-            break;
-          case StatusType.programExceptionError:
-            errorDescription = response.data["reason"];
-            break;
-          case StatusType.timeoutError:
-            errorDescription = "無法連線";
-            break;
-          case StatusType.unknownError:
-            errorDescription = response.data["reason"];
-            break;
-          default:
-            errorDescription = "";
-        }
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: errorDescription);
+        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.data["detail"]);
       }
     }
   }
@@ -93,24 +76,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
         _animateSwitchScreen();
       }
       else{
-        String errorDescription;
-        switch(response.type){
-          case StatusType.invalidCredentialCodeError:
-            errorDescription = "驗證碼錯誤";
-            break;
-          case StatusType.programExceptionError:
-            errorDescription = response.data["reason"];
-            break;
-          case StatusType.timeoutError:
-            errorDescription = "無法連線";
-            break;
-          case StatusType.unknownError:
-            errorDescription = response.data["reason"];
-            break;
-          default:
-            errorDescription = "";
-        }
-        DialogPresenter.showInformDialog(context, "失敗", description: errorDescription);
+        DialogPresenter.showInformDialog(context, "失敗", description: response.data["detail"]);
       }
     }
   }

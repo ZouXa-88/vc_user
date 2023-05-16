@@ -43,30 +43,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
         SnackBarPresenter.showSnackBar(context, "傳送成功");
       }
       else{
-        String errorDescription;
-        switch(response.type){
-          case StatusType.objectNotExistError:
-            errorDescription = "此門($_doorName)不存在";
-            break;
-          case StatusType.alreadyAppliedError:
-            errorDescription = "$_doorName已經申請過";
-            break;
-          case StatusType.programExceptionError:
-            errorDescription = response.data["reason"];
-            break;
-          case StatusType.timeoutError:
-            errorDescription = "無法連線";
-            break;
-          case StatusType.notAuthenticatedError:
-            errorDescription = "請登入";
-            return;
-          case StatusType.unknownError:
-            errorDescription = response.data["reason"];
-            break;
-          default:
-            errorDescription = "";
-        }
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: errorDescription);
+        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.data["detail"]);
       }
     }
   }

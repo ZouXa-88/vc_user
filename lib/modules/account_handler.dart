@@ -9,13 +9,18 @@ import 'package:user/objects/account.dart';
 import 'package:user/backend_processes/storage.dart';
 
 
-class DefaultAccountHandler {
+class AccountHandler {
 
-  DefaultAccountHandler._();
+  AccountHandler._();
 
-  static Future<void> storeDefaultAccount() async {
-    final account = await _setupAccount();
-    await storage.storeAccountData(account);
+  static Future<void> storeAccount(String name) async {
+    await storage.storeAccountData(Account(name: name));
+  }
+
+  static Future<void> setDefaultAccount() async {
+    final defaultAccount = await _getDefaultAccount();
+    await storage.storeAccountData(defaultAccount);
+    account = defaultAccount;
   }
 
   static void addDefaultNotifications() {
@@ -40,15 +45,27 @@ class DefaultAccountHandler {
     );
   }
 
-  static Future<Account> _setupAccount() async {
-    Account account = Account(name: "王小明");
+  static Future<void> setAccount(String name) async {
+    storage.setCurrentUser(name);
+    if(storage.hasAccountData()){
+      account = Account.from((await storage.loadAccountData())!);
+    }
+    else{
+      account = Account(name: name);
+      storage.storeAccountData(account);
+    }
+  }
 
-    account.addKey("大門");
+  static Future<Account> _getDefaultAccount() async {
+    Account defaultAccount = Account(name: "王小明");
+    storage.setCurrentUser(defaultAccount.getName());
+
+    defaultAccount.addKey("大門");
     storage.storeShare("大門", await _loadShare("assets/shares/door1_1.png"));
-    account.addKey("二樓辦公室");
+    defaultAccount.addKey("二樓辦公室");
     storage.storeShare("二樓辦公室", await _loadShare("assets/shares/door2_1.png"));
 
-    return account;
+    return defaultAccount;
   }
 
   static Future<String> _loadShare(String path) async {

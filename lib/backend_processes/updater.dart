@@ -46,8 +46,8 @@ class Updater {
         _updateData(response);
       }
       else{
-        String? failedReason = response.data["reason"];
-        throw Exception(response.type.name + (failedReason != null ? "\n$failedReason" : ""));
+        String? failedReason = response.data["detail"];
+        throw Exception(failedReason ?? "");
       }
     }
     catch(e){
@@ -57,34 +57,31 @@ class Updater {
   }
 
   Future<void> _updateData(final ConnectResponse response) async {
-    List<String>? deleteDoors = response.data["deleteDoors"];
-    Map<String, String>? newShares = response.data["newShares"];
+    final deleteDoors = response.data["deleteDoors"];
+    final newShares = response.data["newShares"];
 
-    if(deleteDoors != null){
-      for(String doorName in deleteDoors){
-        account.deleteKey(doorName);
-        storage.deleteShare(doorName);
+    for(String doorName in deleteDoors){
+      account.deleteKey(doorName);
+      storage.deleteShare(doorName);
 
-        notificationsBox.addNotification(
-          UpdateNotification(
-            type: NotificationType.deleteKey,
-            content: doorName,
-          ),
-        );
-      }
+      notificationsBox.addNotification(
+        UpdateNotification(
+          type: NotificationType.deleteKey,
+          content: doorName,
+        ),
+      );
     }
-    if(newShares != null){
-      newShares.forEach((doorName, share){
-        account.addKey(doorName);
-        storage.storeShare(doorName, share);
 
-        notificationsBox.addNotification(
-          UpdateNotification(
-            type: NotificationType.newKey,
-            content: doorName,
-          ),
-        );
-      });
-    }
+    newShares.forEach((doorName, share){
+      account.addKey(doorName);
+      storage.storeShare(doorName, share);
+
+      notificationsBox.addNotification(
+        UpdateNotification(
+          type: NotificationType.newKey,
+          content: doorName,
+        ),
+      );
+    });
   }
 }

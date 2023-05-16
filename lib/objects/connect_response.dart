@@ -2,28 +2,12 @@ part of 'package:user/backend_processes/connector.dart';
 
 class ConnectResponse {
 
-  StatusType type;
+  int code;
   Map<String, dynamic> data;
 
-  ConnectResponse({required this.type, this.data = const {}});
+  ConnectResponse({required this.code, this.data = const {}});
 
   bool isOk() {
-    return type == StatusType.ok;
+    return code ~/ 100 == 2;
   }
-}
-
-enum StatusType {
-  ok,
-  syntaxError,
-  parameterInUsedError,
-  invalidCredentialCodeError,
-  emailPasswordIncorrectError,
-  objectNotExistError,
-  alreadyAppliedError,
-  youDoNotHaveThisKeyError,
-  namePasswordInvalidError,
-  notAuthenticatedError,
-  timeoutError,
-  programExceptionError,
-  unknownError,
 }

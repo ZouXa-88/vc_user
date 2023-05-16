@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:user/backend_processes/connector.dart';
+import 'package:user/backend_processes/storage.dart';
 import 'package:user/modules/app_theme.dart';
-import 'package:user/modules/default_account_handler.dart';
+import 'package:user/modules/account_handler.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/pages/create_account_page.dart';
 import 'package:user/pages/main_page.dart';
+import 'package:user/objects/account.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -33,9 +35,11 @@ class _LoginPage extends State<LoginPage> {
     });
 
     ConnectResponse response = await connector.login(email: _email, password: _password);
+    ConnectResponse userDataResponse = await connector.getUserData();
 
-    if(context.mounted) {
-      if(response.isOk()){
+    if (context.mounted) {
+      if (response.isOk() && userDataResponse.isOk()) {
+        AccountHandler.setAccount(userDataResponse.data["userName"]);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -43,25 +47,11 @@ class _LoginPage extends State<LoginPage> {
           ),
         );
       }
-      else{
-        String errorDescription;
-        switch(response.type){
-          case StatusType.emailPasswordIncorrectError:
-            errorDescription = "帳號或密碼不正確";
-            break;
-          case StatusType.programExceptionError:
-            errorDescription = response.data["reason"];
-            break;
-          case StatusType.timeoutError:
-            errorDescription = "無法連線";
-            break;
-          case StatusType.unknownError:
-            errorDescription = response.data["reason"];
-            break;
-          default:
-            errorDescription = "";
-        }
-        DialogPresenter.showInformDialog(context, "登入失敗", description: errorDescription);
+      else if (response.isOk() && !userDataResponse.isOk()) {
+        DialogPresenter.showInformDialog(context, "登入成功，但無法取得資料", description: userDataResponse.data["detail"]?? "");
+      }
+      else {
+        DialogPresenter.showInformDialog(context, "登入失敗", description: response.data["detail"]?? "");
       }
     }
 
@@ -246,7 +236,7 @@ class _LoginPage extends State<LoginPage> {
                 TextButton(
                   child: const Text("使用預設帳號登入"),
                   onPressed: () {
-                    DefaultAccountHandler.addDefaultNotifications();
+                    AccountHandler.setDefaultAccount();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

@@ -85,11 +85,13 @@ class _QrCodeKeyPage extends State<QrCodeKeyPage> {
             flex: 6,
             child: _qrCodeIsGenerated
                 ? _qrImage
-                : const SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(),
+                : const Center(
+                  child: SizedBox(
+                    width: 70,
+                    height: 70,
+                    child: CircularProgressIndicator(),
                 ),
+            )
           ),
         ],
       ),

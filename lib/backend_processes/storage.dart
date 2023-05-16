@@ -10,15 +10,15 @@ final Storage storage = Storage();
 
 class Storage {
 
-  late final String _userDirectoryPath;
-  final Map<String, String> _sharesCache = {};
+  late String _applicationDirectoryPath;
+  String _userDirectoryPath = "";
 
 
   Future<bool> initialize() async {
     if(await _checkPermission()){
       try{
-        final applicationDirectoryPath = (await getApplicationDocumentsDirectory()).path;
-        _userDirectoryPath = "$applicationDirectoryPath/user";
+        _applicationDirectoryPath = (await getApplicationDocumentsDirectory()).path;
+        _userDirectoryPath = "$_applicationDirectoryPath/users";
         Directory(_userDirectoryPath).create(recursive: true);
 
         return true;
@@ -33,30 +33,27 @@ class Storage {
     return false;
   }
 
-  bool hasStoredAccount() {
-    return File("$_userDirectoryPath/user_data.txt").existsSync();
+  void setCurrentUser(String userName) {
+    _userDirectoryPath = "$_applicationDirectoryPath/users/$userName";
+  }
+
+  bool hasAccountData() {
+    return File("$_userDirectoryPath/data.txt").existsSync();
   }
 
   Future<String?> loadAccountData() async {
-    final file = File("$_userDirectoryPath/user_data.txt");
+    final file = File("$_userDirectoryPath/data.txt");
     if(await file.exists()){
-      final jsonString = await file.readAsString();
-      return jsonString;
+      return await file.readAsString();
     }
 
     return null;
   }
 
-  FutureOr<String?> loadShare(final String doorName) async {
-    if(_sharesCache.containsKey(doorName)){
-      return _sharesCache[doorName];
-    }
-
+  Future<String?> loadShare(final String doorName) async {
     final file = File("$_userDirectoryPath/doors/$doorName.txt");
     if(await file.exists() && await _checkPermission()) {
-      String share = await file.readAsString();
-      _sharesCache[doorName] = share;
-      return share;
+      return await file.readAsString();
     }
 
     return null;
@@ -64,7 +61,7 @@ class Storage {
 
   Future<bool> storeAccountData(final Account account) async {
     try{
-      final file = File("$_userDirectoryPath/user_data.txt");
+      final file = File("$_applicationDirectoryPath/users/${account.getName()}/data.txt");
       await file.create(recursive: true);
       await file.writeAsString(account.buildAccountData());
 
@@ -78,7 +75,7 @@ class Storage {
   Future<bool> storeShare(final String doorName, final String share) async {
     try{
       final file = File("$_userDirectoryPath/doors/$doorName.txt");
-      await file.create();
+      await file.create(recursive: true);
       await file.writeAsString(share);
       return true;
     }
@@ -92,7 +89,6 @@ class Storage {
     try{
       final file = File("$_userDirectoryPath/doors/$doorName.txt");
       await file.delete();
-      _sharesCache.remove(doorName);
       return true;
     }
     catch(e){

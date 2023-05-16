@@ -1,17 +1,18 @@
 import 'dart:convert';
 
-Account account = Account(name: "Guest");
+Account account = Account(name: "");
 
 class Account {
 
   late String _name;
-  final Set<String> _keys = {};
-  final Set<String> _doors = {};
+  final List<String> _keys = List.empty(growable: true);
 
 
-  Account({required String name, List<String> keys = const []}) {
+  Account({required String name, List<String>? keys}) {
     _name = name;
-    _keys.addAll(keys);
+    if(keys != null){
+      _keys.addAll(keys);
+    }
   }
 
   void addKey(String doorName) {
@@ -47,9 +48,10 @@ class Account {
 
   static Account from(final String jsonString) {
     final json = jsonDecode(jsonString);
+    String encodedKeys = json["doors"];
     return Account(
       name: json["name"],
-      keys: (json["doors"]).split(","),
+      keys: encodedKeys.contains(",") ? encodedKeys.split(",") : null,
     );
   }
 }
