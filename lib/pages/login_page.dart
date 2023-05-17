@@ -35,23 +35,24 @@ class _LoginPage extends State<LoginPage> {
     });
 
     ConnectResponse response = await connector.login(email: _email, password: _password);
-    ConnectResponse userDataResponse = await connector.getUserData();
 
     if (context.mounted) {
-      if (response.isOk() && userDataResponse.isOk()) {
-        AccountHandler.setAccount(userDataResponse.data["userName"]);
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MainPage(),
-          ),
-        );
-      }
-      else if (response.isOk() && !userDataResponse.isOk()) {
-        DialogPresenter.showInformDialog(context, "登入成功，但無法取得資料", description: userDataResponse.data["detail"]?? "");
+      if (response.isOk()) {
+        final setUserErrorMessage = await AccountHandler.setAccount();
+        if(context.mounted && setUserErrorMessage.isEmpty) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MainPage(),
+            ),
+          );
+        }
+        else{
+          DialogPresenter.showInformDialog(context, "無法設定資料", description: setUserErrorMessage);
+        }
       }
       else {
-        DialogPresenter.showInformDialog(context, "登入失敗", description: response.data["detail"]?? "");
+        DialogPresenter.showInformDialog(context, "登入失敗", description: response.getErrorMessage());
       }
     }
 

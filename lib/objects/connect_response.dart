@@ -10,4 +10,18 @@ class ConnectResponse {
   bool isOk() {
     return code ~/ 100 == 2;
   }
+
+  String getErrorMessage() {
+    try{
+      return data["detail"];
+    }
+    catch(_){
+      try{
+        return data["detail"].first["msg"];
+      }
+      catch(_){
+        return "";
+      }
+    }
+  }
 }

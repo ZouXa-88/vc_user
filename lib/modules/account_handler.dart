@@ -3,10 +3,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import 'package:image/image.dart' as image;
-import 'package:user/backend_processes/notifications_box.dart';
+import 'package:user/backend_processes/connector.dart';
 
 import 'package:user/objects/account.dart';
 import 'package:user/backend_processes/storage.dart';
+import 'package:user/backend_processes/notifications_box.dart';
 
 
 class AccountHandler {
@@ -21,9 +22,51 @@ class AccountHandler {
     final defaultAccount = await _getDefaultAccount();
     await storage.storeAccountData(defaultAccount);
     account = defaultAccount;
+    _addDefaultNotifications();
   }
 
-  static void addDefaultNotifications() {
+  static Future<String> setAccount() async {
+    ConnectResponse userDataResponse = await connector.getUserData();
+
+    if(userDataResponse.isOk()) {
+      try {
+        final String name = userDataResponse.data["userName"];
+        storage.setCurrentUser(name);
+
+        if (storage.hasAccountData()) {
+          account = Account.from((await storage.loadAccountData())!);
+        }
+        else {
+          ConnectResponse keyDataResponse = await connector.getKeys();
+
+          if(keyDataResponse.isOk()) {
+            account = Account(name: name);
+            await storage.storeAccountData(account);
+            final keys = List<Map<String, String>>.from(keyDataResponse.data["newShares"] as List);
+
+            for(Map<String, String> key in keys){
+              String doorName = key["doorName"]!;
+              String share = key["share"]!;
+              account.addKey(doorName);
+              await storage.storeShare(doorName, share);
+            }
+          }
+          else{
+            return keyDataResponse.getErrorMessage();
+          }
+        }
+        return "";
+      }
+      catch(e){
+        return e.toString();
+      }
+    }
+    else{
+      return userDataResponse.getErrorMessage();
+    }
+  }
+
+  static void _addDefaultNotifications() {
     notificationsBox.clear();
     notificationsBox.addNotification(
       UpdateNotification(
@@ -45,19 +88,8 @@ class AccountHandler {
     );
   }
 
-  static Future<void> setAccount(String name) async {
-    storage.setCurrentUser(name);
-    if(storage.hasAccountData()){
-      account = Account.from((await storage.loadAccountData())!);
-    }
-    else{
-      account = Account(name: name);
-      storage.storeAccountData(account);
-    }
-  }
-
   static Future<Account> _getDefaultAccount() async {
-    Account defaultAccount = Account(name: "王小明");
+    Account defaultAccount = Account(name: "王小明", isDefault: true);
     storage.setCurrentUser(defaultAccount.getName());
 
     defaultAccount.addKey("大門");

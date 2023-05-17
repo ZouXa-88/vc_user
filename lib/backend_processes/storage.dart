@@ -88,7 +88,9 @@ class Storage {
   Future<bool> deleteShare(final String doorName) async {
     try{
       final file = File("$_userDirectoryPath/doors/$doorName.txt");
-      await file.delete();
+      if(await file.exists()) {
+        await file.delete();
+      }
       return true;
     }
     catch(e){

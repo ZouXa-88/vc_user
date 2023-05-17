@@ -42,8 +42,8 @@ class Updater {
   Future<void> update() async {
     final response = await connector.update();
     try{
-      if(response.isOk()){
-        _updateData(response);
+      if(response.isOk() && await _updateData(response)){
+        _setUpdateSuccessful();
       }
       else{
         String? failedReason = response.data["detail"];
@@ -51,37 +51,56 @@ class Updater {
       }
     }
     catch(e){
-      _updateSuccessful = false;
-      _updateFailedMessage = e.toString();
+      _setUpdateFailed(message: e.toString());
     }
   }
 
-  Future<void> _updateData(final ConnectResponse response) async {
-    final deleteDoors = response.data["deleteDoors"];
-    final newShares = response.data["newShares"];
+  Future<bool> _updateData(final ConnectResponse response) async {
+    try{
+      final deleteDoors = List<String>.from(response.data["deleteDoors"] as List);
+      final newShares = List<Map<String, String>>.from(response.data["newShares"] as List);
 
-    for(String doorName in deleteDoors){
-      account.deleteKey(doorName);
-      storage.deleteShare(doorName);
+      for(String doorName in deleteDoors){
+        account.deleteKey(doorName);
+        storage.deleteShare(doorName);
 
-      notificationsBox.addNotification(
-        UpdateNotification(
-          type: NotificationType.deleteKey,
-          content: doorName,
-        ),
-      );
+        notificationsBox.addNotification(
+          UpdateNotification(
+            type: NotificationType.deleteKey,
+            content: doorName,
+          ),
+        );
+      }
+
+      for(Map<String, String> newShare in newShares){
+        String doorName = newShare["doorName"]!;
+        String share = newShare["share"]!;
+        account.addKey(doorName);
+        await storage.storeShare(doorName, share);
+
+        notificationsBox.addNotification(
+          UpdateNotification(
+            type: NotificationType.newKey,
+            content: doorName,
+          ),
+        );
+      }
+
+      return true;
     }
+    catch(e){
+      _setUpdateFailed(message: e.toString());
+      return false;
+    }
+  }
 
-    newShares.forEach((doorName, share){
-      account.addKey(doorName);
-      storage.storeShare(doorName, share);
+  void _setUpdateFailed({String message = ""}) {
+    _updateSuccessful = false;
+    _updateFailedMessage = message;
+  }
 
-      notificationsBox.addNotification(
-        UpdateNotification(
-          type: NotificationType.newKey,
-          content: doorName,
-        ),
-      );
-    });
+  void _setUpdateSuccessful() {
+    _updateSuccessful = true;
+    _updateFailedMessage = "";
   }
 }

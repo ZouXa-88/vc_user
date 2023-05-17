@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user/backend_processes/notifications_box.dart';
 
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/modules/snack_bar_presenter.dart';
@@ -131,10 +132,17 @@ class _AccountScreen extends State<AccountScreen> {
                       label: "登出",
                       iconData: Icons.logout,
                       backgroundColor: Colors.blueAccent,
-                      onPressed: () => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginPage()),
-                      ),
+                      onPressed: () {
+                        if(account.isDefault()){
+                          notificationsBox.clear();
+                        }
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      }
                     ),
                     _optionButton(
                       label: "刪除帳號",

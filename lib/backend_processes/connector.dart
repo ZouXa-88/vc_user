@@ -10,13 +10,13 @@ final Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "10.201.32.58";
+  String _serverAddress = "10.201.35.40";
   int _port = 8000;
 
   final Map<String, String> _headers = {"Content-Type": "application/json"};
 
   final _timeoutDuration = const Duration(seconds: 5);
-  FutureOr<http.Response> _onTimeout() => http.Response(jsonEncode({}), 408);
+  FutureOr<http.Response> _onTimeout() => http.Response(jsonEncode({"detail": "timeout"}), 408);
   http.Response _onException(String e) => http.Response(jsonEncode({"detail": e}), 422);
 
 
@@ -151,6 +151,18 @@ class Connector {
     final response = await _delete(
       url: Uri.http(_getHost(), "/deleteUser"),
       body: {},
+    );
+    final responseBody = _getResponseBody(response);
+
+    return ConnectResponse(
+      code: response.statusCode,
+      data: responseBody,
+    );
+  }
+
+  Future<ConnectResponse> getKeys() async {
+    final response = await _get(
+      url: Uri.http(_getHost(), "/getMyKeys"),
     );
     final responseBody = _getResponseBody(response);
 

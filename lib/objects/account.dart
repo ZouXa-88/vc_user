@@ -6,13 +6,15 @@ class Account {
 
   late String _name;
   final List<String> _keys = List.empty(growable: true);
+  late bool _isDefault;
 
 
-  Account({required String name, List<String>? keys}) {
+  Account({required String name, List<String>? keys, bool isDefault = false}) {
     _name = name;
     if(keys != null){
       _keys.addAll(keys);
     }
+    _isDefault = isDefault;
   }
 
   void addKey(String doorName) {
@@ -37,6 +39,10 @@ class Account {
 
   List<String> getAllKeys() {
     return _keys.toList();
+  }
+
+  bool isDefault() {
+    return _isDefault;
   }
 
   String buildAccountData() {
