@@ -24,7 +24,6 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
 
   QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
-  late final bool _forKeyCreation;
 
 
   bool _isValidFormat(final List<String>? tuple) {
@@ -52,8 +51,8 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
       }
 
       // Let's handle this door.
+      controller.pauseCamera();
       if(account.hasKey(doorName)){
-        controller.pauseCamera();
         // Show qrcode key.
         Navigator.push(
           context,
@@ -66,15 +65,13 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
       }
       else{
         // The user doesn't have this key.
-        if(_forKeyCreation){
+        if(widget.forKeyCreation){
           Navigator.of(context).pop(doorName);
         }
         else{
-          controller.pauseCamera();
           DialogPresenter.showConfirmDialog(context, "您沒有這扇門的鑰匙", description: "想要申請這扇門的鑰匙嗎?")
             .then((confirm) {
               if(confirm){
-                controller.pauseCamera();
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => ApplyKeyPage(doorName: doorName),
@@ -86,16 +83,11 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
               else {
                 controller.resumeCamera();
               }
-          });
+            }
+          );
         }
       }
     });
-  }
-
-  @override
-  void initState() {
-    _forKeyCreation = widget.forKeyCreation;
-    super.initState();
   }
 
   @override

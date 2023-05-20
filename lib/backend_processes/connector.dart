@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:user/backend_processes/storage.dart';
 
 part 'package:user/objects/connect_response.dart';
 
@@ -10,10 +11,13 @@ final Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "10.201.35.40";
+  String _serverAddress = "10.201.25.172";
   int _port = 8000;
 
-  final Map<String, String> _headers = {"Content-Type": "application/json"};
+  final Map<String, String> _headers = {
+    "Content-Type": "application/json",
+    "cookie": "",
+  };
 
   final _timeoutDuration = const Duration(seconds: 5);
   FutureOr<http.Response> _onTimeout() => http.Response(jsonEncode({"detail": "timeout"}), 408);
@@ -36,6 +40,14 @@ class Connector {
     return _port;
   }
 
+  bool hasCookie() {
+    return _headers["cookie"]!.isNotEmpty;
+  }
+
+  Future<void> initialize() async {
+    _headers["cookie"] = await storage.loadCookie();
+  }
+
   Future<ConnectResponse> login({
     required String email,
     required String password,
@@ -50,7 +62,11 @@ class Connector {
     final responseBody = _getResponseBody(response);
 
     if(response.statusCode == 200) {
-      _updateCookie(response);
+      String? cookie = response.headers["set-cookie"];
+      if(cookie != null){
+        _headers["cookie"] = cookie;
+        storage.storeCookie(cookie);
+      }
     }
 
     return ConnectResponse(
@@ -121,7 +137,7 @@ class Connector {
   }
 
   Future<ConnectResponse> deleteKey({required String doorName}) async {
-    final response = await _post(
+    final response = await _delete(
       url: Uri.http(_getHost(), "/deleteKey"),
       body: {
         "doorName": doorName,
@@ -170,6 +186,11 @@ class Connector {
       code: response.statusCode,
       data: responseBody,
     );
+  }
+
+  Future<void> clearCookie() async {
+    _headers["cookie"] = "";
+    await storage.deleteCookie();
   }
 
   Future<http.Response> _post({
@@ -231,13 +252,6 @@ class Connector {
     }
     catch(e){
       return {};
-    }
-  }
-
-  void _updateCookie(http.Response response) {
-    String? cookie = response.headers['set-cookie'];
-    if(cookie != null){
-      _headers['cookie'] = cookie;
     }
   }
 

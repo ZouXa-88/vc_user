@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
 
-import 'package:user/backend_processes/notifications_box.dart';
 import 'package:user/backend_processes/updater.dart';
 import 'package:user/screens/home_screen.dart';
 import 'package:user/screens/notification_screen.dart';

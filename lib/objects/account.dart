@@ -1,20 +1,13 @@
-import 'dart:convert';
-
-Account account = Account(name: "");
+Account account = Account.empty();
 
 class Account {
 
   late String _name;
   final List<String> _keys = List.empty(growable: true);
-  late bool _isDefault;
 
 
-  Account({required String name, List<String>? keys, bool isDefault = false}) {
+  Account({required String name}) {
     _name = name;
-    if(keys != null){
-      _keys.addAll(keys);
-    }
-    _isDefault = isDefault;
   }
 
   void addKey(String doorName) {
@@ -29,6 +22,10 @@ class Account {
     return _keys.contains(doorName);
   }
 
+  void clearKeys() {
+    _keys.clear();
+  }
+
   String getName() {
     return _name;
   }
@@ -41,23 +38,7 @@ class Account {
     return _keys.toList();
   }
 
-  bool isDefault() {
-    return _isDefault;
-  }
-
-  String buildAccountData() {
-    return jsonEncode({
-      "name": _name,
-      "doors": _keys.join(","),
-    });
-  }
-
-  static Account from(final String jsonString) {
-    final json = jsonDecode(jsonString);
-    String encodedKeys = json["doors"];
-    return Account(
-      name: json["name"],
-      keys: encodedKeys.contains(",") ? encodedKeys.split(",") : null,
-    );
+  static Account empty() {
+    return Account(name: "");
   }
 }

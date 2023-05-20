@@ -31,7 +31,7 @@ class DialogPresenter {
     );
   }
 
-  static void showInformDialog(BuildContext context, String title, {String description = ""}) {
+  static Future<void> showInformDialog(BuildContext context, String title, {String description = ""}) async {
     showDialog(
       context: context,
       builder: (context) {

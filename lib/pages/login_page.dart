@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:user/backend_processes/connector.dart';
-import 'package:user/backend_processes/storage.dart';
 import 'package:user/modules/app_theme.dart';
-import 'package:user/modules/account_handler.dart';
+import 'package:user/backend_processes/account_handler.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/pages/create_account_page.dart';
 import 'package:user/pages/main_page.dart';
-import 'package:user/objects/account.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -36,10 +34,10 @@ class _LoginPage extends State<LoginPage> {
 
     ConnectResponse response = await connector.login(email: _email, password: _password);
 
-    if (context.mounted) {
-      if (response.isOk()) {
-        final setUserErrorMessage = await AccountHandler.setAccount();
-        if(context.mounted && setUserErrorMessage.isEmpty) {
+    if(context.mounted){
+      if(response.isOk()){
+        final settingUserErrorMessage = await accountHandler.setAccount();
+        if(context.mounted && settingUserErrorMessage.isEmpty){
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
@@ -48,7 +46,7 @@ class _LoginPage extends State<LoginPage> {
           );
         }
         else{
-          DialogPresenter.showInformDialog(context, "無法設定資料", description: setUserErrorMessage);
+          DialogPresenter.showInformDialog(context, "無法設定資料", description: settingUserErrorMessage);
         }
       }
       else {
@@ -237,7 +235,7 @@ class _LoginPage extends State<LoginPage> {
                 TextButton(
                   child: const Text("使用預設帳號登入"),
                   onPressed: () {
-                    AccountHandler.setDefaultAccount();
+                    accountHandler.setDefaultAccount();
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(

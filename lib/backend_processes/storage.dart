@@ -4,21 +4,18 @@ import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-import 'package:user/objects/account.dart';
-
 final Storage storage = Storage();
 
 class Storage {
 
-  late String _applicationDirectoryPath;
   String _userDirectoryPath = "";
 
 
   Future<bool> initialize() async {
     if(await _checkPermission()){
       try{
-        _applicationDirectoryPath = (await getApplicationDocumentsDirectory()).path;
-        _userDirectoryPath = "$_applicationDirectoryPath/users";
+        final applicationDirectoryPath = (await getApplicationDocumentsDirectory()).path;
+        _userDirectoryPath = "$applicationDirectoryPath/users";
         Directory(_userDirectoryPath).create(recursive: true);
 
         return true;
@@ -33,43 +30,19 @@ class Storage {
     return false;
   }
 
-  void setCurrentUser(String userName) {
-    _userDirectoryPath = "$_applicationDirectoryPath/users/$userName";
-  }
-
-  bool hasAccountData() {
-    return File("$_userDirectoryPath/data.txt").existsSync();
-  }
-
-  Future<String?> loadAccountData() async {
-    final file = File("$_userDirectoryPath/data.txt");
-    if(await file.exists()){
-      return await file.readAsString();
-    }
-
-    return null;
-  }
-
   Future<String?> loadShare(final String doorName) async {
-    final file = File("$_userDirectoryPath/doors/$doorName.txt");
-    if(await file.exists() && await _checkPermission()) {
-      return await file.readAsString();
-    }
-
-    return null;
-  }
-
-  Future<bool> storeAccountData(final Account account) async {
     try{
-      final file = File("$_applicationDirectoryPath/users/${account.getName()}/data.txt");
-      await file.create(recursive: true);
-      await file.writeAsString(account.buildAccountData());
+      final file = File("$_userDirectoryPath/doors/$doorName.txt");
 
-      return true;
+      if(await file.exists()){
+        return await file.readAsString();
+      }
     }
     catch(e){
-      return false;
+      print("Load share failed: ${e.toString()}");
     }
+
+    return null;
   }
 
   Future<bool> storeShare(final String doorName, final String share) async {
@@ -97,6 +70,63 @@ class Storage {
       print("Delete share failed: ${e.toString()}");
       return false;
     }
+  }
+
+  Future<bool> clearAllShares() async {
+    try{
+      final directory = Directory("$_userDirectoryPath/doors");
+      if(await directory.exists()){
+        await directory.delete(recursive: true);
+      }
+      return true;
+    }
+    catch(e){
+      print("Delete shares directory failed: ${e.toString()}");
+      return false;
+    }
+  }
+
+  Future<bool> storeCookie(String cookie) async {
+    try{
+      final file = File("$_userDirectoryPath/cookie.txt");
+      await file.create(recursive: true);
+      file.writeAsString(cookie);
+    }
+    catch(e){
+      print("Store cookie failed: ${e.toString()}");
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<bool> deleteCookie() async {
+    try{
+      final file = File("$_userDirectoryPath/cookie.txt");
+      if(await file.exists()){
+        file.delete();
+      }
+    }
+    catch(e){
+      print("Delete cookie failed: ${e.toString()}");
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<String> loadCookie() async {
+    try{
+      final file = File("$_userDirectoryPath/cookie.txt");
+      if(await file.exists()){
+        return file.readAsString();
+      }
+    }
+    catch(e){
+      print("Load cookie failed: ${e.toString()}");
+    }
+
+    return "";
   }
 
   Future<bool> _checkPermission() async {

@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'package:lottie/lottie.dart';
+
 import 'package:user/modules/app_theme.dart';
 import 'package:user/objects/account.dart';
 
@@ -52,27 +54,48 @@ class _DisplayKeysPage extends State<DisplayKeysPage> {
       backgroundColor: AppTheme.background,
       body: Padding(
         padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-        child: Scrollbar(
-          child: AnimatedOpacity(
-            opacity: _cardVisible ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 800),
-            child: ListView.builder(
-              itemCount: account.getNumKeys(),
-              itemBuilder: (BuildContext buildContext, int index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.key),
-                      title: Text(_registeredDoorsName[index]),
-                    ),
+        child: account.getAllKeys().isNotEmpty
+            ? Scrollbar(
+              child: AnimatedOpacity(
+                opacity: _cardVisible ? 1.0 : 0.0,
+                duration: const Duration(milliseconds: 800),
+                child: ListView.builder(
+                  itemCount: account.getNumKeys(),
+                  itemBuilder: (BuildContext buildContext, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.key),
+                          title: Text(_registeredDoorsName[index]),
+                        ),
+                      ),
+                    );
+                  },
+                  physics: const BouncingScrollPhysics(),
+                ),
+              ),
+            )
+            : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Lottie.asset(
+                    "assets/lotties/astronaut.json"
                   ),
-                );
-              },
-              physics: const BouncingScrollPhysics(),
+                  Container(
+                    margin: const EdgeInsets.symmetric(vertical: 20),
+                    child: const Text(
+                      "無鑰匙",
+                      style: TextStyle(
+                        fontSize: 15,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        ),
       ),
     );
   }

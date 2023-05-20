@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user/backend_processes/account_handler.dart';
 import 'package:user/backend_processes/notifications_box.dart';
 
 import 'package:user/modules/dialog_presenter.dart';
@@ -27,10 +28,18 @@ class _AccountScreen extends State<AccountScreen> {
     if(context.mounted){
       DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        SnackBarPresenter.showSnackBar(context, "傳送成功");
+        SnackBarPresenter.showSnackBar(context, "成功刪除帳號");
+
+        accountHandler.resetAccount();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const LoginPage(),
+          ),
+        );
       }
       else{
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.data["detail"]?? "");
+        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.getErrorMessage());
       }
     }
   }
@@ -104,10 +113,10 @@ class _AccountScreen extends State<AccountScreen> {
           ),
           Flexible(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: Text(
                 account.getName(),
-                style: const TextStyle(fontSize: 40),
+                style: const TextStyle(fontSize: 35),
               ),
             ),
           ),
@@ -133,9 +142,7 @@ class _AccountScreen extends State<AccountScreen> {
                       iconData: Icons.logout,
                       backgroundColor: Colors.blueAccent,
                       onPressed: () {
-                        if(account.isDefault()){
-                          notificationsBox.clear();
-                        }
+                        accountHandler.resetAccount();
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(

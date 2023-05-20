@@ -6,7 +6,7 @@ import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/modules/app_theme.dart';
-import 'package:user/modules/account_handler.dart';
+import 'package:user/backend_processes/account_handler.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/objects/account.dart';
 
@@ -57,7 +57,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
         _animateSwitchScreen();
       }
       else{
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.data["detail"]);
+        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.getErrorMessage());
       }
     }
   }
@@ -76,7 +76,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
         _animateSwitchScreen();
       }
       else{
-        DialogPresenter.showInformDialog(context, "失敗", description: response.data["detail"]);
+        DialogPresenter.showInformDialog(context, "失敗", description: response.getErrorMessage());
       }
     }
   }

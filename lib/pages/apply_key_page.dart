@@ -43,7 +43,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
         SnackBarPresenter.showSnackBar(context, "傳送成功");
       }
       else{
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.data["detail"]);
+        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.getErrorMessage());
       }
     }
   }

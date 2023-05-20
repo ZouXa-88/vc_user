@@ -88,102 +88,102 @@ class _NotificationScreen extends State<NotificationScreen> {
           ),
         ),
       ),
-      body: notifications.isNotEmpty
-        ? Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: ToggleSwitch(
-              width: MediaQuery.of(context).size.width * 0.8,
-              initialIndex: _switchBarIndex,
-              options: const [
-                "全部",
-                "新增鑰匙",
-                "刪除鑰匙",
-              ],
-              onChange: (index) {
-                setState(() {
-                  _switchBarIndex = index;
-                });
-              },
-            ),
-          ),
-          backgroundColor: Colors.transparent,
-          body: Scrollbar(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: notifications.length,
-                itemBuilder: (context, index) {
-                  // Latest notification first.
-                  final notification = notifications[notifications.length - index - 1];
-                  return Card(
-                    child: ExpansionTile(
-                      leading: notification.isNew 
-                          ? const Text("新", style: TextStyle(color: Colors.redAccent))
-                          : const Text(""),
-                      title: Text(
-                        notification.type == NotificationType.newKey ? "新增鑰匙" : "刪除鑰匙",
-                        style: const TextStyle(
-                          color: Colors.black,
-                        ),
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      childrenPadding: const EdgeInsets.symmetric(vertical: 10),
-                      children: [
-                        Text(
-                          notification.content,
-                          style: const TextStyle(
-                            fontSize: 17,
-                          ),
-                        ),
-                      ],
-                      onExpansionChanged: (isExpanded) {
-                        if(isExpanded && notification.isNew){
-                          setState(() {
-                            notification.pickUp();
-                          });
-                        }
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        )
-        : Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 100,
-                height: 100,
-                decoration: const BoxDecoration(
-                  color: Colors.black45,
-                  shape: BoxShape.circle,
-                ),
-                child: Lottie.asset(
-                  "assets/lotties/empty_box.json",
-                  width: 100,
-                  height: 100,
-                ),
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10),
-                child: Text(
-                  "無通知",
-                  style: TextStyle(
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
+      body: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: ToggleSwitch(
+            width: MediaQuery.of(context).size.width * 0.8,
+            initialIndex: _switchBarIndex,
+            options: const [
+              "全部",
+              "新增鑰匙",
+              "刪除鑰匙",
             ],
+            onChange: (index) {
+              setState(() {
+                _switchBarIndex = index;
+              });
+            },
           ),
         ),
+        backgroundColor: Colors.transparent,
+        body: notifications.isNotEmpty
+            ? Scrollbar(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: notifications.length,
+                  itemBuilder: (context, index) {
+                    // Latest notification first.
+                    final notification = notifications[notifications.length - index - 1];
+                    return Card(
+                      child: ExpansionTile(
+                        leading: notification.isNew
+                            ? const Text("新", style: TextStyle(color: Colors.redAccent))
+                            : const Text(""),
+                        title: Text(
+                          notification.type == NotificationType.newKey ? "新增鑰匙" : "刪除鑰匙",
+                          style: const TextStyle(
+                            color: Colors.black,
+                          ),
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        childrenPadding: const EdgeInsets.symmetric(vertical: 10),
+                        children: [
+                          Text(
+                            notification.content,
+                            style: const TextStyle(
+                              fontSize: 17,
+                            ),
+                          ),
+                        ],
+                        onExpansionChanged: (isExpanded) {
+                          if(isExpanded && notification.isNew){
+                            setState(() {
+                              notification.pickUp();
+                            });
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            )
+            : Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: const BoxDecoration(
+                      color: Colors.black45,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Lottie.asset(
+                      "assets/lotties/empty_box.json",
+                      width: 100,
+                      height: 100,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "無通知",
+                      style: TextStyle(
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+      ),
     );
   }
 }

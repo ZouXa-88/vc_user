@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/backend_processes/notifications_box.dart';
@@ -25,6 +26,7 @@ class Updater {
 
   void startPeriodicUpdate() {
     if(_updateTimer == null || !_updateTimer!.isActive) {
+      _resetState();
       update();
       _updateTimer = Timer.periodic(
         const Duration(seconds: 10),
@@ -42,55 +44,49 @@ class Updater {
   Future<void> update() async {
     final response = await connector.update();
     try{
-      if(response.isOk() && await _updateData(response)){
-        _setUpdateSuccessful();
+      if(response.isOk()){
+        await updateData(response.data);
       }
       else{
-        String? failedReason = response.data["detail"];
-        throw Exception(failedReason ?? "");
+        throw Exception(response.getErrorMessage());
       }
     }
     catch(e){
       _setUpdateFailed(message: e.toString());
+      print(e.toString());
     }
   }
 
-  Future<bool> _updateData(final ConnectResponse response) async {
-    try{
-      final deleteDoors = List<String>.from(response.data["deleteDoors"] as List);
-      final newShares = List<Map<String, String>>.from(response.data["newShares"] as List);
+  Future<void> updateData(final data) async {
+    //await storage.clearAllShares();
+    final deleteDoors = List<String>.from(data["deleteDoors"] as List);
+    final newShares = List<Map<String, dynamic>>.from(data["newShares"] as List);
 
-      for(String doorName in deleteDoors){
-        account.deleteKey(doorName);
-        storage.deleteShare(doorName);
+    for(String doorName in deleteDoors){
+      doorName = utf8.decode(doorName.codeUnits);
+      account.deleteKey(doorName);
+      storage.deleteShare(doorName);
 
-        notificationsBox.addNotification(
-          UpdateNotification(
-            type: NotificationType.deleteKey,
-            content: doorName,
-          ),
-        );
-      }
-
-      for(Map<String, String> newShare in newShares){
-        String doorName = newShare["doorName"]!;
-        String share = newShare["share"]!;
-        account.addKey(doorName);
-        await storage.storeShare(doorName, share);
-
-        notificationsBox.addNotification(
-          UpdateNotification(
-            type: NotificationType.newKey,
-            content: doorName,
-          ),
-        );
-      }
-
-      return true;
+      notificationsBox.addNotification(
+        UpdateNotification(
+          type: NotificationType.deleteKey,
+          content: doorName,
+        ),
+      );
     }
-    catch(e){
-      _setUpdateFailed(message: e.toString());
-      return false;
+
+    for(Map<String, dynamic> newShare in newShares) {
+      String doorName = utf8.decode((newShare["doorName"]! as String).codeUnits);
+      String share = newShare["share"]! as String;
+      account.addKey(doorName);
+      await storage.storeShare(doorName, share);
+
+      notificationsBox.addNotification(
+        UpdateNotification(
+          type: NotificationType.newKey,
+          content: doorName,
+        ),
+      );
     }
   }
 
@@ -99,7 +95,7 @@ class Updater {
     _updateFailedMessage = message;
   }
 
-  void _setUpdateSuccessful() {
+  void _resetState() {
     _updateSuccessful = true;
     _updateFailedMessage = "";
   }
