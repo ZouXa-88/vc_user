@@ -14,7 +14,23 @@ final AccountHandler accountHandler = AccountHandler();
 class AccountHandler {
 
   Future<void> setDefaultAccount() async {
-    account = await _getDefaultAccount();
+    account = Account(name: "王小明");
+
+    updater.updateData({
+      "deleteDoors": [
+        String.fromCharCodes(utf8.encode("住家門")),
+      ],
+      "newShares": [
+        {
+          "doorName": String.fromCharCodes(utf8.encode("大門")),
+          "share": await _loadShare("assets/shares/door1_1.png"),
+        },
+        {
+          "doorName": String.fromCharCodes(utf8.encode("二樓辦公室")),
+          "share": await _loadShare("assets/shares/door2_1.png"),
+        },
+      ]
+    });
   }
 
   Future<String> setAccount() async {
@@ -38,28 +54,6 @@ class AccountHandler {
     connector.clearCookie();
     notificationsBox.clear();
     account = Account.empty();
-  }
-
-  Future<Account> _getDefaultAccount() async {
-    Account defaultAccount = Account(name: "王小明");
-
-    updater.updateData({
-      "deleteDoors": [
-        String.fromCharCodes(utf8.encode("住家門")),
-      ],
-      "newShares": [
-        {
-          "doorName": String.fromCharCodes(utf8.encode("大門")),
-          "share": await _loadShare("assets/shares/door1_1.png"),
-        },
-        {
-          "doorName": String.fromCharCodes(utf8.encode("二樓辦公室")),
-          "share": await _loadShare("assets/shares/door2_1.png"),
-        },
-      ]
-    });
-
-    return defaultAccount;
   }
 
   Future<String> _loadShare(String path) async {

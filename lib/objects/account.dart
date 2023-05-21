@@ -3,11 +3,12 @@ Account account = Account.empty();
 class Account {
 
   late String _name;
-  final List<String> _keys = List.empty(growable: true);
+  late List<String> _keys;
 
 
   Account({required String name}) {
     _name = name;
+    _keys = List.empty(growable: true);
   }
 
   void addKey(String doorName) {
