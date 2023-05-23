@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:user/backend_processes/storage.dart';
+import 'package:oauth2/oauth2.dart' as oauth2;
 
+import 'package:user/backend_processes/storage.dart';
 part 'package:user/objects/connect_response.dart';
 
 
@@ -11,17 +12,14 @@ final Connector connector = Connector();
 
 class Connector {
 
-  String _serverAddress = "10.201.25.172";
+  oauth2.Client? _client;
+  String _serverAddress = "vc-server-hha2.onrender.com";
   int _port = 8000;
 
-  final Map<String, String> _headers = {
-    "Content-Type": "application/json",
-    "cookie": "",
-  };
+  final Map<String, String> _header = {"Content-Type": "application/json"};
 
-  final _timeoutDuration = const Duration(seconds: 5);
-  FutureOr<http.Response> _onTimeout() => http.Response(jsonEncode({"detail": "timeout"}), 408);
-  http.Response _onException(String e) => http.Response(jsonEncode({"detail": e}), 422);
+  ConnectResponse _onException(String e) => ConnectResponse(code: 422, data: {"detail": e});
+  ConnectResponse _onNotAuthenticated() => ConnectResponse(code: 401, data: {"detail": "Require login"});
 
 
   void setServerAddress(final String serverAddress) {
@@ -40,52 +38,60 @@ class Connector {
     return _port;
   }
 
-  bool hasCookie() {
-    return _headers["cookie"]!.isNotEmpty;
+  Future<void> setCredentials() async {
+    _client = oauth2.Client(oauth2.Credentials.fromJson((await storage.loadCredentials())!));
   }
 
-  Future<void> initialize() async {
-    _headers["cookie"] = await storage.loadCookie();
+  Future<void> storeCredentials() async {
+    if(_client != null){
+      storage.storeCredentials(_client!.credentials.toJson());
+    }
   }
 
   Future<ConnectResponse> login({
     required String email,
     required String password,
   }) async {
-    final response = await _post(
-      url: Uri.http(_getHost(), "/login"),
-      body: {
-        "email": email,
-        "password": password,
-      },
-    );
-    final responseBody = _getResponseBody(response);
-
-    if(response.statusCode == 200) {
-      String? cookie = response.headers["set-cookie"];
-      if(cookie != null){
-        _headers["cookie"] = cookie;
-        storage.storeCookie(cookie);
-      }
+    try{
+      _client = await oauth2.resourceOwnerPasswordGrant(
+        Uri.https(_serverAddress, "/token"),
+        email,
+        password,
+      );
+      storeCredentials();
+      return ConnectResponse(code: 200);
     }
-
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
+    catch(e){
+      return _onException(e.toString());
+    }
   }
 
-  Future<ConnectResponse> getUserData() async {
-    final response = await _get(
-      url: Uri.http(_getHost(), "/getMe"),
-    );
+  void logout() {
+    _client?.close();
+    _client = null;
+    storage.deleteCredentials();
+  }
 
-    final responseBody = _getResponseBody(response);
+  Future<ConnectResponse> getKeys() async {
+    if(_client == null){
+      return _onNotAuthenticated();
+    }
 
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
+    try{
+      final response = await _client!.get(
+        Uri.https(_serverAddress, "/users/getMyKeys"),
+        headers: _header,
+      );
+      final responseBody = jsonDecode(response.body);
+
+      return ConnectResponse(
+        code: response.statusCode,
+        data: responseBody,
+      );
+    }
+    catch(e){
+      return _onException(e.toString());
+    }
   }
 
   Future<ConnectResponse> createAccount({
@@ -93,118 +99,90 @@ class Connector {
     required String email,
     required String password,
   }) async {
-    final response = await _post(
-      url: Uri.http(_getHost(), "/createUser"),
-      body: {
-        "userName": userName,
-        "email": email,
-        "password": password,
-      },
-    );
-    final responseBody = _getResponseBody(response);
+    try{
+      final response = await http.post(
+        Uri.https(_serverAddress, "/users/createUser"),
+        body: jsonEncode({
+          "password": password,
+          "email": email,
+          "user_name": userName,
+        }),
+        headers: _header,
+      );
+      final responseBody = jsonDecode(response.body);
 
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
+      return ConnectResponse(
+        code: response.statusCode,
+        data: responseBody,
+      );
+    }
+    catch(e){
+      print(e.toString());
+      return _onException(e.toString());
+    }
   }
 
   Future<ConnectResponse> validate({required String code}) async {
-    final response = await _get(
-      url: Uri.http(_getHost(), "/validateEmail", {"code": code}),
-    );
-    final responseBody = _getResponseBody(response);
+    try{
+      final response = await http.get(
+        Uri.http(_serverAddress, "/users/validateEmail", {"code": code}),
+        headers: _header,
+      );
+      final responseBody = _getResponseBody(response);
 
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
+      return ConnectResponse(
+        code: response.statusCode,
+        data: responseBody,
+      );
+    }
+    catch(e){
+      return _onException(e.toString());
+    }
   }
 
-  Future<ConnectResponse> applyKey({required String doorName}) async {
-    final response = await _post(
-      url: Uri.http(_getHost(), "/requestKey"),
-      body: {
-        "doorName": doorName,
-      },
-    );
-    final responseBody = _getResponseBody(response);
+  Future<ConnectResponse> requestKey({required String doorName}) async {
+    if(_client == null){
+      return _onNotAuthenticated();
+    }
 
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
+    try{
+      final response = await _client!.post(
+        Uri.https(_serverAddress, "/users/requestKey"),
+        body: jsonEncode({
+          "door_name": doorName,
+        }),
+        headers: _header,
+      );
+      final responseBody = _getResponseBody(response);
+
+      return ConnectResponse(
+        code: response.statusCode,
+        data: responseBody,
+      );
+    }
+    catch(e){
+      return _onException(e.toString());
+    }
   }
 
   Future<ConnectResponse> deleteKey({required String doorName}) async {
-    final response = await _delete(
-      url: Uri.http(_getHost(), "/deleteKey"),
-      body: {
-        "doorName": doorName,
-      },
-    );
-    final responseBody = _getResponseBody(response);
+    if(_client == null){
+      return _onNotAuthenticated();
+    }
 
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
-  }
-
-  Future<ConnectResponse> update() async {
-    final response = await _get(
-      url: Uri.http(_getHost(), "/userUpdate"),
-    );
-    final responseBody = _getResponseBody(response);
-
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
-  }
-
-  Future<ConnectResponse> deleteAccount() async {
-    final response = await _delete(
-      url: Uri.http(_getHost(), "/deleteUser"),
-      body: {},
-    );
-    final responseBody = _getResponseBody(response);
-
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
-  }
-
-  Future<ConnectResponse> getKeys() async {
-    final response = await _get(
-      url: Uri.http(_getHost(), "/getMyKeys"),
-    );
-    final responseBody = _getResponseBody(response);
-
-    return ConnectResponse(
-      code: response.statusCode,
-      data: responseBody,
-    );
-  }
-
-  Future<void> clearCookie() async {
-    _headers["cookie"] = "";
-    await storage.deleteCookie();
-  }
-
-  Future<http.Response> _post({
-    required Uri url,
-    required Map<String, dynamic> body,
-  }) async {
     try{
-      return http.post(
-        url,
-        body: jsonEncode(body),
-        headers: _headers,
-      ).timeout(
-        _timeoutDuration,
-        onTimeout: _onTimeout,
+      final response = await _client!.delete(
+        Uri.https(_serverAddress, "/users/deleteKey"),
+        body: jsonEncode({
+          "share": await storage.loadShare(doorName),
+        }),
+        headers: _header,
+      );
+      final responseBody = _getResponseBody(response);
+
+      return ConnectResponse(
+        code: response.statusCode,
+        data: responseBody,
       );
     }
     catch(e){
@@ -212,33 +190,21 @@ class Connector {
     }
   }
 
-  Future<http.Response> _get({required Uri url}) async {
-    try{
-      return http.get(
-        url,
-        headers: _headers,
-      ).timeout(
-        _timeoutDuration,
-        onTimeout: _onTimeout,
-      );
+  Future<ConnectResponse> deleteUser() async {
+    if(_client == null){
+      return _onNotAuthenticated();
     }
-    catch(e){
-      return _onException(e.toString());
-    }
-  }
 
-  Future<http.Response> _delete({
-    required Uri url,
-    required Map<String, dynamic> body,
-  }) async {
     try{
-      return http.delete(
-        url,
-        body: jsonEncode(body),
-        headers: _headers,
-      ).timeout(
-        _timeoutDuration,
-        onTimeout: _onTimeout,
+      final response = await _client!.delete(
+        Uri.https(_serverAddress, "/users/deleteUser"),
+        headers: _header,
+      );
+      final responseBody = _getResponseBody(response);
+
+      return ConnectResponse(
+        code: response.statusCode,
+        data: responseBody,
       );
     }
     catch(e){
@@ -247,12 +213,7 @@ class Connector {
   }
 
   Map<String, dynamic> _getResponseBody(http.Response response) {
-    try {
-      return jsonDecode(response.body);
-    }
-    catch(e){
-      return {};
-    }
+    return jsonDecode(response.body);
   }
 
   String _getHost() {

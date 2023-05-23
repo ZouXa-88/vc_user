@@ -36,7 +36,7 @@ class Account {
   }
 
   List<String> getAllKeys() {
-    return _keys.toList();
+    return _keys;
   }
 
   static Account empty() {

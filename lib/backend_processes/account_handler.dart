@@ -16,43 +16,21 @@ class AccountHandler {
   Future<void> setDefaultAccount() async {
     account = Account(name: "王小明");
 
-    updater.updateData({
-      "deleteDoors": [
-        String.fromCharCodes(utf8.encode("住家門")),
-      ],
-      "newShares": [
-        {
-          "doorName": String.fromCharCodes(utf8.encode("大門")),
-          "share": await _loadShare("assets/shares/door1_1.png"),
-        },
-        {
-          "doorName": String.fromCharCodes(utf8.encode("二樓辦公室")),
-          "share": await _loadShare("assets/shares/door2_1.png"),
-        },
-      ]
-    });
-  }
-
-  Future<String> setAccount() async {
-    ConnectResponse userDataResponse = await connector.getUserData();
-
-    if(userDataResponse.isOk()) {
-      try {
-        final String name = utf8.decode(userDataResponse.data["userName"].codeUnits);
-        account = Account(name: name);
-        return "";
-      }
-      catch(e){
-        return e.toString();
-      }
-    }
-
-    return userDataResponse.getErrorMessage();
+    updater.updateData([
+      {
+        "door_name": String.fromCharCodes(utf8.encode("大門")),
+        "share": await _loadShare("assets/shares/door1_1.png"),
+      },
+      {
+        "door_name": String.fromCharCodes(utf8.encode("二樓辦公室")),
+        "share": await _loadShare("assets/shares/door2_1.png"),
+      },
+    ]);
   }
 
   Future<void> resetAccount() async {
-    connector.clearCookie();
     notificationsBox.clear();
+    connector.logout();
     account = Account.empty();
   }
 

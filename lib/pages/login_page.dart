@@ -36,21 +36,15 @@ class _LoginPage extends State<LoginPage> {
 
     if(context.mounted){
       if(response.isOk()){
-        final settingUserErrorMessage = await accountHandler.setAccount();
-        if(context.mounted && settingUserErrorMessage.isEmpty){
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const MainPage(),
-            ),
-          );
-        }
-        else{
-          DialogPresenter.showInformDialog(context, "無法設定資料", description: settingUserErrorMessage);
-        }
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainPage(),
+          ),
+        );
       }
-      else {
-        DialogPresenter.showInformDialog(context, "登入失敗", description: response.getErrorMessage());
+      else{
+        DialogPresenter.showInformDialog(context, "無法登入", description: response.getErrorMessage());
       }
     }
 

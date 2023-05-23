@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:user/backend_processes/connector.dart';
+import 'package:user/backend_processes/updater.dart';
 
-import 'package:user/backend_processes/account_handler.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/backend_processes/storage.dart';
-import 'package:user/backend_processes/connector.dart';
 import 'package:user/pages/login_page.dart';
 import 'package:user/pages/main_page.dart';
 
@@ -17,52 +17,34 @@ class SetupPage extends StatefulWidget {
 
 class _SetupPage extends State<SetupPage> {
 
-  void _toMainPage() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const MainPage(),
-      ),
-    );
-  }
-
-  void _toLoginPage() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const LoginPage(),
-      ),
-    );
-  }
-
-  Future<void> _connectToServer() async {
-    final String settingUserErrorMessage = await accountHandler.setAccount();
-
-    if(context.mounted){
-      if(settingUserErrorMessage.isEmpty){
-        _toMainPage();
+  Future<void> _routePage() async {
+    if(storage.hasCredentials()){
+      await connector.setCredentials();
+      if(context.mounted){
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MainPage(),
+          ),
+        );
       }
-      else{
-        DialogPresenter.showInformDialog(context, "請重新登入", description: settingUserErrorMessage)
-          .then((_) {
-             _toLoginPage();
-        });
-      }
+    }
+    else{
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginPage(),
+        ),
+      );
     }
   }
 
   Future<void> _setup() async {
     final storageInitializeSuccess = await storage.initialize();
-    await connector.initialize();
 
     if(context.mounted){
-      if(storageInitializeSuccess) {
-        if(connector.hasCookie()){
-          _connectToServer();
-        }
-        else{
-          _toLoginPage();
-        }
+      if(storageInitializeSuccess){
+        _routePage();
       }
       else{
         DialogPresenter.showInformDialog(context, "儲存空間設置失敗", description: "請重新啟動程式")

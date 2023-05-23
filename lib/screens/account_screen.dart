@@ -23,7 +23,7 @@ class _AccountScreen extends State<AccountScreen> {
   Future<void> _deleteAccount() async {
     DialogPresenter.showProcessingDialog(context, "傳送中");
 
-    ConnectResponse response = await connector.deleteAccount();
+    ConnectResponse response = await connector.deleteUser();
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);

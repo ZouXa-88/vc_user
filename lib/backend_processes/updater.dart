@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:user/backend_processes/connector.dart';
-import 'package:user/backend_processes/notifications_box.dart';
 import 'package:user/backend_processes/storage.dart';
 import 'package:user/objects/account.dart';
 
@@ -42,7 +41,7 @@ class Updater {
   }
 
   Future<void> update() async {
-    final response = await connector.update();
+    final response = await connector.getKeys();
     try{
       if(response.isOk()){
         await updateData(response.data);
@@ -53,40 +52,18 @@ class Updater {
     }
     catch(e){
       _setUpdateFailed(message: e.toString());
-      print(e.toString());
     }
   }
 
-  Future<void> updateData(final data) async {
-    //await storage.clearAllShares();
-    final deleteDoors = List<String>.from(data["deleteDoors"] as List);
-    final newShares = List<Map<String, dynamic>>.from(data["newShares"] as List);
+  Future<void> updateData(List<dynamic> data) async {
+    await storage.clearAllShares();
+    final keys = List<Map<String, dynamic>>.from(data);
 
-    for(String doorName in deleteDoors){
-      doorName = utf8.decode(doorName.codeUnits);
-      account.deleteKey(doorName);
-      storage.deleteShare(doorName);
-
-      notificationsBox.addNotification(
-        UpdateNotification(
-          type: NotificationType.deleteKey,
-          content: doorName,
-        ),
-      );
-    }
-
-    for(Map<String, dynamic> newShare in newShares) {
-      String doorName = utf8.decode((newShare["doorName"]! as String).codeUnits);
-      String share = newShare["share"]! as String;
+    for(Map<String, dynamic> key in keys){
+      String doorName = utf8.decode((key["door_name"]! as String).codeUnits);
+      String share = key["share"]! as String;
       account.addKey(doorName);
       await storage.storeShare(doorName, share);
-
-      notificationsBox.addNotification(
-        UpdateNotification(
-          type: NotificationType.newKey,
-          content: doorName,
-        ),
-      );
     }
   }
 

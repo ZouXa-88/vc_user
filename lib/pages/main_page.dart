@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_snake_navigationbar/flutter_snake_navigationbar.dart';
+import 'package:user/backend_processes/connector.dart';
 
 import 'package:user/backend_processes/updater.dart';
 import 'package:user/screens/home_screen.dart';
@@ -31,6 +32,7 @@ class _MainPage extends State<MainPage> {
   @override
   void dispose() {
     updater.stopPeriodicUpdate();
+    connector.storeCredentials();
     super.dispose();
   }
 

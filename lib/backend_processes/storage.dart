@@ -86,47 +86,56 @@ class Storage {
     }
   }
 
-  Future<bool> storeCookie(String cookie) async {
+  bool hasCredentials() {
     try{
-      final file = File("$_userDirectoryPath/cookie.txt");
+      return File("$_userDirectoryPath/credentials.txt").existsSync();
+    }
+    catch(e){
+      print("Cannot check whether credentials exist: ${e.toString()}");
+      return false;
+    }
+  }
+
+  Future<bool> storeCredentials(String credentials) async {
+    try{
+      final file = File("$_userDirectoryPath/credentials.txt");
       await file.create(recursive: true);
-      file.writeAsString(cookie);
+      await file.writeAsString(credentials);
+      return true;
     }
     catch(e){
-      print("Store cookie failed: ${e.toString()}");
+      print("Store credentials failed: ${e.toString()}");
       return false;
     }
-
-    return true;
   }
 
-  Future<bool> deleteCookie() async {
+  Future<String?> loadCredentials() async {
     try{
-      final file = File("$_userDirectoryPath/cookie.txt");
+      final file = File("$_userDirectoryPath/credentials.txt");
+
       if(await file.exists()){
-        file.delete();
+        return await file.readAsString();
       }
     }
     catch(e){
-      print("Delete cookie failed: ${e.toString()}");
-      return false;
+      print("Load credentials failed: ${e.toString()}");
     }
 
-    return true;
+    return null;
   }
 
-  Future<String> loadCookie() async {
+  Future<bool> deleteCredentials() async {
     try{
-      final file = File("$_userDirectoryPath/cookie.txt");
-      if(await file.exists()){
-        return file.readAsString();
+      final file = File("$_userDirectoryPath/credentials.txt");
+      if(await file.exists()) {
+        await file.delete();
       }
+      return true;
     }
     catch(e){
-      print("Load cookie failed: ${e.toString()}");
+      print("Delete credentials failed: ${e.toString()}");
+      return false;
     }
-
-    return "";
   }
 
   Future<bool> _checkPermission() async {

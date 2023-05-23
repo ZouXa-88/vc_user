@@ -25,7 +25,7 @@ class _QrCodeKeyPage extends State<QrCodeKeyPage> {
   late String _doorName;
   late int _seed;
 
-  late QrImage _qrImage;
+  late QrImageView _qrImage;
   bool _qrCodeIsGenerated = false;
 
 
@@ -50,7 +50,7 @@ class _QrCodeKeyPage extends State<QrCodeKeyPage> {
     }
 
     setState(() {
-      _qrImage = QrImage(
+      _qrImage = QrImageView(
         data: base64Encode(buf),
         version: 10,
         errorCorrectionLevel: QrErrorCorrectLevel.L,

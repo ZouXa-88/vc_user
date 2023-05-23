@@ -35,7 +35,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
   Future<void> _apply() async {
     DialogPresenter.showProcessingDialog(context, "傳送中...");
 
-    ConnectResponse response = await connector.applyKey(doorName: _doorName);
+    ConnectResponse response = await connector.requestKey(doorName: _doorName);
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);
