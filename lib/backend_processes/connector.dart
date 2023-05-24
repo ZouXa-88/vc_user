@@ -276,9 +276,7 @@ class Connector {
       _storeCredentials();
     }
     catch(e){
-      if(e.toString().contains("Incorrect username or password")){
-        storage.deleteAccountData();
-      }
+      print("Re-login failed: ${e.toString()}");
     }
   }
 
