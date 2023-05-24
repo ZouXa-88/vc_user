@@ -4,19 +4,20 @@ import 'package:flutter/material.dart';
 
 import 'package:lottie/lottie.dart';
 
-import 'package:user/modules/app_theme.dart';
 import 'package:user/backend_processes/updater.dart';
+import 'package:user/backend_processes/connector.dart';
 import 'package:user/modules/dialog_presenter.dart';
+import 'package:user/modules/app_theme.dart';
 
 
-class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({super.key});
+class StatusScreen extends StatefulWidget {
+  const StatusScreen({super.key});
 
   @override
-  State<NotificationScreen> createState() => _NotificationScreen();
+  State<StatusScreen> createState() => _StatusScreen();
 }
 
-class _NotificationScreen extends State<NotificationScreen> {
+class _StatusScreen extends State<StatusScreen> {
 
   late Timer _trackUpdateStatusTimer;
   bool _hasConnection = false;
@@ -25,19 +26,20 @@ class _NotificationScreen extends State<NotificationScreen> {
 
   @override
   void initState() {
-    _getUpdateState();
+    _getUpdateStatus();
     _trackUpdateStatusTimer = Timer.periodic(
-      const Duration(milliseconds: 100),
+      const Duration(seconds: 2),
       (timer) {
-        _getUpdateState();
+        _getUpdateStatus();
       },
     );
     super.initState();
   }
 
-  void _getUpdateState() {
+  Future<void> _getUpdateStatus() async {
+    bool hasConnection = await connector.pingTest();
     setState(() {
-      _hasConnection = !updater.getFailedMessage().contains("Failed host lookup");
+      _hasConnection = hasConnection;
       _failedMessage = updater.getFailedMessage();
     });
   }
@@ -63,6 +65,8 @@ class _NotificationScreen extends State<NotificationScreen> {
           DialogPresenter.showInformDialog(context, "更新失敗", description: description);
         },
         child: Card(
+          color: color.withOpacity(0.1),
+          shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             side: BorderSide(
               color: color.withOpacity(0.6),

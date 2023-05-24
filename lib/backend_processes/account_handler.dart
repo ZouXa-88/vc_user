@@ -3,11 +3,10 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 
 import 'package:image/image.dart' as image;
-import 'package:user/backend_processes/connector.dart';
-import 'package:user/backend_processes/notifications_box.dart';
 
 import 'package:user/objects/account.dart';
 import 'package:user/backend_processes/updater.dart';
+import 'package:user/backend_processes/connector.dart';
 
 final AccountHandler accountHandler = AccountHandler();
 
@@ -30,7 +29,6 @@ class AccountHandler {
   }
 
   Future<void> resetAccount() async {
-    notificationsBox.clear();
     connector.logout();
     account.clear();
   }

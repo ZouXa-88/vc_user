@@ -138,6 +138,48 @@ class Storage {
     }
   }
 
+  Future<String?> loadAccountData() async {
+    try{
+      final file = File("$_userDirectoryPath/account_data.txt");
+
+      if(await file.exists()){
+        return await file.readAsString();
+      }
+    }
+    catch(e){
+      print("Load account data failed: ${e.toString()}");
+    }
+
+    return null;
+  }
+
+  Future<bool> deleteAccountData() async {
+    try{
+      final file = File("$_userDirectoryPath/account_data.txt");
+      if(await file.exists()) {
+        await file.delete();
+      }
+      return true;
+    }
+    catch(e){
+      print("Delete account data failed: ${e.toString()}");
+      return false;
+    }
+  }
+
+  Future<bool> storeAccountData(String accountData) async {
+    try{
+      final file = File("$_userDirectoryPath/account_data.txt");
+      await file.create(recursive: true);
+      await file.writeAsString(accountData);
+      return true;
+    }
+    catch(e){
+      print("Store account data failed: ${e.toString()}");
+      return false;
+    }
+  }
+
   Future<bool> _checkPermission() async {
     if(!(await Permission.manageExternalStorage.isGranted)){
       await Permission.manageExternalStorage.request();

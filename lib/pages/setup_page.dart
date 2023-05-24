@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:user/backend_processes/connector.dart';
-import 'package:user/backend_processes/updater.dart';
 
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/backend_processes/storage.dart';
+import 'package:user/backend_processes/connector.dart';
 import 'package:user/pages/login_page.dart';
 import 'package:user/pages/main_page.dart';
 
@@ -19,7 +18,7 @@ class _SetupPage extends State<SetupPage> {
 
   Future<void> _routePage() async {
     if(storage.hasCredentials()){
-      await connector.autoLogin();
+      await connector.initialize();
       if(context.mounted){
         Navigator.pushReplacement(
           context,
