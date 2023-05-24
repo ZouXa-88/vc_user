@@ -20,7 +20,7 @@ class StatusScreen extends StatefulWidget {
 class _StatusScreen extends State<StatusScreen> {
 
   late Timer _trackUpdateStatusTimer;
-  bool _hasConnection = false;
+  bool _hasConnection = true;
   String _failedMessage = "";
 
 
@@ -38,10 +38,12 @@ class _StatusScreen extends State<StatusScreen> {
 
   Future<void> _getUpdateStatus() async {
     bool hasConnection = await connector.pingTest();
-    setState(() {
-      _hasConnection = hasConnection;
-      _failedMessage = updater.getFailedMessage();
-    });
+    if(_trackUpdateStatusTimer.isActive){
+      setState(() {
+        _hasConnection = hasConnection;
+        _failedMessage = updater.getFailedMessage();
+      });
+    }
   }
 
   @override

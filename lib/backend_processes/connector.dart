@@ -56,10 +56,6 @@ class Connector {
     _client = oauth2.Client(oauth2.Credentials.fromJson((await storage.loadCredentials())!));
   }
 
-  bool isLogout() {
-    return _client == null;
-  }
-
   Future<bool> pingTest() async {
     bool successful = true;
 
@@ -200,6 +196,31 @@ class Connector {
     try{
       final response = await _client!.delete(
         Uri.https(_serverAddress, "/users/deleteKey"),
+        body: jsonEncode({
+          "share": await storage.loadShare(doorName),
+        }),
+        headers: _header,
+      );
+      final responseBody = _getResponseBody(response);
+
+      return ConnectResponse(
+        code: response.statusCode,
+        data: responseBody,
+      );
+    }
+    catch(e){
+      return _onException(e.toString());
+    }
+  }
+
+  Future<ConnectResponse> requestUpdateKey({required String doorName}) async {
+    if(_client == null){
+      return _onNotAuthenticated();
+    }
+
+    try{
+      final response = await _client!.put(
+        Uri.https(_serverAddress, "/users/requestUpdateKey"),
         body: jsonEncode({
           "share": await storage.loadShare(doorName),
         }),

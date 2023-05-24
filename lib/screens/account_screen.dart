@@ -102,21 +102,10 @@ class _AccountScreen extends State<AccountScreen> {
       body: Column(
         mainAxisSize: MainAxisSize.max,
         children: [
-          const Expanded(
+          Expanded(
             flex: 1,
-            child: Icon(
-              Icons.account_circle_rounded,
-              color: Colors.grey,
-              size: 100,
-            ),
-          ),
-          Flexible(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Text(
-                account.getName(),
-                style: const TextStyle(fontSize: 35),
-              ),
+            child: Image.asset(
+              "assets/images/user.png",
             ),
           ),
           Expanded(
