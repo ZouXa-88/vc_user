@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:user/modules/app_theme.dart';
-import 'package:user/backend_processes/notifications_box.dart';
-import 'package:user/widgets/toggle_switch.dart';
+import 'package:user/backend_processes/updater.dart';
+import 'package:user/modules/dialog_presenter.dart';
 
 
 class NotificationScreen extends StatefulWidget {
@@ -18,171 +18,137 @@ class NotificationScreen extends StatefulWidget {
 
 class _NotificationScreen extends State<NotificationScreen> {
 
-  int _switchBarIndex = 0;
+  late Timer _trackUpdateStatusTimer;
+  bool _hasConnection = false;
+  String _failedMessage = "";
 
-  late Timer _trackNewNotificationTimer;
-  late DateTime _lastModifiedTime;
-  List<UpdateNotification> _notifications = List.empty();
-
-  
-  List<UpdateNotification> _filterNotifications(List<UpdateNotification> notifications) {
-    switch(_switchBarIndex){
-      case 1:
-        return <UpdateNotification> [
-          for(UpdateNotification notification in notifications) ...[
-            if(notification.type == NotificationType.newKey) ...[
-              notification,
-            ]
-          ]
-        ];
-      case 2:
-        return <UpdateNotification> [
-          for(UpdateNotification notification in notifications) ...[
-            if(notification.type == NotificationType.deleteKey) ...[
-              notification,
-            ]
-          ]
-        ];
-      default:
-        return notifications;
-    }
-  }
 
   @override
   void initState() {
-    _getNotifications();
-    _trackNewNotificationTimer = Timer.periodic(
+    _getUpdateState();
+    _trackUpdateStatusTimer = Timer.periodic(
       const Duration(milliseconds: 100),
       (timer) {
-        if(_lastModifiedTime != notificationsBox.getLastModifiedTime()){
-          _getNotifications();
-        }
+        _getUpdateState();
       },
     );
     super.initState();
   }
 
-  void _getNotifications() {
+  void _getUpdateState() {
     setState(() {
-      _lastModifiedTime = notificationsBox.getLastModifiedTime();
-      _notifications = notificationsBox.getAllNotifications();
+      _hasConnection = !updater.getFailedMessage().contains("Failed host lookup");
+      _failedMessage = updater.getFailedMessage();
     });
   }
 
   @override
   void dispose() {
-    _trackNewNotificationTimer.cancel();
+    _trackUpdateStatusTimer.cancel();
     super.dispose();
+  }
+
+  Widget _getStatusBar({
+    required String lottiePath,
+    required String title,
+    required Color color,
+    required String status,
+    String? description,
+  }) {
+    return Container(
+      margin: const EdgeInsets.all(15),
+      height: 100,
+      child: InkWell(
+        onTap: description == null ? null : () {
+          DialogPresenter.showInformDialog(context, "更新失敗", description: description);
+        },
+        child: Card(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: color.withOpacity(0.6),
+              width: 2.0,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Lottie.asset(lottiePath),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: Text(
+                        title,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 1,
+                child: Center(
+                  child: Container(
+                    width: 80,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: color,
+                    ),
+                    child: Center(
+                      child: Text(
+                        status,
+                        style: const TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      )
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    final notifications = _filterNotifications(_notifications);
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text(
-          "通知",
+          "伺服器狀態",
           style: TextStyle(
             letterSpacing: 3,
           ),
         ),
       ),
-      body: Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: ToggleSwitch(
-            width: MediaQuery.of(context).size.width * 0.8,
-            initialIndex: _switchBarIndex,
-            options: const [
-              "全部",
-              "新增鑰匙",
-              "刪除鑰匙",
-            ],
-            onChange: (index) {
-              setState(() {
-                _switchBarIndex = index;
-              });
-            },
-          ),
-        ),
-        backgroundColor: Colors.transparent,
-        body: notifications.isNotEmpty
-            ? Scrollbar(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: notifications.length,
-                  itemBuilder: (context, index) {
-                    // Latest notification first.
-                    final notification = notifications[notifications.length - index - 1];
-                    return Card(
-                      child: ExpansionTile(
-                        leading: notification.isNew
-                            ? const Text("新", style: TextStyle(color: Colors.redAccent))
-                            : const Text(""),
-                        title: Text(
-                          notification.type == NotificationType.newKey ? "新增鑰匙" : "刪除鑰匙",
-                          style: const TextStyle(
-                            color: Colors.black,
-                          ),
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        childrenPadding: const EdgeInsets.symmetric(vertical: 10),
-                        children: [
-                          Text(
-                            notification.content,
-                            style: const TextStyle(
-                              fontSize: 17,
-                            ),
-                          ),
-                        ],
-                        onExpansionChanged: (isExpanded) {
-                          if(isExpanded && notification.isNew){
-                            setState(() {
-                              notification.pickUp();
-                            });
-                          }
-                        },
-                      ),
-                    );
-                  },
-                ),
-              ),
-            )
-            : Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: const BoxDecoration(
-                      color: Colors.black45,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Lottie.asset(
-                      "assets/lotties/empty_box.json",
-                      width: 100,
-                      height: 100,
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "無通知",
-                      style: TextStyle(
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            _getStatusBar(
+              lottiePath: "assets/lotties/satellite_antenna.json",
+              title: "連線狀態",
+              color: _hasConnection ? Colors.green : Colors.red,
+              status: _hasConnection ? "連線成功" : "無法連線",
             ),
+            _getStatusBar(
+              lottiePath: "assets/lotties/cloud_server.json",
+              title: "更新狀態",
+              color: _failedMessage.isEmpty ? Colors.green : Colors.red,
+              status: _failedMessage.isEmpty ? "更新成功" : "更新失敗",
+              description: _failedMessage.isEmpty ? null : _failedMessage,
+            ),
+          ],
+        ),
       ),
     );
   }

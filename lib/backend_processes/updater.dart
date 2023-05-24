@@ -28,7 +28,7 @@ class Updater {
       _resetState();
       update();
       _updateTimer = Timer.periodic(
-        const Duration(seconds: 10),
+        const Duration(seconds: 3),
         (timer) => update(),
       );
     }
@@ -45,6 +45,7 @@ class Updater {
     try{
       if(response.isOk()){
         await updateData(response.data);
+        _resetState();
       }
       else{
         throw Exception(response.getErrorMessage());

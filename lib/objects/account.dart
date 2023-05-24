@@ -1,4 +1,4 @@
-Account account = Account.empty();
+Account account = Account();
 
 class Account {
 
@@ -6,9 +6,13 @@ class Account {
   late List<String> _keys;
 
 
-  Account({required String name}) {
-    _name = name;
+  Account() {
+    _name = "";
     _keys = List.empty(growable: true);
+  }
+
+  void setName(String name) {
+    _name = name;
   }
 
   void addKey(String doorName) {
@@ -39,7 +43,8 @@ class Account {
     return _keys;
   }
 
-  static Account empty() {
-    return Account(name: "");
+  void clear() {
+    _name = "";
+    _keys.clear();
   }
 }

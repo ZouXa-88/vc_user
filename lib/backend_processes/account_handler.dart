@@ -14,7 +14,8 @@ final AccountHandler accountHandler = AccountHandler();
 class AccountHandler {
 
   Future<void> setDefaultAccount() async {
-    account = Account(name: "王小明");
+    account = Account();
+    account.setName("王小明");
 
     updater.updateData([
       {
@@ -31,7 +32,7 @@ class AccountHandler {
   Future<void> resetAccount() async {
     notificationsBox.clear();
     connector.logout();
-    account = Account.empty();
+    account.clear();
   }
 
   Future<String> _loadShare(String path) async {

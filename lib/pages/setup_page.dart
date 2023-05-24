@@ -19,7 +19,7 @@ class _SetupPage extends State<SetupPage> {
 
   Future<void> _routePage() async {
     if(storage.hasCredentials()){
-      await connector.setCredentials();
+      await connector.autoLogin();
       if(context.mounted){
         Navigator.pushReplacement(
           context,

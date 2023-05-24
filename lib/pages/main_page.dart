@@ -32,7 +32,6 @@ class _MainPage extends State<MainPage> {
   @override
   void dispose() {
     updater.stopPeriodicUpdate();
-    connector.storeCredentials();
     super.dispose();
   }
 
@@ -58,8 +57,8 @@ class _MainPage extends State<MainPage> {
             activeIcon: Icon(Icons.home),
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications_none),
-            activeIcon: Icon(Icons.notifications),
+            icon: Icon(Icons.track_changes_outlined),
+            activeIcon: Icon(Icons.track_changes),
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outlined),

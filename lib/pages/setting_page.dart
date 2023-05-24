@@ -24,13 +24,7 @@ class _SettingPage extends State<SettingPage> {
         margin: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            Card(
-              child: ListTile(
-                title: const Text("自動更新情形"),
-                trailing: updater.isSuccessful() ? const Text("成功") : const Text("失敗"),
-                subtitle: updater.isSuccessful() ? const Text("") : Text(updater.getFailedMessage()),
-              ),
-            )
+
           ],
         ),
       )

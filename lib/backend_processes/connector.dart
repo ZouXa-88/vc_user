@@ -38,14 +38,29 @@ class Connector {
     return _port;
   }
 
-  Future<void> setCredentials() async {
+  Future<void> autoLogin() async {
     _client = oauth2.Client(oauth2.Credentials.fromJson((await storage.loadCredentials())!));
   }
 
-  Future<void> storeCredentials() async {
+  Future<void> _storeCredentials() async {
     if(_client != null){
       storage.storeCredentials(_client!.credentials.toJson());
     }
+  }
+
+  Future<void> _storeAccountData({
+    required String email,
+    required String password,
+  }) async {
+
+  }
+
+  Future<void> _reLogin() async {
+    
+  }
+
+  Future<void> ping() async {
+
   }
 
   Future<ConnectResponse> login({
@@ -58,7 +73,7 @@ class Connector {
         email,
         password,
       );
-      storeCredentials();
+      _storeCredentials();
       return ConnectResponse(code: 200);
     }
     catch(e){
