@@ -16,10 +16,11 @@ class Connector {
 
   oauth2.Client? _client;
 
-  Timer? _credentialsCheckTimer;
-  final Duration _credentialsCheckDuration = const Duration(seconds: 30);
+  Timer? _authenticationCheckTimer;
+  final Duration _authenticationCheckDuration = const Duration(seconds: 5);
 
-  String _serverAddress = "vc-server-hha2.onrender.com";
+  //String _serverAddress = "vc-server-hha2.onrender.com";
+  String _serverAddress = "10.201.20.101";
   int _port = 8000;
 
   final Map<String, String> _header = {"Content-Type": "application/json"};
@@ -29,10 +30,10 @@ class Connector {
 
 
   Connector() {
-    _checkExpiration();
-    _credentialsCheckTimer = Timer.periodic(
-      _credentialsCheckDuration,
-      (timer) => _checkExpiration(),
+    _authenticate();
+    _authenticationCheckTimer = Timer.periodic(
+      _authenticationCheckDuration,
+      (timer) => _authenticate(),
     );
   }
 
@@ -56,6 +57,15 @@ class Connector {
     _client = oauth2.Client(oauth2.Credentials.fromJson((await storage.loadCredentials())!));
   }
 
+  bool getAuthenticationStatus() {
+    if(_client != null) {
+      final token = _client!.credentials.accessToken;
+      return !JwtDecoder.isExpired(token);
+    }
+
+    return false;
+  }
+
   Future<bool> pingTest() async {
     bool successful = true;
 
@@ -75,7 +85,7 @@ class Connector {
   }) async {
     try{
       _client = await oauth2.resourceOwnerPasswordGrant(
-        Uri.https(_serverAddress, "/token"),
+        Uri.http(_getHost(), "/token"),
         email,
         password,
       );
@@ -102,7 +112,7 @@ class Connector {
 
     try{
       final response = await _client!.get(
-        Uri.https(_serverAddress, "/users/getMyKeys"),
+        Uri.http(_getHost(), "/users/getMyKeys"),
         headers: _header,
       );
       final responseBody = jsonDecode(response.body);
@@ -124,7 +134,7 @@ class Connector {
   }) async {
     try{
       final response = await http.post(
-        Uri.https(_serverAddress, "/users/createUser"),
+        Uri.http(_getHost(), "/users/createUser"),
         body: jsonEncode({
           "password": password,
           "email": email,
@@ -132,11 +142,9 @@ class Connector {
         }),
         headers: _header,
       );
-      final responseBody = jsonDecode(response.body);
 
       return ConnectResponse(
         code: response.statusCode,
-        data: responseBody,
       );
     }
     catch(e){
@@ -148,14 +156,12 @@ class Connector {
   Future<ConnectResponse> validate({required String code}) async {
     try{
       final response = await http.get(
-        Uri.http(_serverAddress, "/users/validateEmail", {"code": code}),
+        Uri.http(_getHost(), "/users/validateEmail", {"code": code}),
         headers: _header,
       );
-      final responseBody = _getResponseBody(response);
 
       return ConnectResponse(
         code: response.statusCode,
-        data: responseBody,
       );
     }
     catch(e){
@@ -170,17 +176,15 @@ class Connector {
 
     try{
       final response = await _client!.post(
-        Uri.https(_serverAddress, "/users/requestKey"),
+        Uri.http(_getHost(), "/users/requestKey"),
         body: jsonEncode({
           "door_name": doorName,
         }),
         headers: _header,
       );
-      final responseBody = _getResponseBody(response);
 
       return ConnectResponse(
         code: response.statusCode,
-        data: responseBody,
       );
     }
     catch(e){
@@ -195,17 +199,15 @@ class Connector {
 
     try{
       final response = await _client!.delete(
-        Uri.https(_serverAddress, "/users/deleteKey"),
+        Uri.http(_getHost(), "/users/deleteKey"),
         body: jsonEncode({
           "share": await storage.loadShare(doorName),
         }),
         headers: _header,
       );
-      final responseBody = _getResponseBody(response);
 
       return ConnectResponse(
         code: response.statusCode,
-        data: responseBody,
       );
     }
     catch(e){
@@ -220,17 +222,15 @@ class Connector {
 
     try{
       final response = await _client!.put(
-        Uri.https(_serverAddress, "/users/requestUpdateKey"),
+        Uri.http(_getHost(), "/users/requestUpdateKey"),
         body: jsonEncode({
           "share": await storage.loadShare(doorName),
         }),
         headers: _header,
       );
-      final responseBody = _getResponseBody(response);
 
       return ConnectResponse(
         code: response.statusCode,
-        data: responseBody,
       );
     }
     catch(e){
@@ -245,23 +245,17 @@ class Connector {
 
     try{
       final response = await _client!.delete(
-        Uri.https(_serverAddress, "/users/deleteUser"),
+        Uri.http(_getHost(), "/users/deleteUser"),
         headers: _header,
       );
-      final responseBody = _getResponseBody(response);
 
       return ConnectResponse(
         code: response.statusCode,
-        data: responseBody,
       );
     }
     catch(e){
       return _onException(e.toString());
     }
-  }
-
-  Map<String, dynamic> _getResponseBody(http.Response response) {
-    return jsonDecode(response.body);
   }
 
   String _getHost() {
@@ -285,31 +279,33 @@ class Connector {
   }
 
   Future<void> _reLogin() async {
-    _clearClient();
     storage.deleteCredentials();
     try{
       final accountData = jsonDecode((await storage.loadAccountData())!);
       _client = await oauth2.resourceOwnerPasswordGrant(
-        Uri.https(_serverAddress, "/token"),
+        Uri.http(_getHost(), "/token"),
         accountData["email"],
         accountData["password"],
       );
       _storeCredentials();
     }
     catch(e){
-      print("Re-login failed: ${e.toString()}");
+      print("Cannot re-login: ${e.toString()}");
     }
   }
 
-  void _checkExpiration() {
+  void _authenticate() {
     if(_client != null) {
       final token = _client!.credentials.accessToken;
       final remainTime = JwtDecoder.getRemainingTime(token);
       final isExpired = JwtDecoder.isExpired(token);
-
-      if(isExpired || remainTime.compareTo(_credentialsCheckDuration * 2) <= 0){
+      print(remainTime);
+      if(isExpired || remainTime.compareTo(const Duration(minutes: 1)) <= 0){
         _reLogin();
       }
+    }
+    else if(storage.hasAccountData()){
+      _reLogin();
     }
   }
 

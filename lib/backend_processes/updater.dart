@@ -58,6 +58,7 @@ class Updater {
 
   Future<void> updateData(List<dynamic> data) async {
     await storage.clearAllShares();
+    account.clearKeys();
     final keys = List<Map<String, dynamic>>.from(data);
 
     for(Map<String, dynamic> key in keys){

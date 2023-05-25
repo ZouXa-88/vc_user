@@ -21,7 +21,8 @@ class _StatusScreen extends State<StatusScreen> {
 
   late Timer _trackUpdateStatusTimer;
   bool _hasConnection = true;
-  String _failedMessage = "";
+  String _updateFailedMessage = "";
+  bool _isAuthenticated = true;
 
 
   @override
@@ -41,7 +42,8 @@ class _StatusScreen extends State<StatusScreen> {
     if(_trackUpdateStatusTimer.isActive){
       setState(() {
         _hasConnection = hasConnection;
-        _failedMessage = updater.getFailedMessage();
+        _updateFailedMessage = updater.getFailedMessage();
+        _isAuthenticated = connector.getAuthenticationStatus();
       });
     }
   }
@@ -148,10 +150,16 @@ class _StatusScreen extends State<StatusScreen> {
             ),
             _getStatusBar(
               lottiePath: "assets/lotties/cloud_server.json",
-              title: "更新狀態",
-              color: _failedMessage.isEmpty ? Colors.green : Colors.red,
-              status: _failedMessage.isEmpty ? "更新成功" : "更新失敗",
-              description: _failedMessage.isEmpty ? null : _failedMessage,
+              title: "資料更新狀態",
+              color: _updateFailedMessage.isEmpty ? Colors.green : Colors.red,
+              status: _updateFailedMessage.isEmpty ? "更新成功" : "更新失敗",
+              description: _updateFailedMessage.isEmpty ? null : _updateFailedMessage,
+            ),
+            _getStatusBar(
+              lottiePath: "assets/lotties/fingerprint.json",
+              title: "認證時效",
+              color: _isAuthenticated ? Colors.green : Colors.red,
+              status: _isAuthenticated ? "尚未過期" : "無認證",
             ),
           ],
         ),

@@ -180,6 +180,16 @@ class Storage {
     }
   }
 
+  bool hasAccountData() {
+    try{
+      return File("$_userDirectoryPath/account_data.txt").existsSync();
+    }
+    catch(e){
+      print("Cannot check whether account data exist: ${e.toString()}");
+      return false;
+    }
+  }
+
   Future<bool> _checkPermission() async {
     if(!(await Permission.manageExternalStorage.isGranted)){
       await Permission.manageExternalStorage.request();
