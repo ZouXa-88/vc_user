@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/backend_processes/storage.dart';
-import 'package:user/objects/account.dart';
+import 'package:user/objects/key_list.dart';
 
 
 final Updater updater = Updater();
@@ -58,13 +58,13 @@ class Updater {
 
   Future<void> updateData(List<dynamic> data) async {
     await storage.clearAllShares();
-    account.clearKeys();
+    keyList.clearKeys();
     final keys = List<Map<String, dynamic>>.from(data);
 
     for(Map<String, dynamic> key in keys){
       String doorName = utf8.decode((key["door_name"]! as String).codeUnits);
       String share = key["share"]! as String;
-      account.addKey(doorName);
+      keyList.addKey(doorName);
       await storage.storeShare(doorName, share);
     }
   }

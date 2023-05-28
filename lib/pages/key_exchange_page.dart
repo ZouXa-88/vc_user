@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:user/modules/app_theme.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/modules/snack_bar_presenter.dart';
-import 'package:user/objects/account.dart';
+import 'package:user/objects/key_list.dart';
 import 'package:user/backend_processes/connector.dart';
 
 
@@ -41,7 +41,7 @@ class _KeyExchangePage extends State<KeyExchangePage> {
 
   @override
   initState() {
-    _registeredDoorsName = account.getAllKeys();
+    _registeredDoorsName = keyList.getAllKeys();
     _hintTextVisibleTimer = Timer.periodic(
       const Duration(seconds: 1),
           (timer) {
@@ -93,7 +93,7 @@ class _KeyExchangePage extends State<KeyExchangePage> {
             Expanded(
               child: Scrollbar(
                 child: ListView.builder(
-                  itemCount: account.getNumKeys(),
+                  itemCount: keyList.getNumKeys(),
                   itemBuilder: (BuildContext buildContext, int index) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),

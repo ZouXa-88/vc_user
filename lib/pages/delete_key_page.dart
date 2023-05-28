@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:user/objects/account.dart';
+import 'package:user/objects/key_list.dart';
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/modules/snack_bar_presenter.dart';
@@ -40,7 +40,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
 
   @override
   initState() {
-    _registeredDoorsName = account.getAllKeys();
+    _registeredDoorsName = keyList.getAllKeys();
     _hintTextVisibleTimer = Timer.periodic(
       const Duration(seconds: 1),
       (timer) {
@@ -80,7 +80,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
             Expanded(
               child: Scrollbar(
                 child: ListView.builder(
-                  itemCount: account.getNumKeys(),
+                  itemCount: keyList.getNumKeys(),
                   itemBuilder: (BuildContext buildContext, int index) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),

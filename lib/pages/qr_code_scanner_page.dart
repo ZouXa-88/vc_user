@@ -4,7 +4,7 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/pages/apply_key_page.dart';
 import 'package:user/pages/qr_code_key_page.dart';
-import 'package:user/objects/account.dart';
+import 'package:user/objects/key_list.dart';
 
 
 class QrCodeScannerPage extends StatefulWidget {
@@ -52,7 +52,7 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
 
       // Let's handle this door.
       controller.pauseCamera();
-      if(account.hasKey(doorName)){
+      if(keyList.hasKey(doorName)){
         // Show qrcode key.
         Navigator.push(
           context,

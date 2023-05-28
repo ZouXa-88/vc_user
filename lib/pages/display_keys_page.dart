@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:user/modules/app_theme.dart';
-import 'package:user/objects/account.dart';
+import 'package:user/objects/key_list.dart';
 
 
 class DisplayKeysPage extends StatefulWidget {
@@ -24,7 +24,7 @@ class _DisplayKeysPage extends State<DisplayKeysPage> {
 
   @override
   void initState() {
-    _registeredDoorsName = account.getAllKeys();
+    _registeredDoorsName = keyList.getAllKeys();
     _fadeInCardRespectively();
     super.initState();
   }
@@ -54,13 +54,13 @@ class _DisplayKeysPage extends State<DisplayKeysPage> {
       backgroundColor: AppTheme.background,
       body: Padding(
         padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
-        child: account.getAllKeys().isNotEmpty
+        child: keyList.getAllKeys().isNotEmpty
             ? Scrollbar(
               child: AnimatedOpacity(
                 opacity: _cardVisible ? 1.0 : 0.0,
                 duration: const Duration(milliseconds: 800),
                 child: ListView.builder(
-                  itemCount: account.getNumKeys(),
+                  itemCount: keyList.getNumKeys(),
                   itemBuilder: (BuildContext buildContext, int index) {
                     return Padding(
                       padding: const EdgeInsets.only(bottom: 10),

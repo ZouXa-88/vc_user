@@ -19,8 +19,7 @@ class Connector {
   Timer? _authenticationCheckTimer;
   final Duration _authenticationCheckDuration = const Duration(seconds: 5);
 
-  //String _serverAddress = "vc-server-hha2.onrender.com";
-  String _serverAddress = "10.201.20.101";
+  String _serverAddress = "10.201.25.250";
   int _port = 8000;
 
   final Map<String, String> _header = {"Content-Type": "application/json"};
@@ -69,7 +68,7 @@ class Connector {
   Future<bool> pingTest() async {
     bool successful = true;
 
-    final ping = Ping("vc-server-hha2.onrender.com", count: 1);
+    final ping = Ping(_getHost(), count: 1);
     await for(PingData pingData in ping.stream){
       if(pingData.error != null){
         successful = false;

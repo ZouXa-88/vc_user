@@ -1,18 +1,12 @@
-Account account = Account();
+KeyList keyList = KeyList();
 
-class Account {
+class KeyList {
 
-  late String _name;
   late List<String> _keys;
 
 
-  Account() {
-    _name = "";
+  KeyList() {
     _keys = List.empty(growable: true);
-  }
-
-  void setName(String name) {
-    _name = name;
   }
 
   void addKey(String doorName) {
@@ -31,20 +25,11 @@ class Account {
     _keys.clear();
   }
 
-  String getName() {
-    return _name;
-  }
-
   int getNumKeys() {
     return _keys.length;
   }
 
   List<String> getAllKeys() {
     return _keys;
-  }
-
-  void clear() {
-    _name = "";
-    _keys.clear();
   }
 }

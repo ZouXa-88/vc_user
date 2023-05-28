@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 
 import 'package:image/image.dart' as image;
 
-import 'package:user/objects/account.dart';
+import 'package:user/objects/key_list.dart';
 import 'package:user/backend_processes/updater.dart';
 import 'package:user/backend_processes/connector.dart';
 
@@ -13,8 +13,7 @@ final AccountHandler accountHandler = AccountHandler();
 class AccountHandler {
 
   Future<void> setDefaultAccount() async {
-    account = Account();
-    account.setName("王小明");
+    keyList.clearKeys();
 
     updater.updateData([
       {
@@ -30,7 +29,7 @@ class AccountHandler {
 
   Future<void> resetAccount() async {
     connector.logout();
-    account.clear();
+    keyList.clearKeys();
   }
 
   Future<String> _loadShare(String path) async {
