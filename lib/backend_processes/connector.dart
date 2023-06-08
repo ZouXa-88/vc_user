@@ -26,6 +26,7 @@ class Connector {
 
   ConnectResponse _onException(String e) => ConnectResponse(code: 422, data: {"detail": e});
   ConnectResponse _onNotAuthenticated() => ConnectResponse(code: 401, data: {"detail": "Require login"});
+  ConnectResponse _onInvalidIp() => ConnectResponse(code: 422, data: {"detail": "Server's ip is invalid"});
 
 
   Connector() {
@@ -65,23 +66,40 @@ class Connector {
     return false;
   }
 
-  Future<bool> pingTest() async {
-    bool successful = true;
-
-    final ping = Ping(_getHost(), count: 1);
-    await for(PingData pingData in ping.stream){
-      if(pingData.error != null){
-        successful = false;
-      }
+  Future<String> pingTest() async {
+    if(!_isValidIp()){
+      return "Server's address is invalid";
     }
 
-    return successful;
-}
+    String errorMessage = "no reply";
+
+    try{
+      final ping = Ping(_serverAddress, count: 1);
+      await for (PingData pingData in ping.stream) {
+        if(pingData.summary == null){
+          errorMessage = "No ping result";
+        }
+        else{
+          // Empty string if no error message.
+          errorMessage = pingData.summary!.errors.join("\n");
+        }
+      }
+    }
+    catch(e){
+      errorMessage = e.toString();
+    }
+
+    return errorMessage;
+  }
 
   Future<ConnectResponse> login({
     required String email,
     required String password,
   }) async {
+    if(!_isValidIp()){
+      return _onInvalidIp();
+    }
+
     try{
       _client = await oauth2.resourceOwnerPasswordGrant(
         Uri.http(_getHost(), "/token"),
@@ -105,6 +123,9 @@ class Connector {
   }
 
   Future<ConnectResponse> getKeys() async {
+    if(!_isValidIp()){
+      return _onInvalidIp();
+    }
     if(_client == null){
       return _onNotAuthenticated();
     }
@@ -131,6 +152,10 @@ class Connector {
     required String email,
     required String password,
   }) async {
+    if(!_isValidIp()){
+      return _onInvalidIp();
+    }
+
     try{
       final response = await http.post(
         Uri.http(_getHost(), "/users/createUser"),
@@ -153,6 +178,10 @@ class Connector {
   }
 
   Future<ConnectResponse> validate({required String code}) async {
+    if(!_isValidIp()){
+      return _onInvalidIp();
+    }
+
     try{
       final response = await http.get(
         Uri.http(_getHost(), "/users/validateEmail", {"code": code}),
@@ -169,6 +198,9 @@ class Connector {
   }
 
   Future<ConnectResponse> requestKey({required String doorName}) async {
+    if(!_isValidIp()){
+      return _onInvalidIp();
+    }
     if(_client == null){
       return _onNotAuthenticated();
     }
@@ -192,6 +224,9 @@ class Connector {
   }
 
   Future<ConnectResponse> deleteKey({required String doorName}) async {
+    if(!_isValidIp()){
+      return _onInvalidIp();
+    }
     if(_client == null){
       return _onNotAuthenticated();
     }
@@ -215,6 +250,9 @@ class Connector {
   }
 
   Future<ConnectResponse> requestUpdateKey({required String doorName}) async {
+    if(!_isValidIp()){
+      return _onInvalidIp();
+    }
     if(_client == null){
       return _onNotAuthenticated();
     }
@@ -238,6 +276,9 @@ class Connector {
   }
 
   Future<ConnectResponse> deleteUser() async {
+    if(!_isValidIp()){
+      return _onInvalidIp();
+    }
     if(_client == null){
       return _onNotAuthenticated();
     }
@@ -259,6 +300,22 @@ class Connector {
 
   String _getHost() {
     return "$_serverAddress:$_port";
+  }
+
+  bool _isValidIp() {
+    List<dynamic> buf = _serverAddress.split(".");
+    if(buf.length != 4){
+      return false;
+    }
+
+    for(dynamic seg in buf){
+      int? num = int.tryParse(seg);
+      if(num == null || !(num >= 0 && num <= 255)){
+        return false;
+      }
+    }
+
+    return true;
   }
 
   Future<void> _storeCredentials() async {

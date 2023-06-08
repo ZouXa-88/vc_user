@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:user/modules/dialog_presenter.dart';
 import 'package:user/backend_processes/storage.dart';
-import 'package:user/backend_processes/connector.dart';
 import 'package:user/pages/login_page.dart';
 import 'package:user/pages/main_page.dart';
 

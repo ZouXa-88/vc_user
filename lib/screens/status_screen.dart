@@ -20,7 +20,7 @@ class StatusScreen extends StatefulWidget {
 class _StatusScreen extends State<StatusScreen> {
 
   late Timer _trackUpdateStatusTimer;
-  bool _hasConnection = true;
+  String _pingFailedMessage = "";
   String _updateFailedMessage = "";
   bool _isAuthenticated = true;
 
@@ -38,10 +38,11 @@ class _StatusScreen extends State<StatusScreen> {
   }
 
   Future<void> _getUpdateStatus() async {
-    bool hasConnection = await connector.pingTest();
+    String pingFailMessage = await connector.pingTest();
+
     if(_trackUpdateStatusTimer.isActive){
       setState(() {
-        _hasConnection = hasConnection;
+        _pingFailedMessage = pingFailMessage;
         _updateFailedMessage = updater.getFailedMessage();
         _isAuthenticated = connector.getAuthenticationStatus();
       });
@@ -66,7 +67,7 @@ class _StatusScreen extends State<StatusScreen> {
       height: 100,
       child: InkWell(
         onTap: description == null ? null : () {
-          DialogPresenter.showInformDialog(context, "更新失敗", description: description);
+          DialogPresenter.showInformDialog(context, "失敗訊息", description: description);
         },
         child: Card(
           color: color.withOpacity(0.1),
@@ -145,8 +146,9 @@ class _StatusScreen extends State<StatusScreen> {
             _getStatusBar(
               lottiePath: "assets/lotties/satellite_antenna.json",
               title: "連線狀態",
-              color: _hasConnection ? Colors.green : Colors.red,
-              status: _hasConnection ? "連線成功" : "無法連線",
+              color: _pingFailedMessage.isEmpty ? Colors.green : Colors.red,
+              status: _pingFailedMessage.isEmpty ? "連線成功" : "無法連線",
+              description: _pingFailedMessage.isEmpty ? null : _pingFailedMessage,
             ),
             _getStatusBar(
               lottiePath: "assets/lotties/cloud_server.json",
