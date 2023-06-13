@@ -26,7 +26,7 @@ class _KeyExchangePage extends State<KeyExchangePage> {
   Future<void> _exchange({required String doorName}) async {
     DialogPresenter.showProcessingDialog(context, "傳送中...");
 
-    final response = await connector.requestKey(doorName: doorName);
+    final response = await connector.requestUpdateKey(doorName: doorName);
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);

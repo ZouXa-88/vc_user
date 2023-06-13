@@ -19,7 +19,7 @@ class Connector {
   Timer? _authenticationCheckTimer;
   final Duration _authenticationCheckDuration = const Duration(seconds: 5);
 
-  String _serverAddress = "10.201.25.250";
+  String _serverAddress = "192.168.50.249";
   int _port = 8000;
 
   final Map<String, String> _header = {"Content-Type": "application/json"};
@@ -355,7 +355,7 @@ class Connector {
       final token = _client!.credentials.accessToken;
       final remainTime = JwtDecoder.getRemainingTime(token);
       final isExpired = JwtDecoder.isExpired(token);
-      print(remainTime);
+
       if(isExpired || remainTime.compareTo(const Duration(minutes: 1)) <= 0){
         _reLogin();
       }
