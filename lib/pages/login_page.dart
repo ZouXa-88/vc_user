@@ -44,7 +44,7 @@ class _LoginPage extends State<LoginPage> {
         );
       }
       else{
-        DialogPresenter.showInformDialog(context, "無法登入", description: response.getErrorMessage());
+        DialogPresenter.showInformDialog(context, "Unable to Sign in.", description: response.getErrorMessage());
       }
     }
 
@@ -57,7 +57,7 @@ class _LoginPage extends State<LoginPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return DialogPresenter.showConfirmDialog(context, "關閉程式?");
+        return DialogPresenter.showConfirmDialog(context, "Exit?");
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
@@ -78,7 +78,7 @@ class _LoginPage extends State<LoginPage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "登入帳號",
+                    "Sign in",
                     style: TextStyle(
                       fontSize: 25,
                       color: Theme.of(context).primaryColor,
@@ -101,14 +101,14 @@ class _LoginPage extends State<LoginPage> {
                             initialValue: "",
                             keyboardType: TextInputType.emailAddress,
                             decoration: AppTheme.getEllipseInputDecoration(
-                              labelText: "帳號",
+                              labelText: "Account",
                               prefixIcon: const Icon(Icons.email),
                             ),
                             onChanged: (text) {
                               _email = text;
                             },
                             validator: (text) {
-                              return (text == null || text.isEmpty) ? "請輸入帳號" : null;
+                              return (text == null || text.isEmpty) ? "Account" : null;
                             },
                           ),
                         ),
@@ -120,7 +120,7 @@ class _LoginPage extends State<LoginPage> {
                             keyboardType: TextInputType.visiblePassword,
                             obscureText: !_passwordVisible,
                             decoration: AppTheme.getEllipseInputDecoration(
-                              labelText: "密碼",
+                              labelText: "Password",
                               prefixIcon: const Icon(Icons.password),
                               suffixIcon: IconButton(
                                 icon: _passwordVisible
@@ -137,7 +137,7 @@ class _LoginPage extends State<LoginPage> {
                               _password = text;
                             },
                             validator: (text) {
-                              return (text == null || text.isEmpty) ? "請輸入密碼" : null;
+                              return (text == null || text.isEmpty) ? "Password" : null;
                             },
                           ),
                         ),
@@ -157,7 +157,7 @@ class _LoginPage extends State<LoginPage> {
                             ),
                             child: _isLogging
                                 ? const CircularProgressIndicator(color: Colors.white)
-                                : const Text("登入"),
+                                : const Text("Sign in"),
                           ),
                         ),
                       ],
@@ -176,7 +176,7 @@ class _LoginPage extends State<LoginPage> {
                           MaterialPageRoute(builder: (context) => const CreateAccountPage())
                       );
                     },
-                    child: const Text("註冊帳號"),
+                    child: const Text("Sign up"),
                   ),
                   TextButton(
                     child: const Text("server's IP"),
@@ -231,7 +231,7 @@ class _LoginPage extends State<LoginPage> {
                     },
                   ),
                   TextButton(
-                    child: const Text("使用預設帳號登入"),
+                    child: const Text("Enter as dev."),
                     onPressed: () {
                       accountHandler.setDefaultAccount();
                       Navigator.pushReplacement(

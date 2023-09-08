@@ -69,7 +69,7 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
           Navigator.of(context).pop(doorName);
         }
         else{
-          DialogPresenter.showConfirmDialog(context, "您沒有這扇門的鑰匙", description: "想要申請這扇門的鑰匙嗎?")
+          DialogPresenter.showConfirmDialog(context, "You don't have the key to this door.", description: "Do you want to apply?")
             .then((confirm) {
               if(confirm){
                 Navigator.of(context).push(
@@ -101,7 +101,7 @@ class _QrCodeScannerPage extends State<QrCodeScannerPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("掃QR Code"),
+        title: const Text("Scan QR Code"),
       ),
       body: QRView(
         key: qrKey,

@@ -17,7 +17,7 @@ class _SettingPage extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("設定"),
+        title: const Text("Setting"),
       ),
       backgroundColor: AppTheme.background,
       body: Container(
@@ -39,7 +39,7 @@ class _SettingPage extends State<SettingPage> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text("伺服器"),
+                    const Text("Server"),
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
                       child: TextFormField(

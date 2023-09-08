@@ -34,36 +34,36 @@ class _CreateAccountPage extends State<CreateAccountPage> {
   int _currentScreen = 0;
   final PageController _pageController = PageController(initialPage: 0);
   final _screenTitles = <String> [
-    "輸入基本資訊",
-    "設定密碼",
-    "傳送申請",
-    "驗證信箱",
-    "成功 !",
+    "Enter Basic Information",
+    "Set Password",
+    "Submit Your Application",
+    "Verify Email",
+    "Success !",
   ];
 
 
   Future<void> _create() async {
-    DialogPresenter.showProcessingDialog(context, "傳送中");
+    DialogPresenter.showProcessingDialog(context, "Sending...");
 
     ConnectResponse response = await connector.createAccount(userName: _userName, email: _email, password: _password);
 
     if(context.mounted) {
       DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        DialogPresenter.showInformDialog(context, "傳送成功");
+        DialogPresenter.showInformDialog(context, "Success");
         setState(() {
           _currentScreen = 3;
         });
         _animateSwitchScreen();
       }
       else{
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.getErrorMessage());
+        DialogPresenter.showInformDialog(context, "Failed", description: response.getErrorMessage());
       }
     }
   }
 
   Future<void> _validate() async {
-    DialogPresenter.showProcessingDialog(context, "傳送中");
+    DialogPresenter.showProcessingDialog(context, "Sending...");
 
     ConnectResponse response = await connector.validate(code: _code);
 
@@ -76,7 +76,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
         _animateSwitchScreen();
       }
       else{
-        DialogPresenter.showInformDialog(context, "失敗", description: response.getErrorMessage());
+        DialogPresenter.showInformDialog(context, "Failed", description: response.getErrorMessage());
       }
     }
   }
@@ -114,7 +114,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                       if([1, 2, 3].contains(_currentScreen)) ...[
                         const Icon(Icons.arrow_back_ios, color: Colors.orange),
                         Text(
-                          _currentScreen == 3 ? "返回" : "上一步",
+                          _currentScreen == 3 ? "Back" : "Previous",
                           style: const TextStyle(
                             color: Colors.orange,
                             fontSize: 14,
@@ -161,7 +161,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                     children: [
                       if(_currentScreen == 0 || _currentScreen == 1) ...[
                         const Text(
-                          "下一步",
+                          "Next",
                           style: TextStyle(
                             color: Colors.orange,
                             fontSize: 14,
@@ -203,7 +203,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
               initialValue: _userName,
               keyboardType: TextInputType.text,
               decoration: AppTheme.getEllipseInputDecoration(
-                labelText: "使用者名稱",
+                labelText: "User Name",
                 prefixIcon: const Icon(Icons.person),
               ),
               onChanged: (text) {
@@ -212,7 +212,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                 });
               },
               validator: (text) {
-                return (text == null || text.isEmpty) ? "請輸入使用者名稱" : null;
+                return (text == null || text.isEmpty) ? "User Name" : null;
               },
             ),
           ),
@@ -222,7 +222,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
               initialValue: _email,
               keyboardType: TextInputType.emailAddress,
               decoration: AppTheme.getEllipseInputDecoration(
-                labelText: "信箱",
+                labelText: "Email",
                 prefixIcon: const Icon(Icons.email),
               ),
               onChanged: (text) {
@@ -231,7 +231,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                 });
               },
               validator: (text) {
-                return (text == null || text.isEmpty) ? "請輸入信箱" : null;
+                return (text == null || text.isEmpty) ? "Email" : null;
               },
             ),
           ),
@@ -254,7 +254,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
               keyboardType: TextInputType.visiblePassword,
               obscureText: !_passwordVisible,
               decoration: AppTheme.getEllipseInputDecoration(
-                labelText: "密碼",
+                labelText: "Password",
                 prefixIcon: const Icon(Icons.password),
                 suffixIcon: IconButton(
                   icon: _passwordVisible
@@ -273,7 +273,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                 });
               },
               validator: (text) {
-                return (text == null || text.isEmpty) ? "請輸入密碼" : null;
+                return (text == null || text.isEmpty) ? "Password" : null;
               },
             ),
           ),
@@ -284,7 +284,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
               keyboardType: TextInputType.visiblePassword,
               obscureText: !_passwordVisible,
               decoration: AppTheme.getEllipseInputDecoration(
-                labelText: "確認密碼",
+                labelText: "Confirm Your Password",
                 prefixIcon: const Icon(Icons.password),
                 suffixIcon: IconButton(
                   icon: _passwordVisible
@@ -299,10 +299,10 @@ class _CreateAccountPage extends State<CreateAccountPage> {
               ),
               validator: (text) {
                 if(text == null || text.isEmpty) {
-                  return "請再次輸入密碼";
+                  return "Enter your password again";
                 }
                 if(text != _password){
-                  return "密碼不一致";
+                  return "Inconsistent";
                 }
                 return null;
               },
@@ -329,7 +329,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
           onPressed: () {
             _create();
           },
-          child: const Text("傳送"),
+          child: const Text("Submit"),
         ),
       ],
     );
@@ -353,7 +353,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
             child: TextFormField(
               decoration: AppTheme.getRoundedRectangleInputDecoration(
                 prefixIcon: const Icon(Icons.code),
-                labelText: "驗證碼",
+                labelText: "Verification Code",
               ),
               onChanged: (text) {
                 setState(() {
@@ -361,7 +361,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                 });
               },
               validator: (text) {
-                return (text == null || text.isEmpty) ? "請輸入驗證碼" : null;
+                return (text == null || text.isEmpty) ? "Verification Code" : null;
               },
             ),
           ),
@@ -375,7 +375,7 @@ class _CreateAccountPage extends State<CreateAccountPage> {
                 _validate();
               }
             },
-            child: const Text("確定"),
+            child: const Text("OK"),
           ),
         ],
       ),
@@ -395,12 +395,12 @@ class _CreateAccountPage extends State<CreateAccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("註冊帳號"),
+        title: const Text("Sign Up"),
         backgroundColor: AppTheme.veryLightOrange,
         actions: [
           TextButton(
             child: const Text(
-              "輸入驗證碼",
+              "Enter verification code.",
               style: TextStyle(
                 color: Colors.deepOrange,
               ),

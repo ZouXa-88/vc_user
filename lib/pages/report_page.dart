@@ -5,17 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import 'package:user/modules/app_theme.dart';
-import 'package:user/pages/key_exchange_page.dart';
+import 'package:user/pages/refresh_key_page.dart';
 
 
-class ReportErrorPage extends StatefulWidget {
-  const ReportErrorPage({super.key});
+class ReportPage extends StatefulWidget {
+  const ReportPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _ReportErrorPage();
+  State<StatefulWidget> createState() => _ReportPage();
 }
 
-class _ReportErrorPage extends State<ReportErrorPage> {
+class _ReportPage extends State<ReportPage> {
 
   bool _warningTextVisible = true;
   late final Timer _warningTextVisibleTimer;
@@ -105,7 +105,7 @@ class _ReportErrorPage extends State<ReportErrorPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("問題通報"),
+        title: const Text("Report"),
       ),
       backgroundColor: AppTheme.background,
       body: Column(
@@ -113,12 +113,12 @@ class _ReportErrorPage extends State<ReportErrorPage> {
         children: [
           _button(
             lottiePath: "assets/lotties/transaction.json",
-            label: "鑰匙換新",
+            label: "Refresh Key",
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => const KeyExchangePage(),
+                  builder: (context) => const RefreshKeyPage(),
                 ),
               );
             },

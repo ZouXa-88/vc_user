@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:user/modules/app_theme.dart';
 import 'package:user/modules/page_switcher.dart';
 import 'package:user/pages/delete_key_page.dart';
-import 'package:user/pages/report_error_page.dart';
+import 'package:user/pages/report_page.dart';
 import 'package:user/pages/qr_code_scanner_page.dart';
 import 'package:user/pages/apply_key_page.dart';
 import 'package:user/pages/display_keys_page.dart';
@@ -82,7 +82,7 @@ class _HomeScreen extends State<HomeScreen> {
       backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text(
-          "首頁",
+          "Home",
           style: TextStyle(
             letterSpacing: 3,
           ),
@@ -95,14 +95,14 @@ class _HomeScreen extends State<HomeScreen> {
             _rectangleContainer(
               contents: [
                 _functionButton(
-                  label: "掃QR Code",
+                  label: "Scan QR Code",
                   imagePath: "assets/gifs/qr_code.gif",
                   onPressed: () {
                     PageSwitcher.pushPage(
                       context: context,
                       destinationPage: const QrCodeScannerPage(),
                       lottiePath: "assets/lotties/qr_scanner.json",
-                      label: "掃QR Code",
+                      label: "Scan QR Code",
                     );
                   },
                 ),
@@ -111,14 +111,14 @@ class _HomeScreen extends State<HomeScreen> {
             _rectangleContainer(
               contents: [
                 _functionButton(
-                  label: "鑰匙清單",
+                  label: "Key List",
                   imagePath: "assets/gifs/keys.gif",
                   onPressed: () {
                     PageSwitcher.pushPage(
                       context: context,
                       destinationPage: const DisplayKeysPage(),
                       lottiePath: "assets/lotties/list.json",
-                      label: "鑰匙清單",
+                      label: "Key List",
                     );
                   },
                 ),
@@ -127,14 +127,14 @@ class _HomeScreen extends State<HomeScreen> {
                   thickness: 1.5,
                 ),
                 _functionButton(
-                  label: "申請鑰匙",
+                  label: "Apply for a Key",
                   imagePath: "assets/gifs/plus.gif",
                   onPressed: () {
                     PageSwitcher.pushPage(
                       context: context,
                       destinationPage: const ApplyKeyPage(enableScan: true),
                       lottiePath: "assets/lotties/plus.json",
-                      label: "申請鑰匙",
+                      label: "Apply for a Key",
                     );
                   },
                 ),
@@ -143,14 +143,14 @@ class _HomeScreen extends State<HomeScreen> {
                   thickness: 1.5,
                 ),
                 _functionButton(
-                  label: "刪除特定鑰匙",
+                  label: "Delete the Key",
                   imagePath: "assets/gifs/remove.gif",
                   onPressed: () {
                     PageSwitcher.pushPage(
                       context: context,
                       destinationPage: const DeleteKeyPage(),
                       lottiePath: "assets/lotties/delete.json",
-                      label: "刪除特定鑰匙",
+                      label: "Delete the Key",
                     );
                   },
                 ),
@@ -159,14 +159,14 @@ class _HomeScreen extends State<HomeScreen> {
             _rectangleContainer(
               contents: [
                 _functionButton(
-                  label: "問題通報",
+                  label: "Report",
                   imagePath: "assets/gifs/alert.gif",
                   onPressed: () {
                     PageSwitcher.pushPage(
                       context: context,
-                      destinationPage: const ReportErrorPage(),
+                      destinationPage: const ReportPage(),
                       lottiePath: "assets/lotties/warning.json",
-                      label: "問題通報",
+                      label: "Report",
                     );
                   },
                 ),

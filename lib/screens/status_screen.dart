@@ -67,7 +67,7 @@ class _StatusScreen extends State<StatusScreen> {
       height: 100,
       child: InkWell(
         onTap: description == null ? null : () {
-          DialogPresenter.showInformDialog(context, "失敗訊息", description: description);
+          DialogPresenter.showInformDialog(context, "message", description: description);
         },
         child: Card(
           color: color.withOpacity(0.1),
@@ -133,7 +133,7 @@ class _StatusScreen extends State<StatusScreen> {
       backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text(
-          "伺服器狀態",
+          "Status",
           style: TextStyle(
             letterSpacing: 3,
           ),
@@ -145,23 +145,23 @@ class _StatusScreen extends State<StatusScreen> {
           children: [
             _getStatusBar(
               lottiePath: "assets/lotties/satellite_antenna.json",
-              title: "連線狀態",
+              title: "Connection",
               color: _pingFailedMessage.isEmpty ? Colors.green : Colors.red,
-              status: _pingFailedMessage.isEmpty ? "連線成功" : "無法連線",
+              status: _pingFailedMessage.isEmpty ? "Success" : "Failed",
               description: _pingFailedMessage.isEmpty ? null : _pingFailedMessage,
             ),
             _getStatusBar(
               lottiePath: "assets/lotties/cloud_server.json",
-              title: "資料更新狀態",
+              title: "Update Data",
               color: _updateFailedMessage.isEmpty ? Colors.green : Colors.red,
-              status: _updateFailedMessage.isEmpty ? "更新成功" : "更新失敗",
+              status: _updateFailedMessage.isEmpty ? "Success" : "Failed",
               description: _updateFailedMessage.isEmpty ? null : _updateFailedMessage,
             ),
             _getStatusBar(
               lottiePath: "assets/lotties/fingerprint.json",
-              title: "認證時效",
+              title: "Authentication",
               color: _isAuthenticated ? Colors.green : Colors.red,
-              status: _isAuthenticated ? "尚未過期" : "無認證",
+              status: _isAuthenticated ? "Success" : "Invalid",
             ),
           ],
         ),

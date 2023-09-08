@@ -33,17 +33,17 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
 
 
   Future<void> _apply() async {
-    DialogPresenter.showProcessingDialog(context, "傳送中...");
+    DialogPresenter.showProcessingDialog(context, "Sending...");
 
     ConnectResponse response = await connector.requestKey(doorName: _doorName);
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        SnackBarPresenter.showSnackBar(context, "傳送成功");
+        SnackBarPresenter.showSnackBar(context, "Success");
       }
       else{
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.getErrorMessage());
+        DialogPresenter.showInformDialog(context, "Failed", description: response.getErrorMessage());
       }
     }
   }
@@ -70,7 +70,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("申請鑰匙"),
+        title: const Text("Apply for a Key"),
       ),
       backgroundColor: AppTheme.background,
       body: Stack(
@@ -108,7 +108,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
                         },
                         icon: const Icon(Icons.qr_code_scanner),
                         label: const Text(
-                          "掃門鎖QR Code",
+                          "Scan QR Code",
                           style: TextStyle(
                             fontSize: 16,
                             letterSpacing: 0.5,
@@ -134,7 +134,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
                       keyboardType: TextInputType.text,
                       controller: _doorNameController,
                       decoration: AppTheme.getEllipseInputDecoration(
-                        labelText: "門鎖名稱",
+                        labelText: "Door name",
                         prefixIcon: const Icon(Icons.door_back_door),
                       ),
                       onChanged: (text) {
@@ -143,7 +143,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
                         });
                       },
                       validator: (text) {
-                        return (text == null || text.isEmpty) ? "請輸入門鎖名稱" : null;
+                        return (text == null || text.isEmpty) ? "Door name" : null;
                       },
                     ),
                   ),
@@ -153,7 +153,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
                       initialValue: "",
                       keyboardType: TextInputType.multiline,
                       decoration: AppTheme.getEllipseInputDecoration(
-                        labelText: "申請原因",
+                        labelText: "Reason for application",
                         prefixIcon: const Icon(Icons.description),
                       ),
                       onChanged: (text) {
@@ -162,7 +162,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
                         });
                       },
                       validator: (text) {
-                        return (text == null || text.isEmpty) ? "請輸入申請原因" : null;
+                        return (text == null || text.isEmpty) ? "Reason for application" : null;
                       },
                     ),
                   ),
@@ -170,7 +170,7 @@ class _ApplyKeyPage extends State<ApplyKeyPage> {
                     style: ElevatedButton.styleFrom(
                       fixedSize: const Size(100, 40),
                     ),
-                    child: const Text("傳送"),
+                    child: const Text("Submit"),
                     onPressed: () {
                       if(_formKey.currentState!.validate()){
                         _apply();

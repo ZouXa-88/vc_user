@@ -112,7 +112,6 @@ class AppTheme {
           ),
           textStyle: MaterialStateProperty.all(
             const TextStyle(
-              letterSpacing: 4,
               fontWeight: FontWeight.bold,
             )
           ),

@@ -20,14 +20,14 @@ class AccountScreen extends StatefulWidget {
 class _AccountScreen extends State<AccountScreen> {
 
   Future<void> _deleteAccount() async {
-    DialogPresenter.showProcessingDialog(context, "傳送中");
+    DialogPresenter.showProcessingDialog(context, "Sending...");
 
     ConnectResponse response = await connector.deleteUser();
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        SnackBarPresenter.showSnackBar(context, "成功刪除帳號");
+        SnackBarPresenter.showSnackBar(context, "Delete the account successfully.");
 
         accountHandler.resetAccount();
         Navigator.pushReplacement(
@@ -38,7 +38,7 @@ class _AccountScreen extends State<AccountScreen> {
         );
       }
       else{
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.getErrorMessage());
+        DialogPresenter.showInformDialog(context, "Failed", description: response.getErrorMessage());
       }
     }
   }
@@ -93,7 +93,7 @@ class _AccountScreen extends State<AccountScreen> {
       backgroundColor: AppTheme.background,
       appBar: AppBar(
         title: const Text(
-          "帳號",
+          "Account",
           style: TextStyle(
             letterSpacing: 3,
           ),
@@ -117,7 +117,7 @@ class _AccountScreen extends State<AccountScreen> {
                   physics: const BouncingScrollPhysics(),
                   children: [
                     _optionButton(
-                      label: "設定",
+                      label: "Setting",
                       iconData: Icons.settings,
                       backgroundColor: Colors.grey,
                       onPressed: () => Navigator.push(
@@ -126,7 +126,7 @@ class _AccountScreen extends State<AccountScreen> {
                       ),
                     ),
                     _optionButton(
-                      label: "登出",
+                      label: "Sign out",
                       iconData: Icons.logout,
                       backgroundColor: Colors.blueAccent,
                       onPressed: () {
@@ -140,14 +140,14 @@ class _AccountScreen extends State<AccountScreen> {
                       }
                     ),
                     _optionButton(
-                      label: "刪除帳號",
+                      label: "Delete account",
                       iconData: Icons.delete,
                       backgroundColor: Colors.redAccent,
                       onPressed: () {
                         DialogPresenter.showConfirmDialog(
                           context,
-                          "刪除帳號",
-                          description: "確定要刪除此帳號?",
+                          "Delete Account",
+                          description: "Are you sure?",
                         ).then((confirm) {
                           if(confirm){
                             _deleteAccount();

@@ -61,7 +61,7 @@ class DialogPresenter {
             content: Text(description),
             actions: [
               TextButton(
-                child: const Text("取消", style: TextStyle(color: Colors.black45)),
+                child: const Text("Cancel", style: TextStyle(color: Colors.black45)),
                 onPressed: () => Navigator.of(context).pop(false),
               ),
               TextButton(

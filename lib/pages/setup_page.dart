@@ -44,7 +44,7 @@ class _SetupPage extends State<SetupPage> {
         _routePage();
       }
       else{
-        DialogPresenter.showInformDialog(context, "儲存空間設置失敗", description: "請重新啟動程式")
+        DialogPresenter.showInformDialog(context, "Failed to set your storage.", description: "Please restart this app.")
           .then((_) {
             Navigator.pop(context);
         });
@@ -60,15 +60,15 @@ class _SetupPage extends State<SetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             CircularProgressIndicator(),
             Padding(
               padding: EdgeInsets.only(top: 20),
-              child: Text("正在設置程式"),
+              child: Text("Setting."),
             ),
           ],
         ),

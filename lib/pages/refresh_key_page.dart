@@ -9,14 +9,14 @@ import 'package:user/objects/key_list.dart';
 import 'package:user/backend_processes/connector.dart';
 
 
-class KeyExchangePage extends StatefulWidget {
-  const KeyExchangePage({super.key});
+class RefreshKeyPage extends StatefulWidget {
+  const RefreshKeyPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _KeyExchangePage();
+  State<StatefulWidget> createState() => _RefreshKeyPage();
 }
 
-class _KeyExchangePage extends State<KeyExchangePage> {
+class _RefreshKeyPage extends State<RefreshKeyPage> {
 
   late final List<String> _registeredDoorsName;
   bool _hintTextVisible = true;
@@ -24,17 +24,17 @@ class _KeyExchangePage extends State<KeyExchangePage> {
 
 
   Future<void> _exchange({required String doorName}) async {
-    DialogPresenter.showProcessingDialog(context, "傳送中...");
+    DialogPresenter.showProcessingDialog(context, "Sending...");
 
     final response = await connector.requestUpdateKey(doorName: doorName);
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        SnackBarPresenter.showSnackBar(context, "傳送成功");
+        SnackBarPresenter.showSnackBar(context, "Success");
       }
       else{
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.getErrorMessage());
+        DialogPresenter.showInformDialog(context, "Failed", description: response.getErrorMessage());
       }
     }
   }
@@ -63,19 +63,7 @@ class _KeyExchangePage extends State<KeyExchangePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("鑰匙換新"),
-        actions: [
-          IconButton(
-            onPressed: () {
-              DialogPresenter.showInformDialog(
-                context,
-                "鑰匙換新是什麼?",
-                description: "若您覺得當前鑰匙已經暴露在危險中，可傳送舊鑰匙給伺服器。經驗證成功後，下一次更新鑰匙時即可得到新版本的鑰匙。",
-              );
-            },
-            icon: const Icon(Icons.question_mark),
-          ),
-        ],
+        title: const Text("Refresh Key"),
       ),
       backgroundColor: AppTheme.background,
       body: Padding(
@@ -87,7 +75,7 @@ class _KeyExchangePage extends State<KeyExchangePage> {
               child: AnimatedOpacity(
                 opacity: _hintTextVisible ? 1.0 : 0.2,
                 duration: const Duration(seconds: 1),
-                child: const Text("點選要換新的鑰匙"),
+                child: const Text("Select the key."),
               ),
             ),
             Expanded(
@@ -104,8 +92,8 @@ class _KeyExchangePage extends State<KeyExchangePage> {
                           onTap: () {
                             DialogPresenter.showConfirmDialog(
                               context,
-                              "鑰匙換新",
-                              description: "確定要換新 ${_registeredDoorsName[index]} 的鑰匙?",
+                              "Refresh Key",
+                              description: "Are you sure you want to refresh the key of ${_registeredDoorsName[index]} ?",
                             ).then((confirm) {
                               if(confirm){
                                 _exchange(doorName: _registeredDoorsName[index]);

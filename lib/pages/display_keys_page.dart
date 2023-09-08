@@ -49,7 +49,7 @@ class _DisplayKeysPage extends State<DisplayKeysPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("鑰匙清單"),
+        title: const Text("Key List"),
       ),
       backgroundColor: AppTheme.background,
       body: Padding(
@@ -86,7 +86,7 @@ class _DisplayKeysPage extends State<DisplayKeysPage> {
                   Container(
                     margin: const EdgeInsets.symmetric(vertical: 20),
                     child: const Text(
-                      "無鑰匙",
+                      "No key found.",
                       style: TextStyle(
                         fontSize: 15,
                         letterSpacing: 1,

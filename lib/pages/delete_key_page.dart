@@ -23,17 +23,17 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
   late Timer _hintTextVisibleTimer;
 
   Future<void> _delete({required String doorName}) async {
-    DialogPresenter.showProcessingDialog(context, "傳送中...");
+    DialogPresenter.showProcessingDialog(context, "Sending...");
 
     final response = await connector.deleteKey(doorName: doorName);
 
     if(context.mounted){
       DialogPresenter.closeDialog(context);
       if(response.isOk()){
-        SnackBarPresenter.showSnackBar(context, "傳送成功");
+        SnackBarPresenter.showSnackBar(context, "Success");
       }
       else{
-        DialogPresenter.showInformDialog(context, "傳送失敗", description: response.getErrorMessage());
+        DialogPresenter.showInformDialog(context, "Failed", description: response.getErrorMessage());
       }
     }
   }
@@ -62,7 +62,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("刪除特定鑰匙"),
+        title: const Text("Delete the Key"),
       ),
       backgroundColor: AppTheme.background,
       body: Padding(
@@ -74,7 +74,7 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
               child: AnimatedOpacity(
                 opacity: _hintTextVisible ? 1.0 : 0.2,
                 duration: const Duration(seconds: 1),
-                child: const Text("點選要刪除的鑰匙"),
+                child: const Text("Select the key."),
               ),
             ),
             Expanded(
@@ -91,8 +91,8 @@ class _DeleteKeyPage extends State<DeleteKeyPage> {
                           onTap: () {
                             DialogPresenter.showConfirmDialog(
                               context,
-                              "刪除鑰匙",
-                              description: "確定要刪除 ${_registeredDoorsName[index]}?",
+                              "Delete",
+                              description: "Are you sure you want to delete ${_registeredDoorsName[index]}?",
                             ).then((confirm) {
                               if(confirm){
                                 _delete(doorName: _registeredDoorsName[index]);

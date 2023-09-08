@@ -39,7 +39,7 @@ class _MainPage extends State<MainPage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        return DialogPresenter.showConfirmDialog(context, "關閉程式?");
+        return DialogPresenter.showConfirmDialog(context, "Exit?");
       },
       child: Scaffold(
         bottomNavigationBar: SnakeNavigationBar.color(
