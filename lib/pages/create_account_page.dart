@@ -6,9 +6,7 @@ import 'package:page_view_dot_indicator/page_view_dot_indicator.dart';
 
 import 'package:user/backend_processes/connector.dart';
 import 'package:user/modules/app_theme.dart';
-import 'package:user/backend_processes/account_handler.dart';
 import 'package:user/modules/dialog_presenter.dart';
-import 'package:user/objects/key_list.dart';
 
 
 class CreateAccountPage extends StatefulWidget {

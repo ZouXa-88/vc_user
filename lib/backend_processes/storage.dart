@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 final Storage storage = Storage();
 
@@ -12,18 +11,16 @@ class Storage {
 
 
   Future<bool> initialize() async {
-    if(await _checkPermission()){
-      try{
-        final applicationDirectoryPath = (await getApplicationDocumentsDirectory()).path;
-        _userDirectoryPath = "$applicationDirectoryPath/users";
-        Directory(_userDirectoryPath).create(recursive: true);
+    try{
+      final applicationDirectoryPath = (await getApplicationDocumentsDirectory()).path;
+      _userDirectoryPath = "$applicationDirectoryPath/users";
+      Directory(_userDirectoryPath).create(recursive: true);
 
-        return true;
-      }
-      catch(e){
-        print("Storage initialize failed: ${e.toString()}");
-        return false;
-      }
+      return true;
+    }
+    catch(e){
+      print("Storage initialize failed: ${e.toString()}");
+      return false;
     }
 
     print("Storage permission is not allowed.");
@@ -188,12 +185,5 @@ class Storage {
       print("Cannot check whether account data exist: ${e.toString()}");
       return false;
     }
-  }
-
-  Future<bool> _checkPermission() async {
-    if(!(await Permission.manageExternalStorage.isGranted)){
-      await Permission.manageExternalStorage.request();
-    }
-    return await Permission.manageExternalStorage.isGranted;
   }
 }
