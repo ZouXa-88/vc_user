@@ -1,16 +1,21 @@
-# user
+# vc_user
+This is the implementation of user program in the [graduation project](https://www.csie.ntpu.edu.tw/uploads/file/project/111/PRJ-NTPUCSIE-111-008.pdf).
 
-A new Flutter project.
+## Screenshot
+### Login
+<img src="https://github.com/ZouXa-88/vc_user/blob/main/result/Screenshot_2023-05-15-16-22-17-48_891fb06c891611a5c6beb3a7b139a854.jpg" width=30%>
 
-## Getting Started
+### Register account
+<img src="https://github.com/ZouXa-88/vc_user/blob/main/result/Screenshot_2023-05-29-16-36-58-31_891fb06c891611a5c6beb3a7b139a854.jpg" width=30%/> <img src="https://github.com/ZouXa-88/vc_user/blob/main/result/Screenshot_2023-05-29-16-37-09-31_891fb06c891611a5c6beb3a7b139a854.jpg" width=30%/> <img src="https://github.com/ZouXa-88/vc_user/blob/main/result/Screenshot_2023-05-29-16-38-19-86_891fb06c891611a5c6beb3a7b139a854.jpg" width=30%/>
 
-This project is a starting point for a Flutter application.
+### Homepage
+<img src="https://github.com/ZouXa-88/vc_user/blob/main/result/Screenshot_2023-05-10-21-41-01-93_891fb06c891611a5c6beb3a7b139a854.jpg" width=30%>
 
-A few resources to get you started if this is your first Flutter project:
+### Apply for a key
+<img src="https://github.com/ZouXa-88/vc_user/blob/main/result/Screenshot_2023-05-10-21-40-20-45_891fb06c891611a5c6beb3a7b139a854.jpg" width=30%>
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Check all keys
+<img src="https://github.com/ZouXa-88/vc_user/blob/main/result/Screenshot_2023-05-29-16-41-36-06_891fb06c891611a5c6beb3a7b139a854.jpg" width=30%>
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Open the door
+<img src="https://github.com/ZouXa-88/vc_user/blob/main/result/ezgif-4-710bce48ec.gif" width=30%>
